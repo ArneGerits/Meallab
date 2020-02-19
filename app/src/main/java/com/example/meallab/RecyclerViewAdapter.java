@@ -26,12 +26,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ArrayList<String> mImageNames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
+    private String[] allergies;
+    private boolean[] Choices;
     private Context mContext;
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<String> mImageNames, ArrayList<String> mImages) {
+    public RecyclerViewAdapter(Context mContext, ArrayList<String> mImageNames) {
         this.mImageNames = mImageNames;
-        this.mImages = mImages;
         this.mContext = mContext;
+        this.allergies = new String[getItemCount()];
+        this.Choices = new boolean[getItemCount()];
     }
 
     @NonNull
@@ -46,9 +49,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called.");
 
-        Glide.with(mContext)
-                .asBitmap()
-                .load(mImages.get(position));
+
+
+        holder.image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            public void onCheckedChanged(CompoundButton button, boolean isChecked){
+                Choices[position] = isChecked;
+                System.out.println(Choices[position] + "  on position : " + position);
+            }
+        });
 
         holder.image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -74,6 +83,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Log.d(TAG, "onClick : clicked on : " + mImageNames.get(position));
 
                 Toast.makeText(mContext,mImageNames.get(position),Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -101,4 +111,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
     }
+
+
 }
