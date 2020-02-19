@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.meallab.Spoonacular.SpoonacularDiet;
+
 import static android.view.View.*;
 
 public class MainActivity extends AppCompatActivity {

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 .asBitmap()
                 .load(mImages.get(position));
 
+        holder.image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+                System.out.println("position:" + position);
+                button = (ToggleButton)button;
+                if(isChecked)
+                {
+                    System.out.println("is checked");
+                }
+                else
+                {
+                    System.out.println("not checked");
+                }
+            }
+        });
+
         holder.imageName.setText(mImageNames.get(position));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
@@ -71,15 +88,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         //CircleImageView image;
         //TO BE CORRECTED: naam is nog image, dit zou moeten worden togglebutton of iets dergelijks
-        ToggleButton image;
-        TextView imageName;
-        RelativeLayout parentLayout;
+        public ToggleButton image;
+        public TextView imageName;
+        public RelativeLayout parentLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.toggle);
             imageName = itemView.findViewById(R.id.toggle_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);
+
+
         }
     }
 }
