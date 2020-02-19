@@ -113,9 +113,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToSecondActivity() {
 
-        Intent intent = new Intent(this, SecondActivity.class);
+        //Intent intent = new Intent(this, SecondActivity.class);
 
-        startActivity(intent);
+        //startActivity(intent);
 
     }
 }
