@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.SaveAndContinue:
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putStringSet()
+
         }
     }
 
