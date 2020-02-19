@@ -4,8 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -16,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     //vars
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
+    private TextView mTextView;
 
 
     @Override
@@ -25,6 +31,25 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate : started.");
 
         initImageBitmaps();
+
+        final SeekBar bar = (SeekBar)this.findViewById(R.id.seekBar);
+        mTextView = ((TextView)MainActivity.this.findViewById(R.id.textView));
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int value = 500 + (progress * 100);
+                MainActivity.this.mTextView.setText(String.format("%d", value));
+
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar){
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar){
+
+            }
+        });
     }
 
     private void initImageBitmaps(){
@@ -66,9 +91,12 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView() {
 
         Log.d(TAG, "initRecyclerView: init recyvlerview");
-        RecyclerView recyclerView = findViewById(R.id.recyclerv_view);
+        RecyclerView recyclerViewAllergies = findViewById(R.id.recyclerv_view_allergies);
+        RecyclerView recyclerViewDiets = findViewById(R.id.recyclerv_view_diets);
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(this,mNames,mImageUrls);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+        recyclerViewAllergies.setAdapter(adapter);
+        recyclerViewAllergies.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false));
+        recyclerViewDiets.setAdapter(adapter);
+        recyclerViewDiets.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
     }
 }
