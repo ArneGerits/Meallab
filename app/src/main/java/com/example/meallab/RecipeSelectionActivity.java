@@ -2,6 +2,7 @@ package com.example.meallab;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.meallab.Spoonacular.Recipe;
@@ -10,7 +11,7 @@ import com.example.meallab.Spoonacular.SpoonacularAPI;
 import com.example.meallab.Spoonacular.SpoonacularBatchRecipeListener;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
 
-public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener {
+public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener, RecipeInfoFragment.OnFragmentInteractionListener {
 
     // The recipes loaded.
     private Recipe[] recipes;
@@ -29,10 +30,10 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         setContentView(R.layout.activity_recipe_selection);
 
         // Resolve the meal type.
-        Bundle b      = getIntent().getExtras();
-        this.mealType = SpoonacularMealType.valueOf(b.getString("mealType"));
+        //Bundle b      = getIntent().getExtras();
+        //this.mealType = SpoonacularMealType.valueOf(b.getString("mealType"));
 
-        loadRecipes(0);
+        //loadRecipes(0);
     }
 
     // Loads 9 breakfast recipes.
@@ -56,6 +57,11 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     @Override
     public void batchRecipesErrorHandler() {
         // todo: Handle error here.
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
     //endregion
 }

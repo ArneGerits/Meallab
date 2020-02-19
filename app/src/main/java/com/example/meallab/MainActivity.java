@@ -54,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        Intent intent = new Intent(this, RecipeSelectionActivity.class);
+
+        startActivity(intent);
+
+        /*
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
 
         firstTime = sharedPreferences.getBoolean(firstTimeKey, true);
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             goToInitialStartupActivity();
         } else {
             goToSecondActivity();
-        }
+        }*/
 
     }
 
@@ -74,10 +79,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToSecondActivity() {
-
-        Intent intent = new Intent(this, SecondActivity.class);
-
-        startActivity(intent);
 
     }
 }

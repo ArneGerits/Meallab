@@ -88,9 +88,6 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
                 editor.putBoolean(firstTimeKey,false);
                 editor.commit();
                 System.out.println("clicked in second activity");
-                goToSecondActivity();
-
-
         }
     }
 
@@ -120,20 +117,6 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
         recyclerViewAllergies.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         recyclerViewDiets.setAdapter(adapter1);
         recyclerViewDiets.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-    }
-
-
-
-     
-
-    // ------ Actions ------
-
-    private void goToSecondActivity() {
-
-        Intent intent = new Intent(this, SecondActivity.class);
-
-        startActivity(intent);
-
     }
 }
 
