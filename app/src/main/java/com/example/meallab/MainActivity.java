@@ -8,13 +8,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
@@ -22,6 +25,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private TextView mTextView;
+    private Button saveAndContinue;
+    SharedPreferences sharedPreferences;
+    public boolean firstTime;
+    public ArrayList<String> allergies = new ArrayList<>();
+    public ArrayList<String> diets = new ArrayList<>();
 
 
     @Override
@@ -34,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
         final SeekBar bar = (SeekBar)this.findViewById(R.id.seekBar);
         mTextView = ((TextView)MainActivity.this.findViewById(R.id.textView));
+        saveAndContinue = (Button) MainActivity.this.findViewById(R.id.SaveAndContinue);
+        saveAndContinue.setOnClickListener(this);
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -50,6 +60,15 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onClick(View view){
+        switch (view.getId()){
+            case R.id.SaveAndContinue:
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putStringSet()
+        }
     }
 
     private void initImageBitmaps(){

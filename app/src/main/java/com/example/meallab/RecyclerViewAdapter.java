@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,12 +26,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ArrayList<String> mImageNames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
+    private String[] allergies;
+    private boolean[] allergiesChoices;
     private Context mContext;
 
     public RecyclerViewAdapter(Context mContext, ArrayList<String> mImageNames, ArrayList<String> mImages) {
         this.mImageNames = mImageNames;
         this.mImages = mImages;
         this.mContext = mContext;
+        this.allergies = new String[getItemCount()];
+        this.allergiesChoices = new boolean[getItemCount()];
     }
 
     @NonNull
@@ -49,6 +54,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 .asBitmap()
                 .load(mImages.get(position));
 
+        holder.image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            public void onCheckedChanged(CompoundButton button, boolean isChecked){
+                allergiesChoices[position] = isChecked;
+                System.out.println(allergiesChoices[position] + "  on position : " + position);
+            }
+        });
+
         holder.imageName.setText(mImageNames.get(position));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
@@ -56,7 +69,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onClick(View view){
                 Log.d(TAG, "onClick : clicked on : " + mImageNames.get(position));
 
+                allergiesChoices[position] = !allergiesChoices[position];
                 Toast.makeText(mContext,mImageNames.get(position),Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -82,4 +97,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             parentLayout = itemView.findViewById(R.id.parent_layout);
         }
     }
+
+
 }
