@@ -61,7 +61,9 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        System.out.println("interacted with fragment!");
+        // Switch fragment to selected state....
+        // But how do we know which fragment was selected?
     }
     //endregion
 }
