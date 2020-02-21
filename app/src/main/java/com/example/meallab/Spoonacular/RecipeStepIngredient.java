@@ -11,7 +11,7 @@ public class RecipeStepIngredient {
 
     public int id; // The ID of the ingredient.
     public String name; // The name of the ingredient.
-    public String imageURL; // The URL of the image of the ingredient.
+    public String imageURL; // The URL of the toggle of the ingredient.
 
     // ------ Constructor ------
     public RecipeStepIngredient(JSONObject jsonIngredient) throws JSONException {

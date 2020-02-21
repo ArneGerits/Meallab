@@ -3,33 +3,24 @@ package com.example.meallab;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.content.Context;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import android.content.Intent;
 
-import android.view.View;
-
-import android.widget.Button;
-import android.widget.TextView;
-
 import com.example.meallab.Spoonacular.SpoonacularDiet;
 import com.example.meallab.Spoonacular.SpoonacularIntolerance;
-
-import static android.view.View.*;
 
 
 public class InitialStartupActivity extends AppCompatActivity implements View.OnClickListener {
@@ -46,8 +37,8 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
     public ArrayList<String> diets = new ArrayList<>();
     public static final String mypreference = "mypref";
     public static String firstTimeKey = "firstTimeKey";
-    RecyclerViewAdapter adapter;
-    RecyclerViewAdapter adapter1;
+    RecyclerViewAdapterToggle adapter;
+    RecyclerViewAdapterToggle adapter1;
     public ArrayList<String> allergyNames;
     public ArrayList<String> dietNames;
     private SeekBar bar;
@@ -172,8 +163,8 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
         Log.d(TAG, "initRecyclerView: init recyvlerview");
         RecyclerView recyclerViewAllergies = findViewById(R.id.recyclerv_view_allergies);
         RecyclerView recyclerViewDiets = findViewById(R.id.recyclerv_view_diets);
-        adapter = new RecyclerViewAdapter(this, mIntolerances);
-        adapter1 = new RecyclerViewAdapter(this, mDiets);
+        adapter = new RecyclerViewAdapterToggle(this, mIntolerances);
+        adapter1 = new RecyclerViewAdapterToggle(this, mDiets);
         recyclerViewAllergies.setAdapter(adapter);
         recyclerViewAllergies.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         recyclerViewDiets.setAdapter(adapter1);
@@ -188,7 +179,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
     private void goToSecondActivity() {
 
-        Intent intent = new Intent(this, SecondActivity.class);
+        Intent intent = new Intent(this, OverviewActivity.class);
 
         startActivity(intent);
 

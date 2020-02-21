@@ -14,17 +14,14 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.SharedPreferences;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+public class RecyclerViewAdapterToggle extends RecyclerView.Adapter<RecyclerViewAdapterToggle.ViewHolder>{
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
+    private static final String TAG = "RecyclerViewAdapterToggle";
 
-    private static final String TAG = "RecyclerViewAdapter";
-
-    private ArrayList<String> mImageNames = new ArrayList<>();
+    private ArrayList<String> mToggleNames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
     private boolean[] Choices;
     private Context mContext;
@@ -32,8 +29,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static final String mypreference = "mypref";
     int count = 0;
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<String> mImageNames) {
-        this.mImageNames = mImageNames;
+    public RecyclerViewAdapterToggle(Context mContext, ArrayList<String> mImageNames) {
+        this.mToggleNames = mImageNames;
         this.mContext = mContext;
         this.Choices = new boolean[getItemCount()];
         this.sharedPreferences = mContext.getSharedPreferences(mypreference, Context.MODE_PRIVATE);
@@ -62,7 +59,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
 
-        holder.image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             public void onCheckedChanged(CompoundButton button, boolean isChecked) {
                 System.out.println("position:" + position);
@@ -80,16 +77,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
 
-        holder.imageName.setText(mImageNames.get(position));
-        holder.image.setChecked(sharedPreferences.getBoolean(mImageNames.get(position),false));
-        System.out.println(mImageNames.get(position));
+        holder.toggleName.setText(mToggleNames.get(position));
+        holder.toggle.setChecked(sharedPreferences.getBoolean(mToggleNames.get(position),false));
+        System.out.println(mToggleNames.get(position));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.d(TAG, "onClick : clicked on : " + mImageNames.get(position));
+                Log.d(TAG, "onClick : clicked on : " + mToggleNames.get(position));
 
-                Toast.makeText(mContext,mImageNames.get(position),Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, mToggleNames.get(position),Toast.LENGTH_SHORT).show();
 
 
             }
@@ -98,21 +95,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return mImageNames.size();
+        return mToggleNames.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        //CircleImageView image;
-        //TO BE CORRECTED: naam is nog image, dit zou moeten worden togglebutton of iets dergelijks
-        public ToggleButton image;
-        public TextView imageName;
+        //CircleImageView toggle;
+        //TO BE CORRECTED: naam is nog toggle, dit zou moeten worden togglebutton of iets dergelijks
+        public ToggleButton toggle;
+        public TextView toggleName;
         public RelativeLayout parentLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.toggle);
-            imageName = itemView.findViewById(R.id.toggle_name);
+            toggle = itemView.findViewById(R.id.toggle);
+            toggleName = itemView.findViewById(R.id.toggle_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);
 
 

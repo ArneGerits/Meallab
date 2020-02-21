@@ -50,18 +50,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //this boolean will cause the activity under test to be launched on startup
+        boolean testing = true;
 
         setContentView(R.layout.activity_main);
 
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
 
         firstTime = sharedPreferences.getBoolean(firstTimeKey, true);
+        if(testing){
+            goToActivityUnderTest();
+        }else{
         if (firstTime) {
             goToInitialStartupActivity();
         } else {
             goToSecondActivity();
-        }
+        }}
 
     }
 
@@ -79,5 +83,11 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intent);
 
+    }
+
+    private void goToActivityUnderTest(){
+        Intent intent = new Intent(this, OverviewActivity.class);
+
+        startActivity(intent);
     }
 }

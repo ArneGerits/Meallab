@@ -20,9 +20,9 @@ public class Recipe {
 
     // ------ Image data ------
 
-    public String imageName; // The name of the recipe image, used to compute the URL.
-    public String imageType; // The type of the image.
-    public Image image; // The image of this recipe.
+    public String imageName; // The name of the recipe toggle, used to compute the URL.
+    public String imageType; // The type of the toggle.
+    public Image image; // The toggle of this recipe.
 
     // ------ Timing data ------
 

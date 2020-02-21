@@ -14,6 +14,7 @@
         <activity android:name=".RecipeSelectionActivity"></activity>
         <activity android:name=".InitialStartupActivity"></activity>
         <activity android:name=".SecondActivity"></activity>
+        <activity android:name=".OverviewActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -26,7 +26,7 @@ public class RecipeIngredient {
     // ------ Hidden Data ------
 
     public int id; // The ID of the ingredient.
-    public String imageURL; // The image URL of the ingredient.
+    public String imageURL; // The toggle URL of the ingredient.
 
     // ------ Constructor ------
 
