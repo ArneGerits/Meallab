@@ -179,6 +179,14 @@ public class Recipe {
         final float LOW    = 300;
         final float MEDIUM = 500;
 
+        if (this.type == SpoonacularMealType.LUNCH) {
+
+        }
+        if (this.type == SpoonacularMealType.DINNER) {
+
+        } 
+
+
         if (pricePerServing < LOW) {
             return 1;
         } else if (pricePerServing < MEDIUM) {
