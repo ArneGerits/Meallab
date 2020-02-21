@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class RecyclerViewAdapterToggle extends RecyclerView.Adapter<RecyclerViewAdapterToggle.ViewHolder>{
 
-    private static final String TAG = "RecyclerViewAdapterToggle";
+    private static final String TAG = "RecyclervToggle";
 
     private ArrayList<String> mToggleNames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
@@ -29,8 +29,8 @@ public class RecyclerViewAdapterToggle extends RecyclerView.Adapter<RecyclerView
     public static final String mypreference = "mypref";
     int count = 0;
 
-    public RecyclerViewAdapterToggle(Context mContext, ArrayList<String> mImageNames) {
-        this.mToggleNames = mImageNames;
+    public RecyclerViewAdapterToggle(Context mContext, ArrayList<String> mToggleNames) {
+        this.mToggleNames = mToggleNames;
         this.mContext = mContext;
         this.Choices = new boolean[getItemCount()];
         this.sharedPreferences = mContext.getSharedPreferences(mypreference, Context.MODE_PRIVATE);
