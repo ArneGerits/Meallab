@@ -3,34 +3,22 @@ package com.example.meallab;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.content.Context;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
-import android.content.Intent;
 
-import android.view.View;
-
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.example.meallab.Spoonacular.SpoonacularDiet;
-import com.example.meallab.Spoonacular.SpoonacularIntolerance;
-
-import static android.view.View.*;
-
+import com.example.meallab.Spoonacular.*;
 
 public class InitialStartupActivity extends AppCompatActivity implements View.OnClickListener {
 

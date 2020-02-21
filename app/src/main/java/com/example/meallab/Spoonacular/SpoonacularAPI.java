@@ -7,7 +7,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,10 +43,15 @@ public class SpoonacularAPI {
     // The activity context.
     private Context context;
 
+    private RequestQueue mainQueue;
+
     // ------ Constructor ------
 
     public SpoonacularAPI(Context ctx) {
+
         context = ctx;
+        // Gets the app wide request queue.
+        this.mainQueue = VolleySingleton.getInstance(this.context).getRequestQueue();
     }
 
     // ------ Public methods ------
@@ -98,7 +102,6 @@ public class SpoonacularAPI {
      */
     public void retrieveRecipes(final RecipeRequest request, final SpoonacularBatchRecipeListener listener) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this.context);
         // Obtain the API url.
         final String url = searchURL(request);
 
@@ -117,6 +120,7 @@ public class SpoonacularAPI {
                         // Get the JSON object representing the recipe.
                         JSONObject jsonRecipe = responseJSONArray.getJSONObject(i);
 
+                        System.out.println(jsonRecipe.toString());
                         // Create a recipe object and add it.
                         recipes.add(new Recipe(jsonRecipe, request.type));
                     }
@@ -134,7 +138,7 @@ public class SpoonacularAPI {
                 System.out.println("An error occurred");
             }
         });
-        requestQueue.add(jsonObjectRequest);
+        this.mainQueue.add(jsonObjectRequest);
     }
 
     /**
@@ -143,7 +147,6 @@ public class SpoonacularAPI {
      */
     public void retrieveAdditionalRecipeInformation(final Recipe recipe, final SpoonacularSingleRecipeListener listener) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this.context);
         // Obtain the API url.
         final String url = recipeInfoURL(recipe);
         // Make the request.
@@ -171,7 +174,7 @@ public class SpoonacularAPI {
                 System.out.println("An error occurred");
             }
         });
-        requestQueue.add(jsonObjectRequest);
+        this.mainQueue.add(jsonObjectRequest);
     }
 
     // ------- Private Methods -------

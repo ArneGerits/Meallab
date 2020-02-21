@@ -31,4 +31,16 @@ public enum SpoonacularDiet {
     {
         this.value = value;
     }
+
+    /**
+     * Returns a value for this enum that is readable by the user.
+     * @return A string value for this enum that is readable by the user.
+     */
+    public String readableValue() {
+        String s = this.getValue();
+
+        // These 2 lines make the first character upper case.
+        String first = s.substring(0,1).toUpperCase();
+        return first + s.substring(1,s.length() - 1);
+    }
 }

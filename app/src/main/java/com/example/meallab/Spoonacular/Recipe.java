@@ -18,6 +18,9 @@ public class Recipe {
     public String title; // The title of this recipe.
     public int servings; // The amount of people this recipe serves.
 
+    // ------ Other data ------
+    public boolean popular; // True if this recipe is very popular, false otherwise.
+    public float pricePerServing; // The price per serving of this recipe in cents.
     // ------ Image data ------
 
     public String imageName; // The name of the recipe image, used to compute the URL.
@@ -79,6 +82,9 @@ public class Recipe {
         this.imageType = json.optString("imageType","");
         this.sourceURL = json.optString("sourceUrl","");
         this.title     = json.optString("title","");
+
+        this.pricePerServing = (float) Double.valueOf(json.optString("pricePerServing","-1")).doubleValue();
+        this.popular = json.optBoolean("veryPopular",false);
 
         // Setting the nutritional properties.
 
@@ -162,6 +168,24 @@ public class Recipe {
     }
     public String getImageURLForSize(SpoonacularImageSize size) {
         return IMAGE_BASE_URL + this.id + "-" + size.getValue() + "." + this.imageType;
+    }
+
+    /**
+     * Classifies the pricePerServing property into 3.
+     * @return 1,2,3 Meaning 1: not expensive, 2 medium expensive, 3 very expensive.
+     */
+    public int getClassifiedPrice() {
+
+        final float LOW    = 300;
+        final float MEDIUM = 500;
+
+        if (pricePerServing < LOW) {
+            return 1;
+        } else if (pricePerServing < MEDIUM) {
+            return 2;
+        } else {
+            return 3;
+        }
     }
 
 }

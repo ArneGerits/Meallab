@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.toolbox.NetworkImageView;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -93,6 +95,13 @@ public class RecipeInfoFragment extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Returns the network image view used by this fragment.
+     * @return The network image view used by this fragment.
+     */
+    public NetworkImageView networkImageView() {
+        return getView().findViewById(R.id.recipeImageView);
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
