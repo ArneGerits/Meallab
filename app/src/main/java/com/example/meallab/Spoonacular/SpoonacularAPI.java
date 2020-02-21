@@ -119,8 +119,6 @@ public class SpoonacularAPI {
                     for (int i = 0; i < responseJSONArray.length(); i++) {
                         // Get the JSON object representing the recipe.
                         JSONObject jsonRecipe = responseJSONArray.getJSONObject(i);
-
-                        System.out.println(jsonRecipe.toString());
                         // Create a recipe object and add it.
                         recipes.add(new Recipe(jsonRecipe, request.type));
                     }

@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.meallab.Spoonacular.SpoonacularDiet;
 import com.example.meallab.Spoonacular.SpoonacularIntolerance;
+import com.example.meallab.Spoonacular.SpoonacularMealType;
 
 import static android.view.View.*;
 
@@ -86,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToActivityUnderTest(){
-        Intent intent = new Intent(this, OverviewActivity.class);
 
+        Intent intent = new Intent(this, RecipeSelectionActivity.class);
+        intent.putExtra("mealType", SpoonacularMealType.BREAKFAST.toString());
         startActivity(intent);
     }
 }

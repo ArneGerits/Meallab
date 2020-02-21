@@ -2,6 +2,8 @@ package com.example.meallab;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +13,7 @@ import com.example.meallab.Spoonacular.*;
 
 import java.util.Arrays;
 
-public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener, RecipeInfoFragment.OnFragmentInteractionListener {
+public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener, RecipeInfoFragment.recipeInfoFragmentListener {
 
     // The recipes loaded.
     private Recipe[] recipes;
@@ -28,6 +30,24 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_selection);
+
+        Button reroll  = this.findViewById(R.id.rerollButton);
+        Button confirm = this.findViewById(R.id.confirmButton);
+
+        reroll.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                reroll();
+            }
+        });
+        confirm.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                confirm();
+            }
+        });
 
         // Resolve the meal type.
         Bundle b      = getIntent().getExtras();
@@ -67,24 +87,44 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         }
     }
 
-    // Loads and sets images for given recipes.
-    // NOTE: recipes.length == 3 should hold.
-    protected void loadImages(Recipe[] recipes) {
+    // Loads all recipe data into the views,
+    // Also loads the images corresponding the recipes.
+    protected void loadRecipeData(Recipe[] recipes) {
+
         // Get the image loader from the Volley singleton.
         ImageLoader imageLoader = VolleySingleton.getInstance(this).getImageLoader();
 
         int[] ids = {R.id.topInfo,R.id.middleInfo,R.id.bottomInfo};
 
         for (int i = 0; i < ids.length; i++) {
-            // Get the fragment.
-            RecipeInfoFragment frag = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(ids[i]);
+
+            Recipe currentRecipe = recipes[i];
             // Get the url.
-            String url = recipes[i].getImageURLForSize(SpoonacularImageSize.S_636x393);
-            System.out.println("Connecting to url: " + url);
+            String url = currentRecipe.getImageURLForSize(SpoonacularImageSize.S_636x393);
+            // Get the fragment.
+
+            RecipeInfoFragment frag = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(ids[i]);
             // Load the image.
             frag.networkImageView().setImageUrl(url,imageLoader);
+            // Set the data.
+            frag.setTitle(currentRecipe.title);
+            frag.setListener(this);
+            frag.detailFragment().setValues(currentRecipe.calories, currentRecipe.servings,
+                    currentRecipe.cookingMinutes, currentRecipe.getCost());
         }
     }
+    //region Actions
+    // Called when the user clicks the reroll button.
+    private void reroll() {
+
+    }
+    // Called when the user clicks the confirm button.
+    private void confirm() {
+
+    }
+
+    //endregion
+
     //region SpoonacularBatchRecipeListener
     @Override
     public void retrievedRecipes(Recipe[] recipes) {
@@ -93,18 +133,45 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         System.out.println("Retrieved the recipes");
         // Load the 3 images.
-        this.loadImages(Arrays.copyOfRange(recipes,0,3));
+        this.loadRecipeData(Arrays.copyOfRange(recipes,0,3));
     }
     @Override
     public void batchRecipesErrorHandler() {
         // todo: Handle error here.
     }
+    //endregion
+
+    //region
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-        System.out.println("interacted with fragment!");
-        // Switch fragment to selected state....
-        // But how do we know which fragment was selected?
+    public void selectedFragment(RecipeInfoFragment fragment, boolean selected) {
+        // Top fragment was selected.
+        if (fragment.getId() == R.id.topInfo) {
+
+        }
+        // Middle fragment was selected.
+        else if (fragment.getId() == R.id.middleInfo) {
+
+        }
+        // Bottom fragment was selected.
+        else {
+
+        }
     }
-    //endregion
+
+    @Override
+    public void moreInfoFragment(RecipeInfoFragment fragment) {
+        // Top fragment was selected.
+        if (fragment.getId() == R.id.topInfo) {
+
+        }
+        // Middle fragment was selected.
+        else if (fragment.getId() == R.id.middleInfo) {
+
+        }
+        // Bottom fragment was selected.
+        else {
+
+        }
+    }
 }

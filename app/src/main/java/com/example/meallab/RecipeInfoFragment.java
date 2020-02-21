@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -31,7 +33,8 @@ public class RecipeInfoFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private recipeInfoFragmentListener mListener;
+    private boolean isSelected = false;
 
     public RecipeInfoFragment() {
         // Required empty public constructor
@@ -64,29 +67,65 @@ public class RecipeInfoFragment extends Fragment {
         }
     }
 
+    public void setTitle(String title) {
+        TextView titleView = getView().findViewById(R.id.titleTextView);
+
+        titleView.setText(title);
+    }
+    public void setSelected(boolean selected) {
+        this.isSelected = selected;
+
+        //todo: Go into selected state.
+    }
+    public void setListener(recipeInfoFragmentListener listener) {
+        this.mListener = listener;
+    }
+    // ------ Actions --------
+
+    // Called when user presses image view.
+    private void selected() {
+        setSelected(!this.isSelected);
+
+        // Inform listener
+        if (mListener != null) {
+            mListener.selectedFragment(this, this.isSelected);
+        }
+    }
+
+    private void more() {
+        if (mListener != null) {
+            mListener.moreInfoFragment(this);
+        }
+    }
+    // --------------
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recipe_info, container, false);
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        View root = inflater.inflate(R.layout.fragment_recipe_info, container, false);
+
+        NetworkImageView img = root.findViewById(R.id.recipeImageView);
+        img.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // your code here
+                selected();
+            }
+        });
+
+        Button moreButton = root.findViewById(R.id.moreButton);
+        moreButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // your code here
+                more();
+            }
+        });
+        // Inflate the layout for this fragment
+        return root;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -102,6 +141,10 @@ public class RecipeInfoFragment extends Fragment {
     public NetworkImageView networkImageView() {
         return getView().findViewById(R.id.recipeImageView);
     }
+    public RecipeInfoDetailFragment detailFragment() {
+        return (RecipeInfoDetailFragment) getChildFragmentManager().findFragmentById(R.id.detailFragment);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -112,8 +155,19 @@ public class RecipeInfoFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface recipeInfoFragmentListener {
+
+        /**
+         * Called when the user selects this fragment.
+         * @param fragment The fragment the user selected.
+         * @param selected True if the user selected this fragment, false if it is deselected.
+         */
+        void selectedFragment(RecipeInfoFragment fragment, boolean selected);
+
+        /**
+         * Called when the user wants more info for this fragment.
+         * @param fragment The fragment the user wants more info of.
+         */
+        void moreInfoFragment(RecipeInfoFragment fragment);
     }
 }
