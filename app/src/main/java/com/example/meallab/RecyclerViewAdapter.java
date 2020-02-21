@@ -13,7 +13,7 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.SharedPreferences;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -26,15 +26,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ArrayList<String> mImageNames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
-    private String[] allergies;
     private boolean[] Choices;
     private Context mContext;
+    SharedPreferences sharedPreferences;
+    public static final String mypreference = "mypref";
+    int count = 0;
 
     public RecyclerViewAdapter(Context mContext, ArrayList<String> mImageNames) {
         this.mImageNames = mImageNames;
         this.mContext = mContext;
-        this.allergies = new String[getItemCount()];
         this.Choices = new boolean[getItemCount()];
+        this.sharedPreferences = mContext.getSharedPreferences(mypreference, Context.MODE_PRIVATE);
     }
 
     @NonNull
@@ -45,24 +47,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return holder;
     }
 
+    public boolean[] getChoices(){
+        return this.Choices;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called.");
 
 
 
-        holder.image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 
-            public void onCheckedChanged(CompoundButton button, boolean isChecked){
-                Choices[position] = isChecked;
-                System.out.println(Choices[position] + "  on position : " + position);
-            }
-        });
+
+
+
 
         holder.image.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             public void onCheckedChanged(CompoundButton button, boolean isChecked) {
                 System.out.println("position:" + position);
+                Choices[position] = isChecked;
+                System.out.println("position "+ position + "  changed into " + isChecked);
                 button = (ToggleButton)button;
                 if(isChecked)
                 {
@@ -76,6 +81,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         });
 
         holder.imageName.setText(mImageNames.get(position));
+        holder.image.setChecked(sharedPreferences.getBoolean(mImageNames.get(position),false));
+        System.out.println(mImageNames.get(position));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -107,6 +114,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             image = itemView.findViewById(R.id.toggle);
             imageName = itemView.findViewById(R.id.toggle_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);
+
 
 
         }

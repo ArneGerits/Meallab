@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="120dp"
+    android:layout_height="160dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="15dp"
-    android:id="@+id/parent_layout"
-    >
+    android:id="@+id/parent_layout">
 
-    <android.widget.ToggleButton
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:id="@+id/toggle"
-        android:src="@mipmap/ic_launcher"
-        android:textOn="Yes"
-        android:textOff="No"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".InitialStartupActivity">
+
+        <android.widget.ToggleButton
+            android:id="@+id/toggle"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@mipmap/ic_launcher"
+            android:textOff="No"
+            android:textOn="Yes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/toggle_name"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toggle"
+            android:layout_centerVertical="true"
+            android:foregroundGravity="center_vertical"
+            android:gravity="center_vertical"
+            android:text="Dummytext"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="12dp"
+            android:autoSizeMaxTextSize="20dp"
+            android:autoSizeStepGranularity="1dp"
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dummytext"
-        android:id="@+id/toggle_name"
-        android:layout_below="@+id/toggle"
-        android:textColor="#000"
-        android:layout_centerVertical="true"
-        android:textSize="17dp"
-
-        />
+            android:textColor="#000"
 
 
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toggle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
