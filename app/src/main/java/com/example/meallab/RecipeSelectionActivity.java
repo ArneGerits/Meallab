@@ -1,5 +1,6 @@
 package com.example.meallab;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.meallab.Spoonacular.*;
 
@@ -54,15 +56,27 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         this.mealType = SpoonacularMealType.valueOf(b.getString("mealType"));
         this.setTitle(this.mealType);
 
+        this.hideFragments(true);
+
         // Setup the API communication
         api = new SpoonacularAPI(this);
         // Load the recipes.
-        loadRecipes(0);
+        loadNewRecipes(0);
     }
 
+    // Hides all recipe info fragments.
+    private void hideFragments(boolean showSpin) {
+        int[] ids = {R.id.topInfo,R.id.middleInfo,R.id.bottomInfo};
+
+        for (int i = 0; i < ids.length; i++) {
+            RecipeInfoFragment frag = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(ids[i]);
+            frag.hide(true);
+        }
+
+    }
     // Loads 9 breakfast recipes.
     // @param offset The offset to use in the retrieval of the recipes.
-    protected void loadRecipes(int offset) {
+    protected void loadNewRecipes(int offset) {
         // Create a breakfast request.
         RecipeRequest request = new RecipeRequest(this.mealType);
         request.offset        = offset;
@@ -103,19 +117,50 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             String url = currentRecipe.getImageURLForSize(SpoonacularImageSize.S_636x393);
             // Get the fragment.
 
-            RecipeInfoFragment frag = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(ids[i]);
-            // Load the image.
-            frag.networkImageView().setImageUrl(url,imageLoader);
+            final RecipeInfoFragment frag = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(ids[i]);
+
             // Set the data.
             frag.setTitle(currentRecipe.title);
             frag.setListener(this);
             frag.detailFragment().setValues(currentRecipe.calories, currentRecipe.servings,
                     currentRecipe.cookingMinutes, currentRecipe.getCost());
+
+            // Load the image.
+            imageLoader.get(url, new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                    if (response.getBitmap() != null) {
+                        Bitmap result = response.getBitmap();
+                        frag.setImage(result);
+                        frag.show();
+                    }
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //todo: show error screen.
+                }
+            });
         }
+        // Increase the current recipe offset.
+        currentOffset += 3;
     }
     //region Actions
     // Called when the user clicks the reroll button.
     private void reroll() {
+
+        boolean loadNew = (currentOffset % 9) == 0;
+
+        this.hideFragments(loadNew);
+
+        // Checks if new recipes need to be loaded.
+        if (loadNew) {
+            // Load new recipes from the network.
+            loadNewRecipes(currentOffset);
+        } else {
+            // Load recipe data for recipes that were already retrieved.
+            loadRecipeData(Arrays.copyOfRange(recipes,currentOffset % 10, (currentOffset + 3) % 10));
+        }
 
     }
     // Called when the user clicks the confirm button.
@@ -161,6 +206,8 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     @Override
     public void moreInfoFragment(RecipeInfoFragment fragment) {
+
+        //todo: use circular reveal.
         // Top fragment was selected.
         if (fragment.getId() == R.id.topInfo) {
 

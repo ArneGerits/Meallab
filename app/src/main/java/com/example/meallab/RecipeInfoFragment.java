@@ -1,24 +1,29 @@
 package com.example.meallab;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.android.volley.toolbox.NetworkImageView;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RecipeInfoFragment.OnFragmentInteractionListener} interface
+ * {@link RecipeInfoFragment.recipeInfoFragmentListener} interface
  * to handle interaction events.
  * Use the {@link RecipeInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -35,6 +40,10 @@ public class RecipeInfoFragment extends Fragment {
 
     private recipeInfoFragmentListener mListener;
     private boolean isSelected = false;
+
+    private int shortAnimationDuration;
+
+    private boolean hidden = false;
 
     public RecipeInfoFragment() {
         // Required empty public constructor
@@ -65,46 +74,16 @@ public class RecipeInfoFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        shortAnimationDuration = getResources().getInteger(
+                android.R.integer.config_shortAnimTime);
     }
-
-    public void setTitle(String title) {
-        TextView titleView = getView().findViewById(R.id.titleTextView);
-
-        titleView.setText(title);
-    }
-    public void setSelected(boolean selected) {
-        this.isSelected = selected;
-
-        //todo: Go into selected state.
-    }
-    public void setListener(recipeInfoFragmentListener listener) {
-        this.mListener = listener;
-    }
-    // ------ Actions --------
-
-    // Called when user presses image view.
-    private void selected() {
-        setSelected(!this.isSelected);
-
-        // Inform listener
-        if (mListener != null) {
-            mListener.selectedFragment(this, this.isSelected);
-        }
-    }
-
-    private void more() {
-        if (mListener != null) {
-            mListener.moreInfoFragment(this);
-        }
-    }
-    // --------------
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_recipe_info, container, false);
 
-        NetworkImageView img = root.findViewById(R.id.recipeImageView);
+        ImageView img = root.findViewById(R.id.imageView);
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // your code here
@@ -115,7 +94,6 @@ public class RecipeInfoFragment extends Fragment {
         Button moreButton = root.findViewById(R.id.moreButton);
         moreButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // your code here
                 more();
             }
         });
@@ -135,11 +113,97 @@ public class RecipeInfoFragment extends Fragment {
     }
 
     /**
-     * Returns the network image view used by this fragment.
-     * @return The network image view used by this fragment.
+     * Sets the title of this fragment.
+     * @param title
      */
-    public NetworkImageView networkImageView() {
-        return getView().findViewById(R.id.recipeImageView);
+    public void setTitle(String title) {
+        TextView titleView = getView().findViewById(R.id.titleTextView);
+
+        titleView.setText(title);
+    }
+    /**
+     * Toggle between selected and non selected state.
+     * @param selected
+     */
+    public void setSelected(boolean selected) {
+        this.isSelected = selected;
+
+        /*View s = getView().findViewById(R.id.selectedView);
+
+        if (selected) {
+            s.setVisibility(View.VISIBLE);
+        } else {
+            s.setVisibility(View.INVISIBLE);
+        }*/
+        //todo: Go into selected or deselected state.
+    }
+
+    /**
+     * Hides all data in the view.
+     */
+    public void hide(boolean showSpinner) {
+
+        this.hidden = true;
+
+        ConstraintLayout l = getView().findViewById(R.id.animLayout);
+        l.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
+
+        if (showSpinner) {
+            ProgressBar s = getView().findViewById(R.id.spinner);
+            s.setAlpha(0.0f);
+            s.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
+        }
+    }
+
+    /**
+     * Shows all data in the view.
+     */
+    public void show() {
+
+        this.hidden = false;
+
+        ConstraintLayout l = getView().findViewById(R.id.animLayout);
+        l.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
+
+        final ProgressBar s = getView().findViewById(R.id.spinner);
+        s.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
+    }
+    /**
+     * Sets the event listener for this info fragment.
+     * @param listener
+     */
+    public void setListener(recipeInfoFragmentListener listener) {
+        this.mListener = listener;
+    }
+    // ------ Actions --------
+
+    // Called when user presses image view.
+    private void selected() {
+
+        // Cant become selected when hidden.
+        if (this.hidden) {
+            return;
+        }
+
+        setSelected(!this.isSelected);
+
+        // Inform listener
+        if (mListener != null) {
+            mListener.selectedFragment(this, this.isSelected);
+        }
+    }
+
+    private void more() {
+        if (mListener != null) {
+            mListener.moreInfoFragment(this);
+        }
+    }
+
+    // --------------
+
+    public void setImage(Bitmap image) {
+        ImageView i = getView().findViewById(R.id.imageView);
+        i.setImageBitmap(image);
     }
     public RecipeInfoDetailFragment detailFragment() {
         return (RecipeInfoDetailFragment) getChildFragmentManager().findFragmentById(R.id.detailFragment);
