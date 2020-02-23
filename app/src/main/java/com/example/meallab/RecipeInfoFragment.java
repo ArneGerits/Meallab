@@ -128,13 +128,13 @@ public class RecipeInfoFragment extends Fragment {
     public void setSelected(boolean selected) {
         this.isSelected = selected;
 
-        /*View s = getView().findViewById(R.id.selectedView);
+        ImageView s = getView().findViewById(R.id.selectedImageView);
 
         if (selected) {
             s.setVisibility(View.VISIBLE);
         } else {
             s.setVisibility(View.INVISIBLE);
-        }*/
+        }
         //todo: Go into selected or deselected state.
     }
 
@@ -144,6 +144,9 @@ public class RecipeInfoFragment extends Fragment {
     public void hide(boolean showSpinner) {
 
         this.hidden = true;
+
+        // Cant be selected if hidden.
+        this.setSelected(false);
 
         ConstraintLayout l = getView().findViewById(R.id.animLayout);
         l.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);

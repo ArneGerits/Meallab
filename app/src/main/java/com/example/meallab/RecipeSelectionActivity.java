@@ -28,6 +28,9 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     // The meal type of this activity.
     SpoonacularMealType mealType;
 
+    // The recipe the user has chosen.
+    Recipe recipeChosen;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,12 +149,14 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         currentOffset += 3;
     }
     //region Actions
+
     // Called when the user clicks the reroll button.
     private void reroll() {
 
         boolean loadNew = (currentOffset % 9) == 0;
 
         this.hideFragments(loadNew);
+        this.madeChoice(null);
 
         // Checks if new recipes need to be loaded.
         if (loadNew) {
@@ -186,21 +191,50 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     }
     //endregion
 
+    private void deselectFragments(int[] fragmentIDs) {
+        for (int id: fragmentIDs) {
+            RecipeInfoFragment f = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(id);
+            f.setSelected(false);
+        }
+    }
+    private void madeChoice(Recipe r) {
+
+        this.recipeChosen = r;
+        // The confirm button is not enabled when the user has not made a choice.
+        Button confirm = this.findViewById(R.id.confirmButton);
+        confirm.setEnabled((r != null));
+    }
     //region
 
     @Override
     public void selectedFragment(RecipeInfoFragment fragment, boolean selected) {
+
+        // If a fragment became deselected invalidate the choice.
+        if (!selected) {
+            this.madeChoice(null);
+
+            return;
+        }
         // Top fragment was selected.
         if (fragment.getId() == R.id.topInfo) {
+            // Deselect other fragments.
+            this.deselectFragments(new int[]{R.id.middleInfo,R.id.bottomInfo});
 
+            this.madeChoice(recipes[(currentOffset % 9)]);
         }
         // Middle fragment was selected.
         else if (fragment.getId() == R.id.middleInfo) {
+            // Deselect other fragments.
+            this.deselectFragments(new int[]{R.id.topInfo,R.id.bottomInfo});
 
+            this.madeChoice(recipes[(currentOffset % 9) + 1]);
         }
         // Bottom fragment was selected.
         else {
+            // Deselect other fragments.
+            this.deselectFragments(new int[]{R.id.topInfo,R.id.middleInfo});
 
+            this.madeChoice(recipes[(currentOffset % 9) + 2]);
         }
     }
 

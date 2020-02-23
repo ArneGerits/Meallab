@@ -31,11 +31,13 @@
             android:id="@+id/selectedImageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="#56FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            tools:visibility="invisible" />
 
         <fragment
             android:id="@+id/detailFragment"
