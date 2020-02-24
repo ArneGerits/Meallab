@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/re"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/recipeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="176dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="176dp"
+            android:text="Recipe name here"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider8" />
+
+        <View
+            android:id="@+id/divider8"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <TextView
+            android:id="@+id/recipeKcal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="kCal:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider10" />
+
+        <TextView
+            android:id="@+id/recipeFats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Fats:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipeKcal" />
+
+        <TextView
+            android:id="@+id/recipeCarbs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Carbs:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipeFats" />
+
+        <TextView
+            android:id="@+id/recipeProtiens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Protiens:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipeCarbs" />
+
+        <TextView
+            android:id="@+id/recipeDifficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Difficulty:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipeTime" />
+
+        <TextView
+            android:id="@+id/recipeTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Time:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipeProtiens" />
+
+        <TextView
+            android:id="@+id/recipekCalValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="50dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toStartOf="@+id/divider12"
+            app:layout_constraintTop_toBottomOf="@+id/divider10" />
+
+        <View
+            android:id="@+id/divider10"
+            android:layout_width="0dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="10dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipeName" />
+
+        <View
+            android:id="@+id/divider11"
+            android:layout_width="0dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="16dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipeDifficulty" />
+
+        <View
+            android:id="@+id/divider12"
+            android:layout_width="10dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toTopOf="@+id/divider11"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider10" />
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="50dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toStartOf="@+id/divider12"
+            app:layout_constraintTop_toBottomOf="@+id/recipekCalValue" />
+
+        <TextView
+            android:id="@+id/textView29"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="50dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toStartOf="@+id/divider12"
+            app:layout_constraintTop_toBottomOf="@+id/textView28" />
+
+        <TextView
+            android:id="@+id/textView30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="50dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toStartOf="@+id/divider12"
+            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+
+        <TextView
+            android:id="@+id/textView31"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="50dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toStartOf="@+id/divider12"
+            app:layout_constraintTop_toBottomOf="@+id/textView30" />
+
+        <TextView
+            android:id="@+id/textView32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="50dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toStartOf="@+id/divider12"
+            app:layout_constraintTop_toBottomOf="@+id/textView31" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toEndOf="@id/divider12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider10"
+            app:layout_constraintBottom_toTopOf="@id/divider11"
+            android:id="@+id/recyclerv_view_shopping_list_recipe_overview"></androidx.recyclerview.widget.RecyclerView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

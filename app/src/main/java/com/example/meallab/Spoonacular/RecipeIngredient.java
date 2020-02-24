@@ -26,10 +26,11 @@ public class RecipeIngredient {
     // ------ Hidden Data ------
 
     public int id; // The ID of the ingredient.
-    public String imageURL; // The toggle URL of the ingredient.
+    public String imageURL; // The ingredientName URL of the ingredient.
 
     // ------ Constructor ------
 
+    public RecipeIngredient(){};
     public RecipeIngredient(JSONObject input) {
         this.id = input.optInt("id",-1);
         this.consistency = input.optString("consistency","");

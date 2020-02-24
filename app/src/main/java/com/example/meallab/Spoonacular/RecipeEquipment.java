@@ -10,7 +10,7 @@ public class RecipeEquipment {
 
     public int id; // The ID of the equipment.
     public String name; // The name of the equipment.
-    public String imageURL; // The toggle URL of the equipment.
+    public String imageURL; // The ingredientName URL of the equipment.
 
     // ------ Constructor ------
     public RecipeEquipment(JSONObject jsonIngredient) throws JSONException {
