@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Title TEXT"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,16 +21,17 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="426dp"
-        android:layout_height="603dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView">
+        app:layout_constraintTop_toTopOf="parent">
 
         <fragment
             android:id="@+id/topInfo"
-            android:name="com.example.meallab.RecipeInfoFragment"
+            android:name="com.example.meallab.fragments.RecipeInfoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -37,12 +39,12 @@
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:background="?android:attr/listDivider" />
+            android:layout_height="8dp"
+            android:background="#ffffff" />
 
         <fragment
             android:id="@+id/middleInfo"
-            android:name="com.example.meallab.RecipeInfoFragment"
+            android:name="com.example.meallab.fragments.RecipeInfoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -50,15 +52,23 @@
         <View
             android:id="@+id/divider2"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:background="?android:attr/listDivider" />
+            android:layout_height="8dp"
+            android:background="#ffffff" />
 
         <fragment
             android:id="@+id/bottomInfo"
-            android:name="com.example.meallab.RecipeInfoFragment"
+            android:name="com.example.meallab.fragments.RecipeInfoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+
+        <View
+            android:id="@+id/divider7"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_weight="0"
+            android:background="#FFFFFF" />
+
     </LinearLayout>
 
     <Button
@@ -66,8 +76,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
         android:text="Reroll"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,9 +85,9 @@
         android:id="@+id/confirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:text="Confirm"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

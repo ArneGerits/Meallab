@@ -27,6 +27,9 @@ public class Recipe {
     public String imageType; // The type of the ingredientName.
     public Image image; // The ingredientName of this recipe.
 
+    // Base url of all recipe images.
+    private final String IMAGE_BASE_URL = "https://spoonacular.com/recipeImages/";
+
     // ------ Timing data ------
 
     public int prepMinutes; // The amount of minutes needed to prepare this recipe.
@@ -53,7 +56,7 @@ public class Recipe {
     public String sourceURL; // The source url of this recipe.
     public int id; // The ID of this recipe.
     public SpoonacularMealType type; // The type of this recipe.
-    private final String IMAGE_BASE_URL = "https://spoonacular.com/recipeImages/";
+    private RecipeCost cost = RecipeCost.UNKNOWN; // The cost of this recipe.
 
     // ------ Constructor ------
 
@@ -67,8 +70,6 @@ public class Recipe {
     public Recipe(JSONObject json, SpoonacularMealType type) throws JSONException {
         this.type = type;
 
-
-        System.out.println("Recipe for object: " + json.toString());
         // Setting simple recipe properties.
 
         this.prepMinutes    = json.optInt("preparationMinutes",-1);
@@ -84,6 +85,8 @@ public class Recipe {
         this.title     = json.optString("title","");
 
         this.pricePerServing = (float) Double.valueOf(json.optString("pricePerServing","-1")).doubleValue();
+        this.cost = this.computeCost(this.pricePerServing,this.type);
+
         this.popular = json.optBoolean("veryPopular",false);
 
         // Setting the nutritional properties.
@@ -95,6 +98,39 @@ public class Recipe {
         this.storeInstructions(instructions);
     }
     // ------ Private Methods ------
+
+    // Computes the cost of a recipe based on the price per serving and meal type.
+    private RecipeCost computeCost(float pricePerServing, SpoonacularMealType type) {
+
+        // If the price per serving is unknown the cost is unknown.
+        if (pricePerServing == -1) {
+            return RecipeCost.UNKNOWN;
+        }
+
+        // Breakfast prices
+        float LOW    = 200;
+        float MEDIUM = 400;
+
+        if (this.type == SpoonacularMealType.LUNCH) {
+            // Lunch prices
+            LOW = 300;
+            MEDIUM = 500;
+        }
+        if (this.type == SpoonacularMealType.DINNER) {
+            // Dinner prices
+            LOW = 400;
+            MEDIUM = 600;
+        }
+
+
+        if (pricePerServing < LOW) {
+            return RecipeCost.LOW;
+        } else if (pricePerServing < MEDIUM) {
+            return RecipeCost.MEDIUM;
+        } else {
+            return RecipeCost.HIGH;
+        }
+    }
 
     // Stores nutrition data
     private void storeNutrition(JSONArray nutrition) throws JSONException {
@@ -170,30 +206,7 @@ public class Recipe {
         return IMAGE_BASE_URL + this.id + "-" + size.getValue() + "." + this.imageType;
     }
 
-    /**
-     * Classifies the pricePerServing property into 3.
-     * @return 1,2,3 Meaning 1: not expensive, 2 medium expensive, 3 very expensive.
-     */
-    public int getClassifiedPrice() {
-
-        final float LOW    = 300;
-        final float MEDIUM = 500;
-
-        if (this.type == SpoonacularMealType.LUNCH) {
-
-        }
-        if (this.type == SpoonacularMealType.DINNER) {
-
-        } 
-
-
-        if (pricePerServing < LOW) {
-            return 1;
-        } else if (pricePerServing < MEDIUM) {
-            return 2;
-        } else {
-            return 3;
-        }
+    public RecipeCost getCost() {
+        return cost;
     }
-
 }
