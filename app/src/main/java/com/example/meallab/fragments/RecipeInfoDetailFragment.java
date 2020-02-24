@@ -1,7 +1,6 @@
-package com.example.meallab;
+package com.example.meallab.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.meallab.R;
 import com.example.meallab.Spoonacular.RecipeCost;
 
 /**

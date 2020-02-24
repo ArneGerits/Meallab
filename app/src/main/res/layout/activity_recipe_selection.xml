@@ -31,7 +31,7 @@
 
         <fragment
             android:id="@+id/topInfo"
-            android:name="com.example.meallab.RecipeInfoFragment"
+            android:name="com.example.meallab.fragments.RecipeInfoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -39,12 +39,12 @@
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="8dp"
             android:background="#ffffff" />
 
         <fragment
             android:id="@+id/middleInfo"
-            android:name="com.example.meallab.RecipeInfoFragment"
+            android:name="com.example.meallab.fragments.RecipeInfoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
@@ -52,15 +52,22 @@
         <View
             android:id="@+id/divider2"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="8dp"
             android:background="#ffffff" />
 
         <fragment
             android:id="@+id/bottomInfo"
-            android:name="com.example.meallab.RecipeInfoFragment"
+            android:name="com.example.meallab.fragments.RecipeInfoFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+
+        <View
+            android:id="@+id/divider7"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_weight="0"
+            android:background="#FFFFFF" />
 
     </LinearLayout>
 

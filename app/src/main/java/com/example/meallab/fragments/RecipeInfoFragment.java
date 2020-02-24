@@ -1,23 +1,20 @@
-package com.example.meallab;
+package com.example.meallab.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.meallab.R;
 
 
 /**
@@ -91,7 +88,7 @@ public class RecipeInfoFragment extends Fragment {
             }
         });
 
-        Button moreButton = root.findViewById(R.id.moreButton);
+        ImageView moreButton = root.findViewById(R.id.moreImageView);
         moreButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 more();

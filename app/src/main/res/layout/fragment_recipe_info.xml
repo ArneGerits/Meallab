@@ -41,18 +41,18 @@
 
         <fragment
             android:id="@+id/detailFragment"
-            android:name="com.example.meallab.RecipeInfoDetailFragment"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:name="com.example.meallab.fragments.RecipeInfoDetailFragment"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleBackground" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/titleBackground"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:background="#A8000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,12 +82,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/moreButton"
-        android:layout_width="66dp"
-        android:layout_height="66dp"
-        android:text="Button"
+    <View
+        android:id="@+id/view"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:background="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/moreImageView"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/image"
+        app:layout_constraintTop_toBottomOf="@+id/divider3"
+        android:background="#ffffff"
+        android:src="@mipmap/ic_launcher"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

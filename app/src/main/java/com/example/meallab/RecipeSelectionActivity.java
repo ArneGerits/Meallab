@@ -1,7 +1,6 @@
 package com.example.meallab;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.meallab.Spoonacular.*;
+import com.example.meallab.fragments.RecipeInfoFragment;
 
 import java.util.Arrays;
 
+/**
+ * Allows the user to choose between 3 recipes.
+ */
 public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener, RecipeInfoFragment.recipeInfoFragmentListener {
 
     // The recipes loaded.
