@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#f06347</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#F06347</color>
+    <color name="colorPrimaryDark">#D74A2E</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorCalendarDark">#D74A2E</color>
+    <color name="colorCalendarVeryDark">#A41700</color>
+    <color name="colorCalendarCircleGray">#AAAAAA</color>
+    <color name="colorCalendarTextOutday">#B1B1B1</color>
 </resources>

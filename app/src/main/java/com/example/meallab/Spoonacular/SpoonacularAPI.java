@@ -178,7 +178,7 @@ public class SpoonacularAPI {
     // ------- Private Methods -------
 
     private String recipeInfoURL(Recipe r) {
-        return RECIPE_INFO_BASE_URL + r.id + "information?includeNutrition=false";
+        return RECIPE_INFO_BASE_URL + r.id + "/information?includeNutrition=false&apiKey=" + API_KEY;
     }
     // Constructs the search url for given recipe request.
     private String searchURL(RecipeRequest request) {

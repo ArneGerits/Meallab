@@ -10,12 +10,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".Meallab">
+
         <activity android:name=".RecipeOverviewActivity"></activity>
         <activity android:name=".SecondActivity" />
         <activity android:name=".RecipeSelectionActivity" />
         <activity android:name=".InitialStartupActivity" />
-        <activity android:name=".OverviewActivity" />
+        <activity android:name=".DayOverviewActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

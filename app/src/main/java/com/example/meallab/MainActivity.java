@@ -86,10 +86,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void goToActivityUnderTest(){
+    private void goToActivityUnderTest() {
 
+        /*
         Intent intent = new Intent(this, RecipeSelectionActivity.class);
         intent.putExtra("mealType", SpoonacularMealType.BREAKFAST.toString());
+        startActivity(intent);*/
+
+        Intent intent = new Intent(this, DayOverviewActivity.class);
         startActivity(intent);
+
     }
 }

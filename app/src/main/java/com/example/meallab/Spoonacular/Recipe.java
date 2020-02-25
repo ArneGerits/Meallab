@@ -209,4 +209,20 @@ public class Recipe {
     public RecipeCost getCost() {
         return cost;
     }
+
+    public RecipeEquipment[] getAllEquipment() {
+        ArrayList<RecipeEquipment> all = new ArrayList<>();
+
+        for (RecipeStep step : this.instructions) {
+            for (RecipeEquipment eq : step.equipment) {
+                if (!all.contains(eq)) {
+                    all.add(eq);
+                }
+            }
+        }
+        RecipeEquipment[] eqNeeded = new RecipeEquipment[all.size()];
+        all.toArray(eqNeeded);
+
+        return eqNeeded;
+    }
 }
