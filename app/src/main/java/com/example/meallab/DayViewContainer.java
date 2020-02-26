@@ -42,6 +42,8 @@ public class DayViewContainer extends ViewContainer {
                 if (listener != null) {
                     if (day.getOwner() == DayOwner.THIS_MONTH) {
                         listener.selected(day.getDate());
+                    } else {
+                        listener.selectedInOrOutDate(day.getDate());
                     }
                 }
             }
@@ -63,7 +65,6 @@ public class DayViewContainer extends ViewContainer {
         this.isOutDay = isOutDay;
 
         if (isOutDay) {
-
             int color = ContextCompat.getColor(this.getView().getContext(), R.color.colorCalendarTextOutday);
             textView.setTextColor(color);
         } else {
@@ -80,6 +81,7 @@ public class DayViewContainer extends ViewContainer {
         }
     }
     public void setIsSelected(boolean isSelected) {
+
         this.isSelected = isSelected;
 
         if (isSelected) {
