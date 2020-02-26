@@ -29,7 +29,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     private int currentOffset = 0;
 
     // The meal type of this activity.
-    private SpoonacularMealType mealType;
+    private SpoonacularMealType mealType = SpoonacularMealType.BREAKFAST;
 
     // The recipe the user has chosen.
     Recipe recipeChosen;
