@@ -1,6 +1,6 @@
 package com.example.meallab.Spoonacular;
 
-import android.media.Image;
+import android.graphics.Bitmap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +25,6 @@ public class Recipe {
 
     public String imageName; // The name of the recipe ingredientName, used to compute the URL.
     public String imageType; // The type of the ingredientName.
-    public Image image; // The ingredientName of this recipe.
 
     // Base url of all recipe images.
     private final String IMAGE_BASE_URL = "https://spoonacular.com/recipeImages/";
@@ -67,7 +66,7 @@ public class Recipe {
      * @param json The top level json object
      * @param type The type of recipe this is
      */
-    public Recipe(JSONObject json, SpoonacularMealType type) throws JSONException {
+    public Recipe(JSONObject json, SpoonacularMealType type) throws JSONException{
         this.type = type;
 
         // Setting simple recipe properties.
@@ -225,6 +224,4 @@ public class Recipe {
 
         return eqNeeded;
     }
-
-
 }

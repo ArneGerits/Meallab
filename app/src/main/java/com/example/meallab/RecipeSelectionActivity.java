@@ -120,7 +120,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         for (int i = 0; i < ids.length; i++) {
 
-            Recipe currentRecipe = recipes[i];
+            final Recipe currentRecipe = recipes[i];
             // Get the url.
             String url = currentRecipe.getImageURLForSize(SpoonacularImageSize.S_636x393);
             // Get the fragment.
@@ -249,7 +249,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         //todo: use circular reveal.
         // Top fragment was selected.
         if (fragment.getId() == R.id.topInfo) {
-            Recipe top = recipes[(currentOffset % 9)-3];
+            Recipe top = recipes[((currentOffset -3)% 9)];
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
             intent.putExtra("obj", gson.toJson(top));
             startActivity(intent);
@@ -257,14 +257,14 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         }
         // Middle fragment was selected.
         else if (fragment.getId() == R.id.middleInfo) {
-            Recipe middle = recipes[(currentOffset % 9) + 1];
+            Recipe middle = recipes[((currentOffset -3)) % 9+ 1];
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
             intent.putExtra("obj", gson.toJson(middle));
             startActivity(intent);
         }
         // Bottom fragment was selected.
         else {
-            Recipe bottom = recipes[(currentOffset % 9) + 2];
+            Recipe bottom = recipes[((currentOffset -3)) % 9 + 2];
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
             intent.putExtra("obj", gson.toJson(bottom));
             startActivity(intent);
