@@ -25,6 +25,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     public static final String mypreference = "mypref";
     SharedPreferences sharedPreferences;
     Recipe testRecipe;
+    Recipe recipe;
     Gson gson;
     RecyclerViewAdapterRecipe adapter;
     ArrayList<Object> mObjects = new ArrayList<>();
@@ -89,6 +90,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
         System.out.println(json);
 
         testRecipe = gson.fromJson(json,Recipe.class);
+        this.recipe = recipe;
         prepareRecyclerView();
 
     }
@@ -107,11 +109,17 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     }
 
     private void prepareRecyclerView(){
-        mObjects.add(testRecipe.getImageURLForSize(SpoonacularImageSize.S_636x393));
-        mObjects.add(testRecipe);
-        mObjects.addAll(Arrays.asList(testRecipe.instructions));
+        mObjects.add(recipe.getImageURLForSize(SpoonacularImageSize.S_636x393));
+        mObjects.add(recipe);
+        mObjects.addAll(Arrays.asList(recipe.instructions));
         System.out.println("now running initRecyclerView(mObjects); BROLOOO");
         initRecyclerView(mObjects);
 
+    }
+    public void setRecipe(Recipe recipe){
+        
+        SpoonacularAPI api = new SpoonacularAPI(this);
+        api.retrieveAdditionalRecipeInformation(recipe,this);
+        this.recipe = recipe;
     }
 }
