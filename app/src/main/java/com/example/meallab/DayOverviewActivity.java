@@ -369,8 +369,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     quantity = quantity + ", " + r.metaInformation[i];
                 }
             }
-            mIngredientNames.add(name);
-            mIngredientQuantities.add(quantity);
+            //mIngredientNames.add(name);
+           // mIngredientQuantities.add(quantity);
         }
         RecyclerView recyclerViewShoppingList = findViewById(R.id.recyclerv_view_shopping_list_overview);
         adapter = new RecyclerViewAdapterIngredients(this, mIngredientNames, mIngredientQuantities);
