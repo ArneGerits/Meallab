@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import com.example.meallab.Spoonacular.*;
+import com.example.meallab.Spoonacular.SpoonacularAPI.*;
+
 import com.google.gson.Gson;
 
 import org.json.JSONArray;

@@ -42,6 +42,8 @@ import kotlin.jvm.functions.Function1;
 
 import static com.example.meallab.InitialStartupActivity.mypreference;
 
+import com.example.meallab.DayViewContainer.DayViewContainerListener;
+
 /**
  * This is the most important activity, here the user can see the meal plan for a given day, view
  * meal detail screens, select different dates to plan ahead and access settings.
@@ -186,7 +188,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         scrollView.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         testRecycler();
 
-        scrollView.setCustomListener(new CustomScrollViewListener() {
+        scrollView.setCustomListener(new CustomScrollView.CustomScrollViewListener() {
             @Override
             public void onScrollChanged() {
 
@@ -336,16 +338,16 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         RecipeIngredient ingredient = new RecipeIngredient();
         RecipeIngredient ingredient2 = new RecipeIngredient();
         ingredient.name = "Egg";
-        ingredient.amount = 3;
-        ingredient.unitLong = "";
+        ingredient.amountMetric = 3;
+        ingredient.unitLongMetric = "";
         ingredient.metaInformation = new String[]{};
 
         for(int i = 0; i < 10 ; i++){
             ingredients.add(ingredient);
         }
         ingredient2.name="pasta";
-        ingredient2.amount = 2;
-        ingredient2.unitLong = "cups";
+        ingredient2.amountMetric = 2;
+        ingredient2.unitLongMetric = "cups";
         ingredient2.metaInformation = new String[]{"salted", "boiled", "cooled"};
         ingredients.add(ingredient2);
 
@@ -363,7 +365,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         for(RecipeIngredient r : ingredients){
 
             name = r.name;
-            quantity = r.amount + " " + r.unitLong;
+            quantity = r.amountMetric + " " + r.unitLongMetric;
             if(r.metaInformation.length != 0){
                 for(int i = 0; i < r.metaInformation.length ; i++){
                     quantity = quantity + ", " + r.metaInformation[i];

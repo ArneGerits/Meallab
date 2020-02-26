@@ -100,7 +100,7 @@ public class RecyclerViewAdapterRecipe extends  RecyclerView.Adapter<RecyclerVie
 
                 for(RecipeIngredient r : ingredients){
                     mIngredients.add(r.name);
-                    String quantity = r.amount + " " + r.unitLong;
+                    String quantity = r.amountMetric + " " + r.unitLongMetric;
                     if(r.metaInformation.length != 0){
                         for(int i = 0; i < r.metaInformation.length ; i++){
                             quantity = quantity + ", " + r.metaInformation[i];

@@ -194,6 +194,11 @@ public class RecipeInfoFragment extends Fragment {
     }
 
     private void more() {
+        // Cant show more info if hidden.
+        if (this.hidden) {
+            return;
+        }
+
         if (mListener != null) {
             mListener.moreInfoFragment(this);
         }
