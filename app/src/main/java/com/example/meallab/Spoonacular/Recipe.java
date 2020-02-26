@@ -25,7 +25,6 @@ public class Recipe {
 
     public String imageName; // The name of the recipe ingredientName, used to compute the URL.
     public String imageType; // The type of the ingredientName.
-    public Bitmap image; // The ingredientName of this recipe.
 
     // Base url of all recipe images.
     private final String IMAGE_BASE_URL = "https://spoonacular.com/recipeImages/";

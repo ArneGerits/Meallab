@@ -138,7 +138,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
                 public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                     if (response.getBitmap() != null) {
                         Bitmap result = response.getBitmap();
-                        currentRecipe.image = result;
+
                         frag.setImage(result);
                         frag.show();
                     }
@@ -250,6 +250,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         // Top fragment was selected.
         if (fragment.getId() == R.id.topInfo) {
             Recipe top = recipes[currentOffset % 9];
+
             Intent intent = new Intent(this, RecipeOverviewActivity.class);
             startActivity(intent);
 
