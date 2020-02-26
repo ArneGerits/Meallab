@@ -29,7 +29,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     private int currentOffset = 0;
 
     // The meal type of this activity.
-    SpoonacularMealType mealType;
+    private SpoonacularMealType mealType;
 
     // The recipe the user has chosen.
     Recipe recipeChosen;
@@ -57,11 +57,6 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             }
         });
 
-        // Resolve the meal type.
-        Bundle b      = getIntent().getExtras();
-        this.mealType = SpoonacularMealType.valueOf(b.getString("mealType"));
-        this.setTitle(this.mealType);
-
         this.hideFragments(true);
 
         // Setup the API communication
@@ -70,6 +65,10 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         loadNewRecipes(0);
     }
 
+    public void setMealType(SpoonacularMealType mealType) {
+        this.mealType = mealType;
+        this.setTitle(this.mealType);
+    }
     // Hides all recipe info fragments.
     private void hideFragments(boolean showSpin) {
         int[] ids = {R.id.topInfo,R.id.middleInfo,R.id.bottomInfo};
