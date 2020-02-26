@@ -1,105 +1,117 @@
 package com.example.meallab;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.ScrollView;
+
+import com.example.meallab.Spoonacular.*;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RecipeOverviewActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+
+public class RecipeOverviewActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener,SpoonacularSingleRecipeListener {
+    public static final String mypreference = "mypref";
+    SharedPreferences sharedPreferences;
+    Recipe testRecipe;
+    Gson gson;
+    RecyclerViewAdapterRecipe adapter;
+    ArrayList<Object> mObjects = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_overview);
+        RecyclerView view = (RecyclerView) findViewById(R.id.recyclerv_view_recipe_overview);
+        view.setFocusableInTouchMode(true);
+        view.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
 
         createTestRecipe();
     }
 
     public void createTestRecipe() {
-        /**
-         *         this.prepMinutes    = json.optInt("preparationMinutes",-1);
-         *         this.cookingMinutes = json.optInt("cookingMinutes",-1);
-         *         this.readyInMinutes = json.optInt("readyInMinutes",-1);
-         *
-         *         this.id       = json.optInt("id",-1);
-         *         this.servings = json.optInt("servings",-1);
-         *
-         *         this.imageName = json.optString("image","");
-         *         this.imageType = json.optString("imageType","");
-         *         this.sourceURL = json.optString("sourceUrl","");
-         *         this.title     = json.optString("title","");
-         *
-         *         this.pricePerServing = (float) Double.valueOf(json.optString("pricePerServing","-1")).doubleValue();
-         *         this.popular = json.optBoolean("veryPopular",false);
-         *
-         *         JSONArray nutrition = json.optJSONArray("nutrition");
-         *         this.storeNutrition(nutrition);
-         *
-         *         JSONArray instructions = json.optJSONArray("analyzedInstructions");
-         *         this.storeInstructions(instructions);
-         */
-        /*
-        try{
-            JSONObject recipe = new JSONObject();
-            recipe.put("preparationMinutes",1);
-            recipe.put("cookingMinutes",6);
-            recipe.put("readyInMinutes",7);
-            recipe.put("id",9001);
-            recipe.put("servings",1);
-            recipe.put("image","egg");
-            recipe.put("imageType","jpg");
-            recipe.put("sourceURL","https://upload.wikimedia.org/wikipedia/commons/0/0e/Egg.jpg");
-            recipe.put("title","Soft boiled egg");
-            recipe.put("pricePerServing", "0.50");
-            recipe.put("VeryPopular",true);
+
+        sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+        String json = sharedPreferences.getString("testRecipe", "");
+        gson = new Gson();
+
+        if(json.equals("")){
+            //retrieve recipe.
+            SpoonacularAPI api = new SpoonacularAPI(this);
+            RecipeRequest recipeRequest = new RecipeRequest(SpoonacularMealType.SNACK);
+            recipeRequest.offset=0;
+            api.retrieveRecipes(recipeRequest,this);
+
+            //retrieved recipe
 
 
-            JSONArray nutrition = new JSONArray();
-            JSONObject calories =  new JSONObject();
-            JSONObject carbs =  new JSONObject();
-            JSONObject protien =  new JSONObject();
-            JSONObject fats =  new JSONObject();
-            calories.put("title","Calories");
-            calories.put("amount","155");
-            carbs.put("title","Carbohydrates");
-            carbs.put("amount", "1.1");
-            protien.put("title","Protien");
-            protien.put("amount","13");
-            fats.put("title","Fat");
-            nutrition.put(fats);
-            nutrition.put(protien);
+        }else{
 
-            fats.put("amount", "11");
-            nutrition.put(calories);
-            nutrition.put(carbs);
-            recipe.put("nutrition",nutrition);
-
-            /**
-             * public RecipeStep(JSONObject jsonStep) throws JSONException {
-             *         this.stepNumber        = jsonStep.optInt("number",-1);
-             *         this.instructionString = jsonStep.optString("step","");
-             *
-             *         JSONArray ingredients = jsonStep.optJSONArray("ingredients");
-             *         JSONArray equipment   = jsonStep.optJSONArray("equipment");
-             */
-
-            // maak een json array met steps aan
-
-            /*//step 1
-            JSONArray instructions = new JSONArray();
-            JSONObject stepOne = new JSONObject();
-            stepOne.put("number",1);
-            stepOne.put("step","Fill a pan with a liter of water, and bring it to a boil");
-            JSONArray stepOneIngredients1;
-
-
-        } catch (JSONException e){
-
+            testRecipe = gson.fromJson(json,Recipe.class);
+            prepareRecyclerView();
         }
-*/
+
+    }
+
+    @Override
+    public void retrievedRecipes(Recipe[] recipes) {
+        SpoonacularAPI api = new SpoonacularAPI(this);
+        api.retrieveAdditionalRecipeInformation(recipes[0],this);
+
+    }
+
+    @Override
+    public void batchRecipesErrorHandler() {
+
+    }
+
+    @Override
+    public void retrievedAdditionalInformation(Recipe recipe) {
+        testRecipe = recipe;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        String json = gson.toJson(testRecipe);
+        editor.putString("testRecipe",json);
+        editor.commit();
+        System.out.println(json);
+
+        testRecipe = gson.fromJson(json,Recipe.class);
+        prepareRecyclerView();
+
+    }
+
+    @Override
+    public void singleRecipeErrorHandler() {
+
+    }
+
+    private void initRecyclerView(ArrayList<Object> mObjects){
+        System.out.println(testRecipe.id+ " DASDASJDASDKASD AHSDASDas fake");
+        RecyclerView recyclerViewRecipeOverview = findViewById(R.id.recyclerv_view_recipe_overview);
+        adapter = new RecyclerViewAdapterRecipe(this, mObjects);
+        recyclerViewRecipeOverview.setAdapter(adapter);
+        recyclerViewRecipeOverview.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void prepareRecyclerView(){
+        mObjects.add(testRecipe.getImageURLForSize(SpoonacularImageSize.S_636x393));
+        mObjects.add(testRecipe);
+        mObjects.addAll(Arrays.asList(testRecipe.instructions));
+        System.out.println("now running initRecyclerView(mObjects); BROLOOO");
+        initRecyclerView(mObjects);
 
     }
 }

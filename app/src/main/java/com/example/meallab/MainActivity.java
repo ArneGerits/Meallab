@@ -88,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToActivityUnderTest(){
 
-        Intent intent = new Intent(this, RecipeSelectionActivity.class);
-        intent.putExtra("mealType", SpoonacularMealType.BREAKFAST.toString());
+        Intent intent = new Intent(this,RecipeOverviewActivity.class);
         startActivity(intent);
     }
 }

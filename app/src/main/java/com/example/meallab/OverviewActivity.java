@@ -24,7 +24,7 @@ import static com.example.meallab.InitialStartupActivity.mypreference;
 public class OverviewActivity extends AppCompatActivity  {
 
 
-    private ArrayList<String> mIngredientNames = new ArrayList<>();
+    private ArrayList<Object> mIngredientNames = new ArrayList<>();
     private ArrayList<String> mIngredientQuantities = new ArrayList<>();
     RecyclerViewAdapterIngredients adapter;
 

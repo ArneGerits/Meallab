@@ -23,9 +23,9 @@ public class Recipe {
     public float pricePerServing; // The price per serving of this recipe in cents.
     // ------ Image data ------
 
-    public String imageName; // The name of the recipe ingredientName, used to compute the URL.
-    public String imageType; // The type of the ingredientName.
-    public Image image; // The ingredientName of this recipe.
+    public String imageName; // The name of the recipe recipeName, used to compute the URL.
+    public String imageType; // The type of the recipeName.
+    public Image image; // The recipeName of this recipe.
 
     // Base url of all recipe images.
     private final String IMAGE_BASE_URL = "https://spoonacular.com/recipeImages/";
@@ -209,4 +209,22 @@ public class Recipe {
     public RecipeCost getCost() {
         return cost;
     }
+
+    public RecipeEquipment[] getAllEquipment() {
+        ArrayList<RecipeEquipment> all = new ArrayList<>();
+
+        for (RecipeStep step : this.instructions) {
+            for (RecipeEquipment eq : step.equipment) {
+                if (!all.contains(eq)) {
+                    all.add(eq);
+                }
+            }
+        }
+        RecipeEquipment[] eqNeeded = new RecipeEquipment[all.size()];
+        all.toArray(eqNeeded);
+
+        return eqNeeded;
+    }
+
+
 }

@@ -100,8 +100,8 @@ public class RecyclerViewAdapterToggle extends RecyclerView.Adapter<RecyclerView
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        //CircleImageView ingredientName;
-        //TO BE CORRECTED: naam is nog ingredientName, dit zou moeten worden togglebutton of iets dergelijks
+        //CircleImageView recipeName;
+        //TO BE CORRECTED: naam is nog recipeName, dit zou moeten worden togglebutton of iets dergelijks
         public ToggleButton toggle;
         public TextView toggleName;
         public RelativeLayout parentLayout;
