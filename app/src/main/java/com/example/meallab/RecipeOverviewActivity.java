@@ -29,10 +29,9 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     RecyclerViewAdapterRecipe adapter;
     ArrayList<Object> mObjects = new ArrayList<>();
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_overview);
         RecyclerView view = (RecyclerView) findViewById(R.id.recyclerv_view_recipe_overview);
