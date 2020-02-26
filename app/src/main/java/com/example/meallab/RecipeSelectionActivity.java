@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.meallab.Spoonacular.*;
 import com.example.meallab.fragments.RecipeInfoFragment;
+import com.google.gson.Gson;
 
 import java.util.Arrays;
 
@@ -34,7 +35,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     // The recipe the user has chosen.
     Recipe recipeChosen;
-
+    Gson gson = new Gson();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -248,18 +249,25 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         //todo: use circular reveal.
         // Top fragment was selected.
         if (fragment.getId() == R.id.topInfo) {
-            Recipe top = recipes[currentOffset % 9];
+            Recipe top = recipes[(currentOffset % 9)-3];
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
+            intent.putExtra("obj", gson.toJson(top));
             startActivity(intent);
 
         }
         // Middle fragment was selected.
         else if (fragment.getId() == R.id.middleInfo) {
             Recipe middle = recipes[(currentOffset % 9) + 1];
+            Intent intent = new Intent(this,RecipeOverviewActivity.class);
+            intent.putExtra("obj", gson.toJson(middle));
+            startActivity(intent);
         }
         // Bottom fragment was selected.
         else {
             Recipe bottom = recipes[(currentOffset % 9) + 2];
+            Intent intent = new Intent(this,RecipeOverviewActivity.class);
+            intent.putExtra("obj", gson.toJson(bottom));
+            startActivity(intent);
         }
     }
 }

@@ -26,7 +26,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     SharedPreferences sharedPreferences;
     Recipe testRecipe;
     Recipe recipe;
-    Gson gson;
+    Gson gson = new Gson();
     RecyclerViewAdapterRecipe adapter;
     ArrayList<Object> mObjects = new ArrayList<>();
 
@@ -39,8 +39,10 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
         RecyclerView view = (RecyclerView) findViewById(R.id.recyclerv_view_recipe_overview);
         view.setFocusableInTouchMode(true);
         view.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+        String strObj = getIntent().getStringExtra("obj");
+        this.recipe = gson.fromJson(strObj, Recipe.class);
 
-        createTestRecipe();
+        setRecipe(this.recipe);
     }
 
     public void createTestRecipe() {
@@ -82,6 +84,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     @Override
     public void retrievedAdditionalInformation(Recipe recipe) {
         testRecipe = recipe;
+        sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String json = gson.toJson(testRecipe);
@@ -117,7 +120,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
 
     }
     public void setRecipe(Recipe recipe){
-        
+
         SpoonacularAPI api = new SpoonacularAPI(this);
         api.retrieveAdditionalRecipeInformation(recipe,this);
         this.recipe = recipe;
