@@ -62,7 +62,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // ------ Animation variables ------
 
-    // The heigh of the calendarview.
+    // The height of the calendarview.
     private int topBound;
     // The distance between dateTextView and the edge of the screen.
     private float leftDistance;
