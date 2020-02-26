@@ -1,5 +1,6 @@
 package com.example.meallab;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -69,6 +70,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         this.mealType = mealType;
         this.setTitle(this.mealType);
     }
+
     // Hides all recipe info fragments.
     private void hideFragments(boolean showSpin) {
         int[] ids = {R.id.topInfo,R.id.middleInfo,R.id.bottomInfo};
@@ -246,15 +248,18 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         //todo: use circular reveal.
         // Top fragment was selected.
         if (fragment.getId() == R.id.topInfo) {
+            Recipe top = recipes[currentOffset % 9];
+            Intent intent = new Intent(this,RecipeOverviewActivity.class);
+            startActivity(intent);
 
         }
         // Middle fragment was selected.
         else if (fragment.getId() == R.id.middleInfo) {
-
+            Recipe middle = recipes[(currentOffset % 9) + 1];
         }
         // Bottom fragment was selected.
         else {
-
+            Recipe bottom = recipes[(currentOffset % 9) + 2];
         }
     }
 }
