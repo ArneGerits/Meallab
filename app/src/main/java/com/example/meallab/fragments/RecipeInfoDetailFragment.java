@@ -59,7 +59,7 @@ public class RecipeInfoDetailFragment extends Fragment {
      */
     public void setValues(float kcal, int servings, int readyTime ,RecipeCost cost) {
         TextView kcalText = getView().findViewById(R.id.kcalTextView);
-        kcalText.setText("" + (int)kcal);
+        kcalText.setText("" + (int)Math.round(kcal));
 
         TextView servText = getView().findViewById(R.id.servingsTextView);
         servText.setText("" + servings);

@@ -179,10 +179,8 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
     private void goToSecondActivity() {
 
-        Intent intent = new Intent(this, OverviewActivity.class);
-
+        Intent intent = new Intent(this, DayOverviewActivity.class);
         startActivity(intent);
-
     }
 }
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:background="@drawable/calendar_bar_shadow"
+    >
+    <TextView
+        android:id="@+id/first"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="M"
+        android:gravity="center"
+        android:textColor="#ffffff"/>
+
+    <TextView
+        android:id="@+id/second"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="T"
+        android:gravity="center"
+        android:textColor="#ffffff"/>
+
+    <TextView
+        android:id="@+id/third"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="W"
+        android:gravity="center"
+        android:textColor="#ffffff"/>
+
+    <TextView
+        android:id="@+id/fourth"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="T"
+        android:gravity="center"
+        android:textColor="#ffffff"/>
+
+    <TextView
+        android:id="@+id/fifth"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="F"
+        android:gravity="center"
+        android:textColor="#ffffff"/>
+
+    <TextView
+        android:id="@+id/sixth"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="S"
+        android:gravity="center"
+        android:textColor="#ffffff"/>
+
+    <TextView
+        android:id="@+id/seventh"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="S"
+        android:gravity="center"
+        android:textColor="#ffffff"/>
+
+</LinearLayout>
