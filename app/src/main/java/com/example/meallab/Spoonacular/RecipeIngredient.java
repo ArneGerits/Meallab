@@ -19,9 +19,13 @@ public class RecipeIngredient {
 
     // ------ Amount Data ------
 
-    public float amount; // The amount needed.
-    public String unitShort; // The short representation of the unit of the amount.
-    public String unitLong; // The long representation of the unit of the amount.
+    public float amountMetric; // The amount needed in metric.
+    public String unitShortMetric; // The short representation of the unit of the amount in metric.
+    public String unitLongMetric; // The long representation of the unit of the amount in metric.
+
+    public float amountImperial; // The amount needed in imperial.
+    public String unitShortImperial; // The short representation of the unit of the amount in imperial
+    public String unitLongImperial; // The long representation of the unit of the amount in imperial.
 
     // ------ Hidden Data ------
 
@@ -55,8 +59,15 @@ public class RecipeIngredient {
 
         JSONObject measureMetric = input.optJSONObject("measures").optJSONObject("metric");
 
-        this.unitShort = measureMetric.optString("unitShort","");
-        this.unitLong = measureMetric.optString("unitLong","");
-        this.amount = (float) Double.valueOf(measureMetric.optString("amount","-1")).doubleValue();
+        this.unitShortMetric = measureMetric.optString("unitShort","");
+        this.unitLongMetric = measureMetric.optString("unitLong","");
+        this.amountMetric = (float) Double.valueOf(measureMetric.optString("amount","-1")).doubleValue();
+
+        JSONObject measureImperial = input.optJSONObject("measures").optJSONObject("us");
+
+        this.unitShortImperial = measureImperial.optString("unitShort","");
+        this.unitLongImperial = measureImperial.optString("unitLong","");
+        this.amountImperial = (float) Double.valueOf(measureImperial.optString("amount","-1")).doubleValue();
+
     }
 }

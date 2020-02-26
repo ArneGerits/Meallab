@@ -62,7 +62,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // ------ Animation variables ------
 
-    // The height of the calendarview.
+    // The height of the calendar view.
     private int topBound;
     // The distance between dateTextView and the edge of the screen.
     private float leftDistance;
@@ -369,8 +369,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     quantity = quantity + ", " + r.metaInformation[i];
                 }
             }
-            mIngredientNames.add(name);
-            mIngredientQuantities.add(quantity);
+            //mIngredientNames.add(name);
+           // mIngredientQuantities.add(quantity);
         }
         RecyclerView recyclerViewShoppingList = findViewById(R.id.recyclerv_view_shopping_list_overview);
         adapter = new RecyclerViewAdapterIngredients(this, mIngredientNames, mIngredientQuantities);

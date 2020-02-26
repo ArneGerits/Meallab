@@ -25,7 +25,8 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     public static final String mypreference = "mypref";
     SharedPreferences sharedPreferences;
     Recipe testRecipe;
-    Gson gson;
+    Recipe recipe;
+    Gson gson = new Gson();
     RecyclerViewAdapterRecipe adapter;
     ArrayList<Object> mObjects = new ArrayList<>();
 
@@ -37,8 +38,10 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
         RecyclerView view = (RecyclerView) findViewById(R.id.recyclerv_view_recipe_overview);
         view.setFocusableInTouchMode(true);
         view.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+        String strObj = getIntent().getStringExtra("obj");
+        this.recipe = gson.fromJson(strObj, Recipe.class);
 
-        createTestRecipe();
+        setRecipe(this.recipe);
     }
 
     public void createTestRecipe() {
@@ -80,6 +83,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     @Override
     public void retrievedAdditionalInformation(Recipe recipe) {
         testRecipe = recipe;
+        sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         String json = gson.toJson(testRecipe);
@@ -88,6 +92,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
         System.out.println(json);
 
         testRecipe = gson.fromJson(json,Recipe.class);
+        this.recipe = recipe;
         prepareRecyclerView();
 
     }
@@ -106,11 +111,17 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     }
 
     private void prepareRecyclerView(){
-        mObjects.add(testRecipe.getImageURLForSize(SpoonacularImageSize.S_636x393));
-        mObjects.add(testRecipe);
-        mObjects.addAll(Arrays.asList(testRecipe.instructions));
+        mObjects.add(recipe.getImageURLForSize(SpoonacularImageSize.S_636x393));
+        mObjects.add(recipe);
+        mObjects.addAll(Arrays.asList(recipe.instructions));
         System.out.println("now running initRecyclerView(mObjects); BROLOOO");
         initRecyclerView(mObjects);
 
+    }
+    public void setRecipe(Recipe recipe){
+
+        SpoonacularAPI api = new SpoonacularAPI(this);
+        api.retrieveAdditionalRecipeInformation(recipe,this);
+        this.recipe = recipe;
     }
 }

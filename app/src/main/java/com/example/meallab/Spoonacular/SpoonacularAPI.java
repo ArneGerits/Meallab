@@ -133,7 +133,7 @@ public class SpoonacularAPI {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("An error occurred");
+                System.out.println("An error occurred " + error.toString());
             }
         });
         this.mainQueue.add(jsonObjectRequest);

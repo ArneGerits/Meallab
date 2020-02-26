@@ -93,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("mealType", SpoonacularMealType.BREAKFAST.toString());
         startActivity(intent);*/
 
-        Intent intent = new Intent(this, DayOverviewActivity.class);
+       // Intent intent = new Intent(this, DayOverviewActivity.class);
+        Intent intent = new Intent(this,RecipeSelectionActivity.class);
         startActivity(intent);
 
     }
