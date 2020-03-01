@@ -32,9 +32,11 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     // The meal type of this activity.
     private SpoonacularMealType mealType = SpoonacularMealType.BREAKFAST;
+    String mealChoice = getIntent().getStringExtra("mealChoice");
 
     // The recipe the user has chosen.
     Recipe recipeChosen;
+
     Gson gson = new Gson();
     @Override
     protected void onCreate(Bundle savedInstanceState) {

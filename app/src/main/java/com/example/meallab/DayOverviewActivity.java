@@ -14,8 +14,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.meallab.Spoonacular.SpoonacularDiet;
+import com.example.meallab.Spoonacular.SpoonacularIntolerance;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -46,7 +49,7 @@ import static com.example.meallab.InitialStartupActivity.mypreference;
  * This is the most important activity, here the user can see the meal plan for a given day, view
  * meal detail screens, select different dates to plan ahead and access settings.
  */
-public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener {
+public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener,View.OnClickListener {
 
     private ArrayList<Object> mIngredientNames = new ArrayList<>();
     private ArrayList<String> mIngredientQuantities = new ArrayList<>();
@@ -116,6 +119,16 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         });
+
+
+        //set listener for recipe selection
+        ImageView breakfast = (ImageView) DayOverviewActivity.this.findViewById(R.id.image);
+        ImageView lunch = (ImageView) DayOverviewActivity.this.findViewById(R.id.image2);
+        ImageView dinner = (ImageView) DayOverviewActivity.this.findViewById(R.id.image3);
+        breakfast.setOnClickListener(this);
+        lunch.setOnClickListener(this);
+        dinner.setOnClickListener(this);
+
     }
 
     //region Date Selection
@@ -377,6 +390,17 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         recyclerViewShoppingList.setAdapter(adapter);
         recyclerViewShoppingList.setLayoutManager(new LinearLayoutManager(this));
 
+    }
+
+    //Region onClickListener
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.image:
+                
+
+
+        }
     }
 
 
