@@ -20,12 +20,12 @@ import com.example.meallab.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RecipeInfoFragment.recipeInfoFragmentListener} interface
+ * {@link RecipeSelectionRow.recipeInfoFragmentListener} interface
  * to handle interaction events.
- * Use the {@link RecipeInfoFragment#newInstance} factory method to
+ * Use the {@link RecipeSelectionRow#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecipeInfoFragment extends Fragment {
+public class RecipeSelectionRow extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,7 +42,7 @@ public class RecipeInfoFragment extends Fragment {
 
     private boolean hidden = false;
 
-    public RecipeInfoFragment() {
+    public RecipeSelectionRow() {
         // Required empty public constructor
     }
 
@@ -52,11 +52,11 @@ public class RecipeInfoFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment RecipeInfoFragment.
+     * @return A new instance of fragment RecipeSelectionRow.
      */
     // TODO: Rename and change types and number of parameters
-    public static RecipeInfoFragment newInstance(String param1, String param2) {
-        RecipeInfoFragment fragment = new RecipeInfoFragment();
+    public static RecipeSelectionRow newInstance(String param1, String param2) {
+        RecipeSelectionRow fragment = new RecipeSelectionRow();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -210,8 +210,8 @@ public class RecipeInfoFragment extends Fragment {
         ImageView i = getView().findViewById(R.id.imageView);
         i.setImageBitmap(image);
     }
-    public RecipeInfoDetailFragment detailFragment() {
-        return (RecipeInfoDetailFragment) getChildFragmentManager().findFragmentById(R.id.detailFragment);
+    public RecipeSelectionInfo detailFragment() {
+        return (RecipeSelectionInfo) getChildFragmentManager().findFragmentById(R.id.detailFragment);
     }
 
     /**
@@ -231,12 +231,12 @@ public class RecipeInfoFragment extends Fragment {
          * @param fragment The fragment the user selected.
          * @param selected True if the user selected this fragment, false if it is deselected.
          */
-        void selectedFragment(RecipeInfoFragment fragment, boolean selected);
+        void selectedFragment(RecipeSelectionRow fragment, boolean selected);
 
         /**
          * Called when the user wants more info for this fragment.
          * @param fragment The fragment the user wants more info of.
          */
-        void moreInfoFragment(RecipeInfoFragment fragment);
+        void moreInfoFragment(RecipeSelectionRow fragment);
     }
 }

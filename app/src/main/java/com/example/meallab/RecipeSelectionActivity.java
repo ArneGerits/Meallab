@@ -14,7 +14,7 @@ import com.example.meallab.Spoonacular.SpoonacularAPI.SpoonacularBatchRecipeList
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.meallab.Spoonacular.*;
-import com.example.meallab.fragments.RecipeInfoFragment;
+import com.example.meallab.fragments.RecipeSelectionRow;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 /**
  * Allows the user to choose between 3 recipes.
  */
-public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener, RecipeInfoFragment.recipeInfoFragmentListener {
+public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener, RecipeSelectionRow.recipeInfoFragmentListener {
 
     // ----- Recipes -----
 
@@ -90,7 +90,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         int[] ids = {R.id.topInfo,R.id.middleInfo,R.id.bottomInfo};
 
         for (int i = 0; i < ids.length; i++) {
-            RecipeInfoFragment frag = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(ids[i]);
+            RecipeSelectionRow frag = (RecipeSelectionRow)getSupportFragmentManager().findFragmentById(ids[i]);
             frag.hide(true);
         }
 
@@ -138,7 +138,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             String url = currentRecipe.getImageURLForSize(SpoonacularImageSize.S_636x393);
             // Get the fragment.
 
-            final RecipeInfoFragment frag = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(ids[i]);
+            final RecipeSelectionRow frag = (RecipeSelectionRow)getSupportFragmentManager().findFragmentById(ids[i]);
 
             // Set the data.
             frag.setTitle(currentRecipe.title);
@@ -216,7 +216,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     private void deselectFragments(int[] fragmentIDs) {
         for (int id: fragmentIDs) {
-            RecipeInfoFragment f = (RecipeInfoFragment)getSupportFragmentManager().findFragmentById(id);
+            RecipeSelectionRow f = (RecipeSelectionRow)getSupportFragmentManager().findFragmentById(id);
             f.setSelected(false);
         }
     }
@@ -230,7 +230,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     //region
 
     @Override
-    public void selectedFragment(RecipeInfoFragment fragment, boolean selected) {
+    public void selectedFragment(RecipeSelectionRow fragment, boolean selected) {
 
         // If a fragment became deselected invalidate the choice.
         if (!selected) {
@@ -262,7 +262,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     }
 
     @Override
-    public void moreInfoFragment(RecipeInfoFragment fragment) {
+    public void moreInfoFragment(RecipeSelectionRow fragment) {
 
         //todo: use circular reveal.
         // Top fragment was selected.

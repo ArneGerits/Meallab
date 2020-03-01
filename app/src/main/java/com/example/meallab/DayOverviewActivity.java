@@ -118,6 +118,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         });
+        
     }
 
     //region Date Selection
