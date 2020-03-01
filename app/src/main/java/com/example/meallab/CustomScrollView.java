@@ -13,12 +13,10 @@ public class CustomScrollView extends ScrollView {
      * The top bound of this scrollview.
      */
     public int boundYTop;
+
     public boolean topBoundEnabled = false;
+    private boolean isScrolling    = false;
 
-    private boolean ignore = false;
-    private int ignoreTarget;
-
-    private boolean isScrolling = false;
     private int scrollTarget;
 
     CustomScrollViewListener listener;
@@ -68,5 +66,11 @@ public class CustomScrollView extends ScrollView {
     }
     public boolean getIsScrolling() {
         return this.isScrolling;
+    }
+
+    // -------- INTERFACES --------
+
+    public interface CustomScrollViewListener {
+        public void onScrollChanged();
     }
 }

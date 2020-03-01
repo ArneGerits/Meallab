@@ -58,6 +58,7 @@ public class SpoonacularAPI {
 
     /**
      * Updates the diets that will be used in api communication.
+     *
      * @param diets An array of diets to adhere to.
      */
     public void setDiets(SpoonacularDiet[] diets) {
@@ -75,8 +76,10 @@ public class SpoonacularAPI {
             dietString = dietString.substring(0, dietString.length() - 1);
         }
     }
+
     /**
      * Updates the diets that will be used in api communication.
+     *
      * @param intolerances An array of tolerances to adhere to.
      */
     public void setIntolerances(SpoonacularIntolerance[] intolerances) {
@@ -97,6 +100,7 @@ public class SpoonacularAPI {
 
     /**
      * Retrieves recipes that fill the request.
+     *
      * @param request
      * @param listener
      */
@@ -114,7 +118,7 @@ public class SpoonacularAPI {
                     // The top level json object holds an array of json objects, accessed by 'results'
                     JSONArray responseJSONArray = response.getJSONArray("results");
 
-                    ArrayList <Recipe> recipes = new ArrayList<Recipe>();
+                    ArrayList<Recipe> recipes = new ArrayList<Recipe>();
 
                     for (int i = 0; i < responseJSONArray.length(); i++) {
                         // Get the JSON object representing the recipe.
@@ -133,7 +137,7 @@ public class SpoonacularAPI {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("An error occurred");
+                System.out.println("An error occurred " + error.toString());
             }
         });
         this.mainQueue.add(jsonObjectRequest);
@@ -141,6 +145,7 @@ public class SpoonacularAPI {
 
     /**
      * Retrieves additional information for a recipe, mainly an extended list of ingredients.
+     *
      * @param recipe The recipe to retrieve additional information from.
      */
     public void retrieveAdditionalRecipeInformation(final Recipe recipe, final SpoonacularSingleRecipeListener listener) {
@@ -153,17 +158,17 @@ public class SpoonacularAPI {
             @Override
             public void onResponse(JSONObject response) {
 
-                    // The top level json object holds an array of json objects, accessed by 'results'
-                    JSONArray ingredients = response.optJSONArray("extendedIngredients");
+                // The top level json object holds an array of json objects, accessed by 'results'
+                JSONArray ingredients = response.optJSONArray("extendedIngredients");
 
-                    // todo: Better error handling than this.
-                    if (ingredients == null) {
-                        listener.singleRecipeErrorHandler();
-                        return;
-                    }
-                    recipe.addIngredientInfo(ingredients);
+                // todo: Better error handling than this.
+                if (ingredients == null) {
+                    listener.singleRecipeErrorHandler();
+                    return;
+                }
+                recipe.addIngredientInfo(ingredients);
 
-                    listener.retrievedAdditionalInformation(recipe);
+                listener.retrievedAdditionalInformation(recipe);
 
             }
         }, new Response.ErrorListener() {
@@ -180,10 +185,39 @@ public class SpoonacularAPI {
     private String recipeInfoURL(Recipe r) {
         return RECIPE_INFO_BASE_URL + r.id + "/information?includeNutrition=false&apiKey=" + API_KEY;
     }
+
     // Constructs the search url for given recipe request.
     private String searchURL(RecipeRequest request) {
 
         return SEARCH_BASE_URL + "?apiKey=" + API_KEY + "&addRecipeInformation=true" + request.toString();
     }
 
+    // -------- INTERFACES --------
+
+    public interface SpoonacularBatchRecipeListener {
+        /**
+         * Gets called when the API has retrieved recipes.
+         *
+         * @param recipes The recipes retrieved.
+         */
+        void retrievedRecipes(Recipe[] recipes);
+
+        /**
+         * Gets called when the API encounters an error.
+         */
+        void batchRecipesErrorHandler();
+    }
+
+    public interface SpoonacularSingleRecipeListener {
+        /**
+         * Gets called when the API has retrieved additional information for the recipe.
+         * @param recipe The recipe for which additional information is received and set.
+         */
+        void retrievedAdditionalInformation(Recipe recipe);
+
+        /**
+         * Gets called when the API encounters an error.
+         */
+        void singleRecipeErrorHandler();
+    }
 }

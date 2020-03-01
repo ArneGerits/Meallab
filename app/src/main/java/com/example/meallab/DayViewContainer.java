@@ -14,6 +14,8 @@ import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.DayOwner;
 import com.kizitonwose.calendarview.ui.ViewContainer;
 
+import org.threeten.bp.LocalDate;
+
 public class DayViewContainer extends ViewContainer {
 
     public TextView textView;
@@ -107,4 +109,13 @@ public class DayViewContainer extends ViewContainer {
         Drawable wrappedDrawable = DrawableCompat.wrap(background);
         DrawableCompat.setTint(wrappedDrawable, color);
     }
+
+    // ------ INTERFACES ------
+
+    public interface DayViewContainerListener {
+        public void selected(LocalDate date);
+
+        public void selectedInOrOutDate(LocalDate date);
+    }
+
 }
