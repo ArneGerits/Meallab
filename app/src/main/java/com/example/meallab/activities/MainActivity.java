@@ -1,33 +1,23 @@
-package com.example.meallab;
+package com.example.meallab.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import android.content.Intent;
 
-import android.view.View;
+import com.example.meallab.R;
+import com.example.meallab.activities.InitialStartupActivity;
+import com.example.meallab.activities.RecipeSelectionActivity;
+import com.example.meallab.activities.SecondActivity;
 
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.example.meallab.Spoonacular.SpoonacularDiet;
-import com.example.meallab.Spoonacular.SpoonacularIntolerance;
-import com.example.meallab.Spoonacular.SpoonacularMealType;
-
-import static android.view.View.*;
+import org.threeten.bp.DayOfWeek;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -94,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);*/
 
        // Intent intent = new Intent(this, DayOverviewActivity.class);
-        Intent intent = new Intent(this,RecipeSelectionActivity.class);
+        //Intent intent = new Intent(this, RecipeSelectionActivity.class);
+        //startActivity(intent);
+        Intent intent = new Intent(this, DayOverviewActivity.class);
         startActivity(intent);
-
     }
 }

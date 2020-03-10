@@ -1,4 +1,4 @@
-package com.example.meallab;
+package com.example.meallab.customViews;
 
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.example.meallab.R;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.DayOwner;
 import com.kizitonwose.calendarview.ui.ViewContainer;

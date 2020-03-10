@@ -1,8 +1,9 @@
-package com.example.meallab;
+package com.example.meallab.customViews;
 
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.meallab.R;
 import com.kizitonwose.calendarview.ui.ViewContainer;
 
 import org.jetbrains.annotations.NotNull;

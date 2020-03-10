@@ -13,12 +13,12 @@
         android:theme="@style/AppTheme"
         android:name=".Meallab">
 
-        <activity android:name=".RecipeOverviewActivity"></activity>
-        <activity android:name=".SecondActivity" />
-        <activity android:name=".RecipeSelectionActivity" />
-        <activity android:name=".InitialStartupActivity" />
-        <activity android:name=".DayOverviewActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.RecipeOverviewActivity"></activity>
+        <activity android:name=".activities.SecondActivity" />
+        <activity android:name=".activities.RecipeSelectionActivity" />
+        <activity android:name=".activities.InitialStartupActivity" />
+        <activity android:name=".activities.DayOverviewActivity" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

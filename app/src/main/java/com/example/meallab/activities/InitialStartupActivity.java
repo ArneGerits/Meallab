@@ -1,4 +1,4 @@
-package com.example.meallab;
+package com.example.meallab.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +19,8 @@ import android.content.SharedPreferences;
 import java.util.ArrayList;
 import android.content.Intent;
 
+import com.example.meallab.R;
+import com.example.meallab.RecyclerViewAdapterToggle;
 import com.example.meallab.Spoonacular.SpoonacularDiet;
 import com.example.meallab.Spoonacular.SpoonacularIntolerance;
 

@@ -1,5 +1,7 @@
-package com.example.meallab;
+package com.example.meallab.activities;
 
+import com.example.meallab.R;
+import com.example.meallab.RecyclerViewAdapterIngredients;
 import com.example.meallab.Spoonacular.RecipeIngredient;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.example.meallab.customViews.CustomScrollView;
+import com.example.meallab.customViews.DayViewContainer;
+import com.example.meallab.customViews.MonthHeader;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -40,9 +45,9 @@ import java.util.Locale;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import static com.example.meallab.InitialStartupActivity.mypreference;
+import static com.example.meallab.activities.InitialStartupActivity.mypreference;
 
-import com.example.meallab.DayViewContainer.DayViewContainerListener;
+import com.example.meallab.customViews.DayViewContainer.DayViewContainerListener;
 
 /**
  * This is the most important activity, here the user can see the meal plan for a given day, view
@@ -85,7 +90,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_overview);
+        setContentView(R.layout.activity_day_overview);
 
         // Perform view first time setup.
         this.scrollView = (CustomScrollView) findViewById(R.id.scrollView);
@@ -358,22 +363,22 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     }
 
-    private void initRecyclerView(ArrayList<RecipeIngredient> ingredients){
+    private void initRecyclerView(ArrayList<RecipeIngredient> ingredients) {
 
         String name;
         String quantity;
 
-        for(RecipeIngredient r : ingredients){
+        for (RecipeIngredient r : ingredients) {
 
             name = r.name;
             quantity = r.amountMetric + " " + r.unitLongMetric;
-            if(r.metaInformation.length != 0){
-                for(int i = 0; i < r.metaInformation.length ; i++){
+            if (r.metaInformation.length != 0) {
+                for (int i = 0; i < r.metaInformation.length; i++) {
                     quantity = quantity + ", " + r.metaInformation[i];
                 }
             }
             //mIngredientNames.add(name);
-           // mIngredientQuantities.add(quantity);
+            // mIngredientQuantities.add(quantity);
         }
         RecyclerView recyclerViewShoppingList = findViewById(R.id.recyclerv_view_shopping_list_overview);
         adapter = new RecyclerViewAdapterIngredients(this, mIngredientNames, mIngredientQuantities);
@@ -381,6 +386,4 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         recyclerViewShoppingList.setLayoutManager(new LinearLayoutManager(this));
 
     }
-
-
 }
