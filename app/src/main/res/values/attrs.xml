@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MacroNutsPieChart">
+        <attr name="fatColor" format="color" />
+        <attr name="carbColor" format="color" />
+        <attr name="proteinColor" format="color" />
+        <attr name="inset" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="BarView">
+        <attr name="barColor" format="color" />
+        <attr name="barBackgroundColor" format="color" />
+        <attr name="indicatorColor" format="color" />
+        <attr name="drawsDottedLines" format="boolean" />
+        <attr name="horizontalInset" format="float" />
+    </declare-styleable>
+
+</resources>

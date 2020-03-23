@@ -143,6 +143,7 @@ public class SpoonacularAPI {
         this.mainQueue.add(jsonObjectRequest);
     }
 
+    // TODO: Allow loading by ID.
     /**
      * Retrieves additional information for a recipe, mainly an extended list of ingredients.
      *
