@@ -90,16 +90,11 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:cv_monthHeaderResource="@layout/calendar_month_header"/>
 
-            <view
-                android:id="@+id/cardScrollView"
-                class="com.example.meallab.customViews.RecipeCardScrollView"
+            <fragment
+                android:id="@+id/fragment"
+                android:name="com.example.meallab.fragments.CardScrollerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="250dp" />
-
-            <View
-                android:id="@+id/view3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </com.example.meallab.customViews.CustomScrollView>

@@ -12,11 +12,11 @@ public class StoredShoppingList implements Parcelable {
     /**
      * The date of this shopping list.
      */
-    Date date;
+    public Date date;
     /**
      * The items on this shopping list.
      */
-    StoredShoppingItem[] items;
+    public StoredShoppingItem[] items;
 
     // ---- Parcelable ----
 

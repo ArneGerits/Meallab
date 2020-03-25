@@ -10,23 +10,23 @@ public class StoredShoppingItem implements Parcelable {
     /**
      * The name of this item.
      */
-    String name;
+    public String name;
     /**
      * The amount of this item needed.
      */
-    float amount;
+    public float amount;
     /**
      * The unit of measurement.
      */
-    String unit;
+    public String unit;
     /**
      * The Spoonacular item ID.
      */
-    int itemID;
+    public int itemID;
     /**
      * True if the user has checked off this item, false otherwise.
      */
-    boolean isChecked;
+    public boolean isChecked;
 
     protected StoredShoppingItem(Parcel in) {
         name = in.readString();

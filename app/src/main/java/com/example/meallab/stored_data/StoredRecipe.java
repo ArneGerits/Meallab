@@ -12,32 +12,36 @@ public class StoredRecipe implements Parcelable {
     /**
      * The name (title of this recipe)
      */
-    String name;
+    public String name;
     /**
      * The macro nutrients in this recipe (4 objects).
      */
-    Nutrient[] macroNutrients;
+    public Nutrient[] macroNutrients;
     /**
      * The amount of minutes it takes to cook this recipe.
      */
-    int cookingMins;
+    public int cookingMins;
     /**
      * The number of people this recipe serves.
      */
-    int numberOfServings;
+    public int numberOfServings;
     /**
      * The price per serving.
      */
-    float pricePerServing;
+    public float pricePerServing;
     /**
      * The id of the Spoonacular recipe.
      */
-    int recipeID;
+    public int recipeID;
     /**
      * True if the user has favorited this recipe, false otherwise.
      */
-    boolean isFavorite;
+    public boolean isFavorite;
 
+    /**
+     * The image url of this recipe, Highest Quality.
+     */
+    public String imageURL;
     // ---- Parcelable ----
 
     protected StoredRecipe(Parcel in) {

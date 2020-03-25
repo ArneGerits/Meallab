@@ -7,6 +7,8 @@ import android.os.Parcelable;
 
 import com.example.meallab.Nutrients.Nutrient;
 
+import org.threeten.bp.LocalDate;
+
 import java.util.Date;
 
 /**
@@ -21,19 +23,19 @@ public class StoredDay implements Parcelable {
     /**
      * The recipe the user has(s)d chosen for this day.
      */
-    StoredRecipe[] recipes;
+    public StoredRecipe[] recipes;
     /**
      * The total nutritional value for this day (macros and micros).
      */
-    Nutrient[] totalNutrients;
+    public Nutrient[] totalNutrients;
     /**
      * The shopping list for this day.
      */
-    StoredShoppingList shoppingList;
+    public StoredShoppingList shoppingList;
     /**
      * The date.
      */
-    Date date;
+    public LocalDate date;
 
     // ---- Parceable ----
 
@@ -41,8 +43,9 @@ public class StoredDay implements Parcelable {
         recipes = (StoredRecipe[]) in.readArray(StoredRecipe.class.getClassLoader());
         totalNutrients = (Nutrient[]) in.readArray(Nutrient.class.getClassLoader());
         shoppingList = (StoredShoppingList) in.readValue(StoredShoppingList.class.getClassLoader());
-        long tmpDate = in.readLong();
-        date = tmpDate != -1 ? new Date(tmpDate) : null;
+
+        //long tmpDate = in.readLong();
+        //date = tmpDate != -1 ? new Date(tmpDate) : null;
     }
 
     @Override
@@ -55,6 +58,7 @@ public class StoredDay implements Parcelable {
         dest.writeArray(recipes);
         dest.writeValue(totalNutrients);
         dest.writeValue(shoppingList);
+        dest.writep
         dest.writeLong(date != null ? date.getTime() : -1L);
     }
 

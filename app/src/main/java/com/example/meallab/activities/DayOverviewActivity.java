@@ -2,11 +2,9 @@ package com.example.meallab.activities;
 
 import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterIngredients;
-import com.example.meallab.Spoonacular.RecipeIngredient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.LayoutTransition;
@@ -21,6 +19,8 @@ import android.widget.TextView;
 import com.example.meallab.customViews.CustomScrollView;
 import com.example.meallab.customViews.DayViewContainer;
 import com.example.meallab.customViews.MonthHeader;
+import com.example.meallab.fragments.CardScrollerFragment;
+import com.example.meallab.stored_data.StoredDay;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -40,6 +40,7 @@ import org.threeten.bp.format.TextStyle;
 import org.threeten.bp.temporal.WeekFields;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import kotlin.Unit;
@@ -62,8 +63,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // True if the calendar is currently showing, False otherwise
     boolean calendarShowing = false;
 
-    public static String firstTimeKey = "firstTimeKey";
-
     // The date selected by the user, on create it is always the current date.
     LocalDate selectedDate = LocalDate.now();
 
@@ -74,7 +73,10 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // The distance between dateTextView and the edge of the screen.
     private float leftDistance;
 
-    // ------ Views ------
+    // The day this day overview activity shows info for.
+    StoredDay currentDay;
+
+    // ------ Outlets ------
 
     private CustomScrollView scrollView;
     private CalendarView calendar;
@@ -82,6 +84,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private TextView dateTextView;
     private TextView yearTextView;
     private TextView monthTextView;
+
+    private CardScrollerFragment cardsScroller;
 
     // ------
 
@@ -92,16 +96,17 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_overview);
 
+        // Load a new StoredDay object if it exists for this day, or create a new one.
+        this.currentDay = loadOrCreateNewDay(selectedDate);
+
         // Perform view first time setup.
-        this.scrollView = (CustomScrollView) findViewById(R.id.scrollView);
+        this.scrollView = findViewById(R.id.scrollView);
         this.calendar   = this.findViewById(R.id.calendarView);
 
         this.setupCalendar(this.calendar);
         this.setupScrollView(this.scrollView);
 
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-
-        testRecycler();
 
         // Getting the text views of the nav bar.
         this.dateTextView  = this.findViewById(R.id.dateTextView);
@@ -123,7 +128,13 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         });
-        
+        this.cardsScroller = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.recipeCardScrollView);
+    }
+
+    // Loads a day from memory or,
+    // creates a new empty day if no days exist yet.
+    private StoredDay loadOrCreateNewDay(LocalDate date) {
+
     }
 
     //region Date Selection
@@ -192,7 +203,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
 
         scrollView.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
-        testRecycler();
 
         scrollView.setCustomListener(new CustomScrollView.CustomScrollViewListener() {
             @Override
@@ -336,54 +346,4 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
 
     //endregion
-
-    public void testRecycler(){
-
-        ArrayList<RecipeIngredient> ingredients = new ArrayList<>();
-
-        RecipeIngredient ingredient = new RecipeIngredient();
-        RecipeIngredient ingredient2 = new RecipeIngredient();
-        ingredient.name = "Egg";
-        ingredient.amountMetric = 3;
-        ingredient.unitLongMetric = "";
-        ingredient.metaInformation = new String[]{};
-
-        for(int i = 0; i < 10 ; i++){
-            ingredients.add(ingredient);
-        }
-        ingredient2.name="pasta";
-        ingredient2.amountMetric = 2;
-        ingredient2.unitLongMetric = "cups";
-        ingredient2.metaInformation = new String[]{"salted", "boiled", "cooled"};
-        ingredients.add(ingredient2);
-
-
-
-        initRecyclerView(ingredients);
-
-    }
-
-    private void initRecyclerView(ArrayList<RecipeIngredient> ingredients) {
-
-        String name;
-        String quantity;
-
-        for (RecipeIngredient r : ingredients) {
-
-            name = r.name;
-            quantity = r.amountMetric + " " + r.unitLongMetric;
-            if (r.metaInformation.length != 0) {
-                for (int i = 0; i < r.metaInformation.length; i++) {
-                    quantity = quantity + ", " + r.metaInformation[i];
-                }
-            }
-            //mIngredientNames.add(name);
-            // mIngredientQuantities.add(quantity);
-        }
-        RecyclerView recyclerViewShoppingList = findViewById(R.id.recyclerv_view_shopping_list_overview);
-        adapter = new RecyclerViewAdapterIngredients(this, mIngredientNames, mIngredientQuantities);
-        recyclerViewShoppingList.setAdapter(adapter);
-        recyclerViewShoppingList.setLayoutManager(new LinearLayoutManager(this));
-
-    }
 }

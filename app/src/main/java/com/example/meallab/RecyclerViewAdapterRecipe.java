@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -175,7 +174,7 @@ public class RecyclerViewAdapterRecipe extends  RecyclerView.Adapter<RecyclerVie
 
         public ViewHolder0 (@NonNull View itemView){
             super(itemView);
-            image = itemView.findViewById(R.id.imageView2);
+            image = itemView.findViewById(R.id.recipeImageView);
             this.itemView = itemView;
             parentLayout = itemView.findViewById(R.id.parent_layout);
         }

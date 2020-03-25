@@ -1,67 +1,131 @@
 package com.example.meallab.fragments;
 
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.meallab.Nutrients.Nutrient;
+import com.example.meallab.Nutrients.SimpleNutrientsOverviewFragment;
 import com.example.meallab.R;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link RecipeCardFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A single recipe card.
  */
 public class RecipeCardFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "cookingMins";
-    private static final String ARG_PARAM2 = "servings";
-    private static final String ARG_PARAM3 = "pricePerServing";
 
+    // the fragment initialization parameters
+    private static final String ARG_PARAM1 = "name";
+    private static final String ARG_PARAM2 = "cookingMins";
+    private static final String ARG_PARAM3 = "servings";
+    private static final String ARG_PARAM4 = "pricePerServing";
+    private static final String ARG_PARAM5 = "nutrients";
 
-    // TODO: Rename and change types of parameters
+    // Outlets
+    private ImageView recipeImageView;
+    private SimpleNutrientsOverviewFragment nutrientsOverview;
+    private TextView cookingTimeTextView;
+    private TextView servingsTextView;
+    private TextView costTextView;
+
+    // ----
+
+    private String name;
     private int cookingMins;
     private int servings;
     private float pricePerServing;
+    private Nutrient[] nutrients;
+    Bitmap recipeImage;
+
+    private RecipeCardFragmentListener listener;
 
     public RecipeCardFragment() {
         // Required empty public constructor
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Creates a new recipe card.
      *
+     * @param name The title of the recipe.
      * @param cookingMins The amount of minutes too full cook the recipe.
      * @param servings The amount of servings.
      * @param pricePerServing The estimated price per serving.
+     * @param nutrients The nutrientional values.
      *
      * @return A new instance of fragment RecipeCardFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static RecipeCardFragment newInstance(int cookingMins, int servings, float pricePerServing) {
+    public static RecipeCardFragment newInstance(String name, int cookingMins, int servings, float pricePerServing, Nutrient[] nutrients) {
         RecipeCardFragment fragment = new RecipeCardFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1,cookingMins);
-        args.putInt(ARG_PARAM2,servings);
-        args.putFloat(ARG_PARAM3,pricePerServing);
-
+        args.putString(ARG_PARAM1,name);
+        args.putInt(ARG_PARAM2,cookingMins);
+        args.putInt(ARG_PARAM3,servings);
+        args.putFloat(ARG_PARAM4,pricePerServing);
+        args.putParcelableArray(ARG_PARAM5,nutrients);
         fragment.setArguments(args);
         return fragment;
     }
+    /**
+     * Sets all values on the fragment and creates the view.
+     *
+     */
+    public void setValues(String name, int cookingMins, int servings, float pricePerServing, Nutrient[] nutrients) {
+        RecipeCardFragment fragment = new RecipeCardFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1,name);
+        args.putInt(ARG_PARAM2,cookingMins);
+        args.putInt(ARG_PARAM3,servings);
+        args.putFloat(ARG_PARAM4,pricePerServing);
+        args.putParcelableArray(ARG_PARAM5,nutrients);
+        fragment.setArguments(args);
 
+        this.name = name;
+        this.cookingMins = cookingMins;
+        this.servings = servings;
+        this.pricePerServing = pricePerServing;
+        this.nutrients = nutrients;
+
+        this.loadAllViews();
+    }
+    public String getName() {
+        return name;
+    }
+    public void setRecipeImage(Bitmap image) {
+        this.recipeImage = image;
+
+        this.recipeImageView.setImageBitmap(image);
+    }
+    public void setListener(RecipeCardFragmentListener listener) {
+        this.listener = listener;
+    }
+
+    // Loads all view objects.
+    private void loadAllViews() {
+        // Set the textviews.
+        this.cookingTimeTextView.setText("" + this.cookingMins + " min");
+        this.servingsTextView.setText("" + this.servings);
+        // TODO: Find out how to localize costs
+        this.costTextView.setText("" + this.pricePerServing  + "$/serving");
+
+        // Set the nutrients.
+        this.nutrientsOverview.setValues(this.nutrients);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.cookingMins     = getArguments().getInt(ARG_PARAM1);
-            this.servings        = getArguments().getInt(ARG_PARAM2);
-            this.pricePerServing = getArguments().getFloat(ARG_PARAM3);
+            this.name            = getArguments().getString(ARG_PARAM1);
+            this.cookingMins     = getArguments().getInt(ARG_PARAM2);
+            this.servings        = getArguments().getInt(ARG_PARAM3);
+            this.pricePerServing = getArguments().getFloat(ARG_PARAM4);
+            this.nutrients       = (Nutrient[]) getArguments().getParcelableArray(ARG_PARAM5);
         }
     }
 
@@ -69,31 +133,31 @@ public class RecipeCardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recipe_card, container, false);
+        View v = inflater.inflate(R.layout.fragment_recipe_card, container, false);
+        this.servingsTextView    = v.findViewById(R.id.servingsTextView);
+        this.cookingTimeTextView = v.findViewById(R.id.recipeCookingTime);
+        this.costTextView        = v.findViewById(R.id.costTextView);
+        this.recipeImageView     = v.findViewById(R.id.recipeImageView);
+
+        this.nutrientsOverview = (SimpleNutrientsOverviewFragment) getChildFragmentManager().findFragmentById(R.id.nutrientsFragment);
+
+        if (this.name != null) {
+            loadAllViews();
+        }
+
+        return v;
     }
+
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Interface that communicates user events with the recipe card.
      */
-    public interface recipeCardFragmentListener {
+    public interface RecipeCardFragmentListener {
 
         /**
-         * Called when the user selects this fragment.
+         * Called when the user selects this fragment, the implementation of this method
+         * should launch the recipe.
          * @param fragment The fragment the user selected.
-         * @param selected True if the user selected this fragment, false if it is deselected.
          */
-        void selectedFragment(RecipeSelectionRow fragment, boolean selected);
-
-        /**
-         * Called when the user wants more info for this fragment.
-         * @param fragment The fragment the user wants more info of.
-         */
-        void moreInfoFragment(RecipeSelectionRow fragment);
+        void launchFragment(RecipeCardFragment fragment);
     }
 }
