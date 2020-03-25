@@ -43,9 +43,7 @@ public class StoredDay implements Parcelable {
         recipes = (StoredRecipe[]) in.readArray(StoredRecipe.class.getClassLoader());
         totalNutrients = (Nutrient[]) in.readArray(Nutrient.class.getClassLoader());
         shoppingList = (StoredShoppingList) in.readValue(StoredShoppingList.class.getClassLoader());
-
-        //long tmpDate = in.readLong();
-        //date = tmpDate != -1 ? new Date(tmpDate) : null;
+        date = (LocalDate) in.readSerializable();
     }
 
     @Override
@@ -58,8 +56,7 @@ public class StoredDay implements Parcelable {
         dest.writeArray(recipes);
         dest.writeValue(totalNutrients);
         dest.writeValue(shoppingList);
-        dest.writep
-        dest.writeLong(date != null ? date.getTime() : -1L);
+        dest.writeSerializable(date);
     }
 
     @SuppressWarnings("unused")

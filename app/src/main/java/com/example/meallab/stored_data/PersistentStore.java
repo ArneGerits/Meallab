@@ -1,39 +1,61 @@
 package com.example.meallab.stored_data;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import androidx.core.content.ContextCompat;
+
 import org.threeten.bp.LocalDate;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.google.gson.Gson;
 
 /**
  * The persistent store is a facade class that regulates all archiving and retrieval of data.
  */
 public class PersistentStore {
 
-    PersistentStoreListener listener;
+    final String C_FILE_NAME = "stored_data.txt";
 
-    StoredDay[] days;
-    StoredRecipe[] recipes;
-    // Days
+    // The listener
+    final PersistentStoreListener listener;
 
-    /**
-     *  Loads every stored object from the file system into app memory.
-     *  Calls the initialized method on the listener on completion.
-     */
-    public void initialize(PersistentStoreListener listener) {
+    // The current context.
+    Context context;
+
+    // The days.
+    ArrayList<StoredDay> days = new ArrayList<>();
+
+    // region Constructor
+    public PersistentStore(final PersistentStoreListener listener, final Context context) {
         this.listener = listener;
+        this.context  = context;
 
-
-
-        this.listener.completedInitialized(true);
+        // Execute the read async.
+        AsyncRead read = new AsyncRead(C_FILE_NAME, this.days, listener);
+        read.execute(context);
     }
+    // endregion
 
     /**
      * Synchronizes(stores) all objects to the file system.
      */
     public void synchronize() {
+        StoredDay[] arr = new StoredDay[days.size()];
+        arr = days.toArray(arr);
 
-
-        this.listener.completedSynchronize(true);
+        // Execute the write async.
+        AsyncWrite write = new AsyncWrite(C_FILE_NAME, arr, listener);
+        write.execute(this.context);
     }
 
     /**
@@ -45,12 +67,13 @@ public class PersistentStore {
 
         ArrayList<StoredRecipe> favos = new ArrayList<>();
 
-        for (StoredRecipe r : this.recipes) {
-            if (r.isFavorite) {
-                favos.add(r);
+        for (StoredDay d : this.days) {
+            for (StoredRecipe r : d.recipes) {
+                if (r.isFavorite) {
+                    favos.add(r);
+                }
             }
         }
-
         StoredRecipe[] arr = new StoredRecipe[favos.size()];
         arr = favos.toArray(arr);
 
@@ -78,25 +101,40 @@ public class PersistentStore {
 
         return arr;
     }
+
+    /**
+     * Retrieves all dates for which there exists a stored day.
+     * @return Dates for which there exists a stored day.
+     */
+    public LocalDate[] retrieveAllDates() {
+
+        ArrayList<LocalDate> d = new ArrayList<>();
+
+        for (StoredDay day: this.days) {
+            d.add(day.date);
+        }
+
+        LocalDate[] arr = new LocalDate[d.size()];
+        arr = d.toArray(arr);
+
+        return arr;
+    }
+
     /**
      * Stores a single day to the file system.
+     * NOTE that the day will be transient until synchronize is called.
      * @param day The day to store.
-     * @return True if the store was succesful, false otherwise.
+     * @return True if the store was successful, false otherwise.
      */
-    public boolean newDay(StoredDay day) {
-
+    public void newDay(StoredDay day) {
+        this.days.add(day);
     }
 
-    // Recipes
-    /**
-     * Stores a single recipe to the file system.
-     * @param recipe The recipe to store.
-     * @return True if the store was succesful, false otherwise.
-     */
-    public boolean newRecipe(StoredRecipe recipe) {
+    // region Writing/Reading
 
-    }
+    // endregion
 
+    // region Interface
     /**
      * Interface
      */
@@ -105,12 +143,147 @@ public class PersistentStore {
          * Called when initialize completes.
          * @param success True if the synchronization was successful, False otherwise
          */
-        void completedInitialized(boolean success);
+        void initializedSuccessfully(boolean success);
 
         /**
          * Called when synchronize completes.
          * @param success True if the synchronization was successful, False otherwise.
          */
         void completedSynchronize(boolean success);
+    }
+    // endregion
+
+    // region Async
+
+    /**
+     * Background task for reading file.
+     */
+    private static class AsyncRead extends AsyncTask<Context, Void, Boolean> {
+
+        String fileName;
+        ArrayList<StoredDay> days;
+        PersistentStoreListener l;
+
+        // Used for (de)serialization
+        Gson gson = new Gson();
+
+        public AsyncRead(String fileName, ArrayList<StoredDay> days, PersistentStoreListener l) {
+            this.fileName = fileName;
+            this.days = days;
+            this.l = l;
+        }
+        @Override
+        protected Boolean doInBackground(Context... ctx) {
+
+            Context c = ctx[0];
+            if (c != null) {
+                try {
+                    // Read the data file from the file system, async.
+                    String jsonString = readFromFile(fileName, c);
+
+                    // Create the object by parsing the json.
+                    StoredDay[] d = gson.fromJson(jsonString, StoredDay[].class);
+
+                    // Set the days.
+                    if (this.days != null) {
+                        this.days.addAll(new ArrayList<>(Arrays.asList(d)));
+                    }
+                } catch (IOException e) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBool) {
+            super.onPostExecute(aBool);
+
+            if (this.l != null) {
+                this.l.initializedSuccessfully(aBool);
+            }
+        }
+
+        // Reads string (json) data from file,
+        private String readFromFile(String fileName, Context context) throws IOException {
+
+            String json = "";
+
+            try {
+                InputStream inputStream = context.openFileInput(fileName);
+
+                if ( inputStream != null ) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String receiveString = "";
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    while ( (receiveString = bufferedReader.readLine()) != null ) {
+                        stringBuilder.append("\n").append(receiveString);
+                    }
+
+                    inputStream.close();
+                    json = stringBuilder.toString();
+                }
+            }
+            // File does not exist yet.
+            catch (FileNotFoundException e) {
+                // Do nothing
+            }
+
+            return json;
+        }
+    }
+    /**
+     * Background task for writing file.
+     */
+    private static class AsyncWrite extends AsyncTask<Context, Void, Boolean> {
+
+        String fileName;
+        PersistentStoreListener l;
+        StoredDay[] days;
+
+        // Used for (de)serialization
+        Gson gson = new Gson();
+
+        public AsyncWrite(String fileName, StoredDay[] days, PersistentStoreListener l) {
+            this.fileName = fileName;
+            this.days = days;
+            this.l = l;
+            this.days = days;
+        }
+        @Override
+        protected Boolean doInBackground(Context... ctx) {
+
+            Context c = ctx[0];
+            if (c != null) {
+                try {
+
+                    String json = gson.toJson(this.days);
+                    this.writeToFile(this.fileName, json, c);
+
+                } catch (IOException e) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBool) {
+            super.onPostExecute(aBool);
+
+            if (this.l != null) {
+                this.l.completedSynchronize(aBool);
+            }
+        }
+        // Writes json to the file system.
+        private void writeToFile(String fileName, String json, Context context) throws IOException {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+            outputStreamWriter.write(json);
+            outputStreamWriter.close();
+        }
     }
 }
