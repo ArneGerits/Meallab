@@ -1,4 +1,4 @@
-package com.example.meallab.stored_data;
+package com.example.meallab.storing_data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -27,6 +27,11 @@ public class StoredShoppingItem implements Parcelable {
      * True if the user has checked off this item, false otherwise.
      */
     public boolean isChecked;
+
+    // Empty constructor.
+    public StoredShoppingItem() {
+
+    }
 
     protected StoredShoppingItem(Parcel in) {
         name = in.readString();

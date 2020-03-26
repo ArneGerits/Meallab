@@ -1,6 +1,6 @@
 
 
-package com.example.meallab.stored_data;
+package com.example.meallab.storing_data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,8 +8,6 @@ import android.os.Parcelable;
 import com.example.meallab.Nutrients.Nutrient;
 
 import org.threeten.bp.LocalDate;
-
-import java.util.Date;
 
 /**
  * Allows for the storage of the following data about a single day:
@@ -37,7 +35,19 @@ public class StoredDay implements Parcelable {
      */
     public LocalDate date;
 
-    // ---- Parceable ----
+    /**
+     * Creates a new stored day for given date and nutrient goals.
+     * that will be tracked.
+     * @param date The date
+     */
+    public StoredDay(LocalDate date) {
+        this.date = date;
+        this.recipes = new StoredRecipe[0];
+        this.totalNutrients = new Nutrient[0];
+        this.shoppingList = new StoredShoppingList(date);
+    }
+
+    // ---- Parcelable ----
 
     protected StoredDay(Parcel in) {
         recipes = (StoredRecipe[]) in.readArray(StoredRecipe.class.getClassLoader());

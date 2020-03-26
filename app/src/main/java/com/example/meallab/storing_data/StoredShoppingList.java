@@ -1,9 +1,9 @@
-package com.example.meallab.stored_data;
+package com.example.meallab.storing_data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
+import org.threeten.bp.LocalDate;
 
 /**
  * Class that allows for the storage of shopping lists.
@@ -12,16 +12,20 @@ public class StoredShoppingList implements Parcelable {
     /**
      * The date of this shopping list.
      */
-    public Date date;
+    public LocalDate date;
     /**
      * The items on this shopping list.
      */
     public StoredShoppingItem[] items;
 
+    public StoredShoppingList(LocalDate date) {
+        this.date = date;
+        this.items = new StoredShoppingItem[0];
+    }
     // ---- Parcelable ----
 
     protected StoredShoppingList(Parcel in) {
-        date = new Date(in.readLong());
+        date = (LocalDate) in.readSerializable();
         items = (StoredShoppingItem[]) in.readArray(StoredShoppingItem.class.getClassLoader());
     }
 
@@ -32,7 +36,7 @@ public class StoredShoppingList implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(date.getTime());
+        dest.writeSerializable(date);
         dest.writeArray(items);
     }
 

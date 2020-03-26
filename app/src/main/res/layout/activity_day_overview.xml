@@ -91,10 +91,16 @@
                 app:cv_monthHeaderResource="@layout/calendar_month_header"/>
 
             <fragment
-                android:id="@+id/fragment"
+                android:id="@+id/cardsFragment"
                 android:name="com.example.meallab.fragments.CardScrollerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="250dp" />
+
+            <fragment
+                android:id="@+id/nutrientsFragment"
+                android:name="com.example.meallab.Nutrients.ComplexNutrientsOverviewFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </com.example.meallab.customViews.CustomScrollView>

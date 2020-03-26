@@ -1,5 +1,7 @@
 package com.example.meallab.activities;
 
+import com.example.meallab.Nutrients.ComplexNutrientsOverviewFragment;
+import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterIngredients;
 
@@ -20,7 +22,10 @@ import com.example.meallab.customViews.CustomScrollView;
 import com.example.meallab.customViews.DayViewContainer;
 import com.example.meallab.customViews.MonthHeader;
 import com.example.meallab.fragments.CardScrollerFragment;
-import com.example.meallab.stored_data.StoredDay;
+import com.example.meallab.storing_data.PersistentStore;
+import com.example.meallab.storing_data.StoredDay;
+import com.example.meallab.storing_data.StoredRecipe;
+import com.example.meallab.storing_data.StoredShoppingList;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -40,7 +45,6 @@ import org.threeten.bp.format.TextStyle;
 import org.threeten.bp.temporal.WeekFields;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 import kotlin.Unit;
@@ -54,7 +58,7 @@ import com.example.meallab.customViews.DayViewContainer.DayViewContainerListener
  * This is the most important activity, here the user can see the meal plan for a given day, view
  * meal detail screens, select different dates to plan ahead and access settings.
  */
-public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener {
+public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener, PersistentStore.PersistentStoreListener {
 
     private ArrayList<Object> mIngredientNames = new ArrayList<>();
     private ArrayList<String> mIngredientQuantities = new ArrayList<>();
@@ -76,6 +80,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // The day this day overview activity shows info for.
     StoredDay currentDay;
 
+    // Used to store objects to disk.
+    PersistentStore store;
+
     // ------ Outlets ------
 
     private CustomScrollView scrollView;
@@ -85,7 +92,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private TextView yearTextView;
     private TextView monthTextView;
 
-    private CardScrollerFragment cardsScroller;
+    private CardScrollerFragment cardsFragment;
+    private ComplexNutrientsOverviewFragment nutrientFragment;
 
     // ------
 
@@ -96,8 +104,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_overview);
 
-        // Load a new StoredDay object if it exists for this day, or create a new one.
-        this.currentDay = loadOrCreateNewDay(selectedDate);
+        // Init the store, will give callback on completion.
+        this.store = new PersistentStore(this,this);
 
         // Perform view first time setup.
         this.scrollView = findViewById(R.id.scrollView);
@@ -128,16 +136,14 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         });
-        this.cardsScroller = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.recipeCardScrollView);
+
+        // Setting the fragments.
+        this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
+        this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
     }
 
-    // Loads a day from memory or,
-    // creates a new empty day if no days exist yet.
-    private StoredDay loadOrCreateNewDay(LocalDate date) {
 
-    }
-
-    //region Date Selection
+    // region Date Selection
 
     // Called when the user selects a date in the calendar.
     // @pre calendar and dateTextView must be initialized.
@@ -321,6 +327,29 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             }
         });
     }
+
+    // Sets up the shopping list view for this day.
+    private void setupDayShoppingList(StoredShoppingList list) {
+
+    }
+    // Sets up the card scroll view.
+    private void setupCardScrollView(StoredRecipe[] recipes) {
+
+    }
+    // Sets up the nutrients view.
+    private void setupNutrientsView(Nutrient[] nutrients) {
+
+        // Get all nutrients that the user wants to track.
+        Nutrient[] all = crossValidateNutrients(nutrients);
+
+        this.nutrientFragment.setValues(all);
+    }
+    // Cross validates the given nutrients with the nutrients the user wants to track.
+    private Nutrient[] crossValidateNutrients(Nutrient[] nutrientsIn) {
+        // Get the nutrients from sharedPreferences.
+
+        return nutrientsIn;
+    }
     //endregion
 
     //region Calendar view hiding/showing
@@ -346,4 +375,34 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
 
     //endregion
+
+    // ----
+
+    // Initializes all views to the passed day.
+    private void switchToDay(StoredDay day) {
+        this.currentDay = day;
+
+        // Set views (Calendar, and views for current day).
+        this.setupCardScrollView(this.currentDay.recipes);
+
+        this.setupDayShoppingList(day.shoppingList);
+
+        this.setupNutrientsView(day.totalNutrients);
+    }
+
+
+    // region Persistent Store Listener
+
+    @Override
+    public void initializedSuccessfully(boolean success) {
+
+        // Load the current day, if no day exists yet a new empty day is created.
+        this.switchToDay(this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0]);
+    }
+
+    @Override
+    public void completedSynchronize(boolean success) {
+
+    }
+    // endregion
 }

@@ -1,7 +1,6 @@
 package com.example.meallab.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.meallab.R;
 import com.example.meallab.customViews.RecipeCardScrollView;
-import com.example.meallab.stored_data.StoredRecipe;
+import com.example.meallab.storing_data.StoredRecipe;
 
 /**
  * Fragment that allows the user to scroll their recipe cards.

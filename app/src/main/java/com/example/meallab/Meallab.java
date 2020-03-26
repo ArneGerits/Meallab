@@ -11,7 +11,8 @@ public class Meallab extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //AndroidThreeTen.init(this);
+
+        this.getshar
         AndroidThreeTen.init(this);
     }
 }

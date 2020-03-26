@@ -1,4 +1,4 @@
-package com.example.meallab.stored_data;
+package com.example.meallab.storing_data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -42,6 +42,11 @@ public class StoredRecipe implements Parcelable {
      * The image url of this recipe, Highest Quality.
      */
     public String imageURL;
+
+    // Empty constructor.
+    public StoredRecipe() {
+
+    }
     // ---- Parcelable ----
 
     protected StoredRecipe(Parcel in) {

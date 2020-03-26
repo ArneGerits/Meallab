@@ -1,10 +1,7 @@
-package com.example.meallab.stored_data;
+package com.example.meallab.storing_data;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import androidx.core.content.ContextCompat;
 
 import org.threeten.bp.LocalDate;
 
@@ -82,6 +79,7 @@ public class PersistentStore {
 
     /**
      * Retrieves StoredDay objects from given dates.
+     * If a storedDay object did not yet exist it is created.
      * @param dates The dates of the StoredDay objects.
      * @return The days.
      */
@@ -89,10 +87,18 @@ public class PersistentStore {
 
         ArrayList<StoredDay> d = new ArrayList<>();
 
-        for (StoredDay day : this.days) {
-            for (LocalDate date : dates) {
-                if (day.date.isEqual(date))
+        for (LocalDate date : dates) {
+            boolean added = false;
+            for (StoredDay day: this.days) {
+                if (day.date.isEqual(date)) {
                     d.add(day);
+                    added = true;
+                }
+            }
+            // There was no stored day found for this date, create a new one.
+            if (!added) {
+                StoredDay newDay = new StoredDay(date);
+                d.add(newDay);
             }
         }
 
@@ -103,36 +109,16 @@ public class PersistentStore {
     }
 
     /**
-     * Retrieves all dates for which there exists a stored day.
+     * Retrieves all stored days.
      * @return Dates for which there exists a stored day.
      */
-    public LocalDate[] retrieveAllDates() {
+    public LocalDate[] retrieveAllDays() {
 
-        ArrayList<LocalDate> d = new ArrayList<>();
-
-        for (StoredDay day: this.days) {
-            d.add(day.date);
-        }
-
-        LocalDate[] arr = new LocalDate[d.size()];
-        arr = d.toArray(arr);
+        LocalDate[] arr = new LocalDate[this.days.size()];
+        arr = this.days.toArray(arr);
 
         return arr;
     }
-
-    /**
-     * Stores a single day to the file system.
-     * NOTE that the day will be transient until synchronize is called.
-     * @param day The day to store.
-     * @return True if the store was successful, false otherwise.
-     */
-    public void newDay(StoredDay day) {
-        this.days.add(day);
-    }
-
-    // region Writing/Reading
-
-    // endregion
 
     // region Interface
     /**
@@ -181,8 +167,15 @@ public class PersistentStore {
                     // Read the data file from the file system, async.
                     String jsonString = readFromFile(fileName, c);
 
-                    // Create the object by parsing the json.
-                    StoredDay[] d = gson.fromJson(jsonString, StoredDay[].class);
+                    StoredDay[] d;
+                    // If the jsonString is empty we create a new array.
+                    if (jsonString.isEmpty()) {
+                        // Create an empty array.
+                        d = new StoredDay[0];
+                    } else {
+                        // Create an array from the stored json.
+                        d = gson.fromJson(jsonString, StoredDay[].class);
+                    }
 
                     // Set the days.
                     if (this.days != null) {
@@ -249,7 +242,6 @@ public class PersistentStore {
 
         public AsyncWrite(String fileName, StoredDay[] days, PersistentStoreListener l) {
             this.fileName = fileName;
-            this.days = days;
             this.l = l;
             this.days = days;
         }
