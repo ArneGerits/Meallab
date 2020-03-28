@@ -19,7 +19,6 @@ public class BarView extends View {
     //paint for drawing custom view
     private Paint barPaint;
     private Paint linePaint;
-    private Paint textPaint;
 
     private DashPathEffect dash;
 
@@ -45,7 +44,6 @@ public class BarView extends View {
 
         barPaint = new Paint();
         linePaint = new Paint();
-        textPaint = new Paint();
 
         dash = new DashPathEffect(new float[]{30.0f, 15.0f}, 0);
 

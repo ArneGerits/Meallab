@@ -340,6 +340,21 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
     // Sets up the card scroll view.
     private void setupCardScrollView(StoredRecipe[] recipes) {
+        // If there are no recipes chosen yet we present a single empty card.
+        if (recipes.length == 0) {
+            this.cardsFragment.setValues(recipes, new boolean[]{true}, 1);
+        } else {
+            // TODO: Add support fore empties, by figuring out which index should be empty.
+
+            // Get the amount of meals the user wants to eat per day.
+            int mealsPerDay = this.preferences.getMealsPerDay();
+
+            boolean[] empties = new boolean[mealsPerDay];
+            for (int i = 0; i < recipes.length; i++) {
+                empties[i] = false;
+            }
+            this.cardsFragment.setValues(recipes, empties, recipes.length);
+        }
 
     }
     // Sets up the nutrients view.

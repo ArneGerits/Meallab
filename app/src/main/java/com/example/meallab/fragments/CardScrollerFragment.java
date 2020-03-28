@@ -15,25 +15,35 @@ import com.example.meallab.R;
 import com.example.meallab.customViews.RecipeCardScrollView;
 import com.example.meallab.storing_data.StoredRecipe;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Fragment that allows the user to scroll their recipe cards.
  */
 public class CardScrollerFragment extends Fragment implements RecipeCardScrollView.RecipeCardScrollViewListener {
 
     // Outlets
-    RecipeCardScrollView scrollView;
-    Button leftButton;
-    Button rightButton;
-    TextView titleTextView;
+    private RecipeCardScrollView scrollView;
+    private Button leftButton;
+    private Button rightButton;
+    private TextView titleTextView;
 
     // ----
 
-    static String ARG_PARAM1 = "recipes";
+    private static String ARG_PARAM1 = "recipes";
+    private static String ARG_PARAM2 = "indices";
 
     // The recipes shown by this scroller.
-    StoredRecipe[] recipes;
+    private StoredRecipe[] recipes;
+    private boolean[] empties;
+    private int amountOfCards;
+
     // The card fragment shown by this scroller.
-    RecipeCardFragment[] fragments;
+    private RecipeCardFragment[] fragments;
 
     public CardScrollerFragment() {
         // Required empty public constructor
@@ -43,13 +53,15 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
      * Creates a new card scroller.
      *
      * @param recipes The recipes
+     * @param emptyIndices Indices where an empty slot should be.
      * @return A new instance of fragment CardScrollerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CardScrollerFragment newInstance(StoredRecipe[] recipes) {
+    public static CardScrollerFragment newInstance(StoredRecipe[] recipes, boolean[] emptyIndices) {
         CardScrollerFragment fragment = new CardScrollerFragment();
         Bundle args = new Bundle();
         args.putParcelableArray(ARG_PARAM1,recipes);
+        args.putBooleanArray(ARG_PARAM2, emptyIndices);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,28 +69,45 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
      * Sets all values on the fragment and creates the view.
      *
      */
-    public void setValues(StoredRecipe[] recipes) {
+    public void setValues(StoredRecipe[] recipes, boolean[] emptyIndices, int amountOfCards) {
 
         CardScrollerFragment fragment = new CardScrollerFragment();
         Bundle args = new Bundle();
         args.putParcelableArray(ARG_PARAM1,recipes);
+        args.putBooleanArray(ARG_PARAM2, emptyIndices);
         fragment.setArguments(args);
 
         this.recipes = recipes;
+        this.empties = emptyIndices;
+        this.amountOfCards = amountOfCards;
         loadAllViews();
     }
     // Loads all views
     // @pre recipes must be initialized.
     private void loadAllViews() {
 
-        this.fragments = new RecipeCardFragment[this.recipes.length];
+        this.fragments = new RecipeCardFragment[this.amountOfCards];
+
+        // Used to get the stored recipes.
+        Iterator<StoredRecipe> it = Arrays.asList(this.recipes).iterator();
+
+        System.out.println("what: " + this.recipes.length);
+        System.out.println("empties: " + this.empties[0]);
+
         // Cycle all recipes and create cards, then add the card to the scrollview.
-        for (int i = 0; i < this.recipes.length; i++) {
-            StoredRecipe r = this.recipes[i];
+        for (int i = 0; i < this.amountOfCards; i++) {
+
+            RecipeCardFragment f;
 
             // Create a new card.
-            RecipeCardFragment f = RecipeCardFragment.newInstance(r.name,r.cookingMins,
-                    r.numberOfServings,r.pricePerServing, r.macroNutrients);
+            if (this.empties[i]) {
+                f = RecipeCardFragment.newEmptyInstance();
+            } else {
+                System.out.println("loop: " +  i);
+                StoredRecipe r = it.next();
+                f = RecipeCardFragment.newInstance(r.name,r.cookingMins,
+                        r.numberOfServings,r.pricePerServing, r.macroNutrients);
+            }
             // Add it to the fragments.
             this.fragments[i] = f;
 
@@ -92,6 +121,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             this.recipes = (StoredRecipe[]) getArguments().getParcelableArray(ARG_PARAM1);
+            this.empties = getArguments().getBooleanArray(ARG_PARAM2);
         }
     }
 

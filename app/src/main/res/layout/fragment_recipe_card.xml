@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/topLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -45,8 +46,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:text="TextView"
-                                    android:gravity="center|left"/>
+                                    android:gravity="center|left"
+                                    android:text="TextView" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -67,8 +68,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:text="TextView"
-                                    android:gravity="center|left"/>
+                                    android:gravity="center|left"
+                                    android:text="TextView" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -89,8 +90,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:text="test"
-                                    android:gravity="center|left"/>
+                                    android:gravity="center|left"
+                                    android:text="test" />
                         </LinearLayout>
                 </LinearLayout>
         </LinearLayout>
@@ -101,5 +102,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
+
+        <view
+            android:id="@+id/emptyView"
+            class="com.example.meallab.customViews.EmptyRecipeCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:visibility="gone" />
 
 </LinearLayout>

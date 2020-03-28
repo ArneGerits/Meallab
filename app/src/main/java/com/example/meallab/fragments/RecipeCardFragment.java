@@ -7,13 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.Nutrients.SimpleNutrientsOverviewFragment;
 import com.example.meallab.R;
+import com.example.meallab.customViews.EmptyRecipeCardView;
+import com.example.meallab.storing_data.StoredRecipe;
 
 
 /**
@@ -27,6 +31,7 @@ public class RecipeCardFragment extends Fragment {
     private static final String ARG_PARAM3 = "servings";
     private static final String ARG_PARAM4 = "pricePerServing";
     private static final String ARG_PARAM5 = "nutrients";
+    private static final String ARG_PARAM6 = "isEmpty";
 
     // Outlets
     private ImageView recipeImageView;
@@ -34,6 +39,8 @@ public class RecipeCardFragment extends Fragment {
     private TextView cookingTimeTextView;
     private TextView servingsTextView;
     private TextView costTextView;
+
+    private LinearLayout topLayout;
 
     // ----
 
@@ -43,8 +50,12 @@ public class RecipeCardFragment extends Fragment {
     private float pricePerServing;
     private Nutrient[] nutrients;
     Bitmap recipeImage;
+    private boolean isEmpty;
+
+    private EmptyRecipeCardView empty;
 
     private RecipeCardFragmentListener listener;
+    private RecipeCardFragmentLayoutListener layoutListener;
 
     public RecipeCardFragment() {
         // Required empty public constructor
@@ -69,6 +80,24 @@ public class RecipeCardFragment extends Fragment {
         args.putInt(ARG_PARAM3,servings);
         args.putFloat(ARG_PARAM4,pricePerServing);
         args.putParcelableArray(ARG_PARAM5,nutrients);
+        args.putBoolean(ARG_PARAM6,false);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    /**
+     * Creates a new empty recipe card.
+     *
+     * @return A new instance of fragment RecipeCardFragment.
+     */
+    public static RecipeCardFragment newEmptyInstance() {
+        RecipeCardFragment fragment = new RecipeCardFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1,"");
+        args.putInt(ARG_PARAM2,0);
+        args.putInt(ARG_PARAM3,0);
+        args.putFloat(ARG_PARAM4,0.0f);
+        args.putParcelableArray(ARG_PARAM5,new Nutrient[0]);
+        args.putBoolean(ARG_PARAM6,true);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,6 +113,7 @@ public class RecipeCardFragment extends Fragment {
         args.putInt(ARG_PARAM3,servings);
         args.putFloat(ARG_PARAM4,pricePerServing);
         args.putParcelableArray(ARG_PARAM5,nutrients);
+        args.putBoolean(ARG_PARAM6,false);
         fragment.setArguments(args);
 
         this.name = name;
@@ -92,7 +122,7 @@ public class RecipeCardFragment extends Fragment {
         this.pricePerServing = pricePerServing;
         this.nutrients = nutrients;
 
-        this.loadAllViews();
+        //this.loadAllViews();
     }
     public String getName() {
         return name;
@@ -106,16 +136,38 @@ public class RecipeCardFragment extends Fragment {
         this.listener = listener;
     }
 
+    public void setLayoutListener(RecipeCardFragmentLayoutListener listener) {
+        this.layoutListener = listener;
+    }
     // Loads all view objects.
     private void loadAllViews() {
-        // Set the textviews.
-        this.cookingTimeTextView.setText("" + this.cookingMins + " min");
-        this.servingsTextView.setText("" + this.servings);
-        // TODO: Find out how to localize costs
-        this.costTextView.setText("" + this.pricePerServing  + "$/serving");
+        if (!isEmpty) {
+            // Set all to visible
+            /*this.cookingTimeTextView.setVisibility(View.VISIBLE);
+            this.nutrientsOverview.getView().setVisibility(View.VISIBLE);
+            this.servingsTextView.setVisibility(View.VISIBLE);
+            this.costTextView.setVisibility(View.VISIBLE);
+            this.recipeImageView.setVisibility(View.gon);*/
+            empty.setVisibility(View.GONE);
+            this.topLayout.setVisibility(View.VISIBLE);
+            this.nutrientsOverview.getView().setVisibility(View.VISIBLE);
 
-        // Set the nutrients.
-        this.nutrientsOverview.setValues(this.nutrients);
+            // Set the text views.
+            this.cookingTimeTextView.setText("" + this.cookingMins + " min");
+            this.servingsTextView.setText("" + this.servings);
+            // TODO: Find out how to localize costs
+            this.costTextView.setText("" + this.pricePerServing  + "$/serving");
+
+            // Set the nutrients.
+            this.nutrientsOverview.setValues(this.nutrients);
+        } else {
+            // Set all to GONE
+            this.topLayout.setVisibility(View.GONE);
+            this.nutrientsOverview.getView().setVisibility(View.GONE);
+
+            empty.setVisibility(View.VISIBLE);
+            empty.setValues(ContextCompat.getColor(this.getContext(),R.color.calories),15.0f);
+        }
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,6 +178,7 @@ public class RecipeCardFragment extends Fragment {
             this.servings        = getArguments().getInt(ARG_PARAM3);
             this.pricePerServing = getArguments().getFloat(ARG_PARAM4);
             this.nutrients       = (Nutrient[]) getArguments().getParcelableArray(ARG_PARAM5);
+            this.isEmpty         = getArguments().getBoolean(ARG_PARAM6);
         }
     }
 
@@ -138,12 +191,16 @@ public class RecipeCardFragment extends Fragment {
         this.cookingTimeTextView = v.findViewById(R.id.recipeCookingTime);
         this.costTextView        = v.findViewById(R.id.costTextView);
         this.recipeImageView     = v.findViewById(R.id.recipeImageView);
+        this.topLayout           = v.findViewById(R.id.topLayout);
 
         this.nutrientsOverview = (SimpleNutrientsOverviewFragment) getChildFragmentManager().findFragmentById(R.id.nutrientsFragment);
+
+        this.empty = v.findViewById(R.id.emptyView);
 
         if (this.name != null) {
             loadAllViews();
         }
+        this.layoutListener.loadedView(v);
 
         return v;
     }
@@ -159,5 +216,9 @@ public class RecipeCardFragment extends Fragment {
          * @param fragment The fragment the user selected.
          */
         void launchFragment(RecipeCardFragment fragment);
+    }
+    public interface RecipeCardFragmentLayoutListener {
+
+        void loadedView(View v);
     }
 }

@@ -23,7 +23,7 @@ import com.example.meallab.fragments.RecipeCardFragment;
  * Horizontal scrollView subclass that allows the user to scroll between their selected recipes.
  * Recipes are presented as cards using RecipeCardFragments
  */
-public class RecipeCardScrollView extends HorizontalScrollView {
+public class RecipeCardScrollView extends HorizontalScrollView implements RecipeCardFragment.RecipeCardFragmentLayoutListener {
 
     // ---- Constants ----
 
@@ -55,6 +55,8 @@ public class RecipeCardScrollView extends HorizontalScrollView {
     private int leftEdgeMargin = 0;
     // Margin between a the last view and edge.
     private int rightEdgeMargin = 0;
+
+    int cardsLayedOut = 0;
 
     // ---- Constructors ----
 
@@ -96,6 +98,9 @@ public class RecipeCardScrollView extends HorizontalScrollView {
     public void setFragments(final RecipeCardFragment[] fragments) {
         this.fragments = fragments;
 
+        for (RecipeCardFragment f : fragments) {
+            f.setLayoutListener(this);
+        }
         this.setupHolder();
 
         setOnTouchListener(new View.OnTouchListener() {
@@ -220,9 +225,6 @@ public class RecipeCardScrollView extends HorizontalScrollView {
             transaction.add(this.holder.getId(), f , "fragment" + i);
             transaction.commit();
         }
-
-        // Makes sure layout is performed correctly
-        finalizeLayout();
     }
 
     // region Dividers
@@ -254,7 +256,7 @@ public class RecipeCardScrollView extends HorizontalScrollView {
 
     // endregion
 
-    // This method adds a view tree observer recursivley to make sure the layout is done correclty.
+    // This method adds a view tree observer recursively to make sure the layout is done correctly.
     private void finalizeLayout() {
 
         // Add tree listener to compute edge margins.
@@ -265,13 +267,11 @@ public class RecipeCardScrollView extends HorizontalScrollView {
 
                 inner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                for (int i = 0; i < fragments.length; i++) {
-                    RecipeCardFragment f = fragments[i];
-
-                    ViewGroup.LayoutParams p = f.getView().getLayoutParams();
-                    p.width = cardWidth;
-                    f.getView().setLayoutParams(p);
-                    holder.addView(newDivider(),(i*2) + 1);
+                // If there are more than 2 cards we need to add spacing in between.
+                if (fragments.length >= 2) {
+                    for (int i = 0; i < fragments.length; i++) {
+                        holder.addView(newDivider(),(i*2) + 1);
+                    }
                 }
 
                 // Calculate the edge margin.
@@ -286,7 +286,7 @@ public class RecipeCardScrollView extends HorizontalScrollView {
                 inner.holder.addView(d1,0);
 
                 // Add the right divider.
-                View d2 = newLeftDivider();
+                View d2 = newRightDivider();
                 inner.holder.addView(d2);
 
                 // Inside view tree observer to adjust heights.
@@ -358,6 +358,20 @@ public class RecipeCardScrollView extends HorizontalScrollView {
         }
         return newHeight;
     }
+
+    @Override
+    public void loadedView(View v) {
+
+        ViewGroup.LayoutParams p = v.getLayoutParams();
+        p.width = cardWidth;
+        v.setLayoutParams(p);
+
+        this.cardsLayedOut++;
+        if (cardsLayedOut == this.fragments.length) {
+            finalizeLayout();
+        }
+    }
+
     public interface RecipeCardScrollViewListener {
         /**
          * Gets called when the API has retrieved additional information for the recipe.
