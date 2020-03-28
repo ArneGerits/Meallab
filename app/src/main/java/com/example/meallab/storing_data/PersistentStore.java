@@ -21,16 +21,16 @@ import com.google.gson.Gson;
  */
 public class PersistentStore {
 
-    final String C_FILE_NAME = "stored_data.txt";
+    private final String C_FILE_NAME = "stored_data.txt";
 
     // The listener
-    final PersistentStoreListener listener;
+    private final PersistentStoreListener listener;
 
     // The current context.
-    Context context;
+    private Context context;
 
     // The days.
-    ArrayList<StoredDay> days = new ArrayList<>();
+    private ArrayList<StoredDay> days = new ArrayList<>();
 
     // region Constructor
     public PersistentStore(final PersistentStoreListener listener, final Context context) {

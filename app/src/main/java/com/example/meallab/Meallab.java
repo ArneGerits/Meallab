@@ -2,6 +2,7 @@ package com.example.meallab;
 
 import android.app.Application;
 
+import com.example.meallab.storing_data.UserPreferences;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 /**
@@ -11,8 +12,6 @@ public class Meallab extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        this.getshar
         AndroidThreeTen.init(this);
     }
 }

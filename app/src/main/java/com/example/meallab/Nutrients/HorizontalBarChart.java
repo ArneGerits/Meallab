@@ -73,7 +73,7 @@ public class HorizontalBarChart extends Fragment {
             public void run() {
 
                 progressTextView.measure(0,0);
-                float kMargin = 16.0f;
+                float kMargin = 32.0f;
 
                 RectF r = barView.getBarRect();
                 ConstraintLayout.LayoutParams p = (ConstraintLayout.LayoutParams)progressTextView.getLayoutParams();

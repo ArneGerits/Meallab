@@ -1,6 +1,8 @@
 package com.example.meallab.Nutrients;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,12 +14,14 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.meallab.R;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -35,6 +39,8 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
     private LinearLayout microHolder;
 
     private boolean showingMicros = false;
+
+    ArrayList<MicroNutrientFragment> microFrags = new ArrayList<>();
 
     // ---- Views ----
     HorizontalBarChart caloriesBar;
@@ -87,8 +93,9 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
 
             bar.setPercentProgress(nut.progressToday());
             bar.setLeftText("0");
-            bar.setRightText((int)nut.amountDailyTarget + "");
-            bar.setTitleText(nut.name + " " + (int)nut.amount + nut.unit);
+
+            bar.setRightText(String.format("%.0f", nut.amountDailyTarget));
+            bar.setTitleText(nut.name + " - " + (int)nut.amount + nut.unit);
             bar.getBarView().setIndicatorColor(indicator);
             bar.getBarView().setBarColor(colorIDs[i]);
         }
@@ -112,27 +119,14 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
     private LinearLayout newMicroLayout(final Nutrient micro) {
 
         final MicroNutrientFragment frag = MicroNutrientFragment.newInstance(micro);
-
+        this.microFrags.add(frag);
         LinearLayout holder = new LinearLayout(this.getContext());
         holder.setId(View.generateViewId());
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, kMicroHeight);
         holder.setLayoutParams(p);
 
         getChildFragmentManager().beginTransaction().add(holder.getId(),frag,"t1").commit();
-        this.getView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ComplexNutrientsOverviewFragment inner = ComplexNutrientsOverviewFragment.this;
-                inner.getView().getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                LinearLayout.LayoutParams p = (LinearLayout.LayoutParams) frag.getView().getLayoutParams();
-                p.weight = 1;
-                p.height = LinearLayout.LayoutParams.MATCH_PARENT;
-                p.width = LinearLayout.LayoutParams.MATCH_PARENT;
-                frag.getView().setLayoutParams(p);
-            }
-
-        });
         return holder;
     }
     /**
@@ -164,7 +158,7 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_nutrients_complex, container, false);
+        final View v = inflater.inflate(R.layout.fragment_nutrients_complex, container, false);
 
         FragmentManager f = this.getChildFragmentManager();
         this.caloriesBar = (HorizontalBarChart) f.findFragmentById(R.id.caloriesBar);
@@ -181,13 +175,17 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+
+
                 showingMicros = !showingMicros;
 
                 // Change the button appearance
                 if (showingMicros) {
+                    System.out.println("hide now!");
                     // TODO: Change button images.
                     showButton.setText("Hide");
                 } else {
+                    System.out.println("show now!");
                     showButton.setText("Show");
                 }
 
@@ -198,6 +196,11 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
                     fromValue = toValue;
                     toValue   = 0;
                 }
+                System.out.println("To value: " + toValue);
+                System.out.println("From value: " + fromValue);
+
+                microHolder.setVisibility(View.VISIBLE);
+
                 // Animate the height of the linear layout.
                 ValueAnimator va = ValueAnimator.ofInt(fromValue, toValue);
                 va.setDuration(400);
@@ -205,8 +208,25 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
                 va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     public void onAnimationUpdate(ValueAnimator animation) {
                         Integer value = (Integer) animation.getAnimatedValue();
-                        microHolder.getLayoutParams().height = value.intValue();
+                        ViewGroup.LayoutParams p = microHolder.getLayoutParams();
+                        p.height = value;
+                        microHolder.setLayoutParams(p);
                         microHolder.requestLayout();
+                    }
+
+                });
+
+                final int toVal = toValue;
+                va.addListener(new AnimatorListenerAdapter()
+                {
+                    @Override
+                    public void onAnimationEnd(Animator animation)
+                    {
+                        if (showingMicros) {
+                            microHolder.setVisibility(View.VISIBLE);
+                        } else {
+                            microHolder.setVisibility(View.GONE);
+                        }
                     }
                 });
                 va.start();
@@ -217,6 +237,23 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
         if (this.progress != null) {
             this.loadAllViews(this.progress);
         }
+
+        v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                for (MicroNutrientFragment frag : microFrags) {
+                    LinearLayout.LayoutParams p = (LinearLayout.LayoutParams) frag.getView().getLayoutParams();
+                    p.weight = 1;
+                    p.height = LinearLayout.LayoutParams.MATCH_PARENT;
+                    p.width = LinearLayout.LayoutParams.MATCH_PARENT;
+                    frag.getView().setLayoutParams(p);
+                }
+            }
+
+        });
 
         return v;
     }

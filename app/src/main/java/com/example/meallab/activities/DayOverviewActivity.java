@@ -26,6 +26,9 @@ import com.example.meallab.storing_data.PersistentStore;
 import com.example.meallab.storing_data.StoredDay;
 import com.example.meallab.storing_data.StoredRecipe;
 import com.example.meallab.storing_data.StoredShoppingList;
+import com.example.meallab.storing_data.UserPreferences;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -82,6 +85,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Used to store objects to disk.
     PersistentStore store;
+    UserPreferences preferences;
 
     // ------ Outlets ------
 
@@ -102,10 +106,12 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_day_overview);
 
         // Init the store, will give callback on completion.
         this.store = new PersistentStore(this,this);
+        this.preferences = new UserPreferences(this);
 
         // Perform view first time setup.
         this.scrollView = findViewById(R.id.scrollView);
@@ -339,17 +345,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // Sets up the nutrients view.
     private void setupNutrientsView(Nutrient[] nutrients) {
 
-        // Get all nutrients that the user wants to track.
-        Nutrient[] all = crossValidateNutrients(nutrients);
-
-        this.nutrientFragment.setValues(all);
+        this.nutrientFragment.setValues(nutrients);
     }
-    // Cross validates the given nutrients with the nutrients the user wants to track.
-    private Nutrient[] crossValidateNutrients(Nutrient[] nutrientsIn) {
-        // Get the nutrients from sharedPreferences.
 
-        return nutrientsIn;
-    }
     //endregion
 
     //region Calendar view hiding/showing
@@ -387,7 +385,22 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         this.setupDayShoppingList(day.shoppingList);
 
-        this.setupNutrientsView(day.totalNutrients);
+        // 1. Get all tracked nutrients.
+        Nutrient[] tracked = this.preferences.getTrackedNutrients();
+
+        // 2. Get the nutrients for the current day.
+        Nutrient[] nutrientsToday = day.totalNutrients;
+
+        // 3. Cross reference and fill tracked.
+        for (Nutrient tr : tracked) {
+            for (Nutrient td : nutrientsToday) {
+                if (tr.name.equals(td.name)) {
+                    tr.amount += td.amount;
+                }
+            }
+        }
+
+        this.setupNutrientsView(tracked);
     }
 
 

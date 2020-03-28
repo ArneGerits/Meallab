@@ -9,7 +9,7 @@
     android:orientation="vertical"
     >
 
-    <com.example.nutriotionalbreakdown.BarView
+    <com.example.meallab.Nutrients.BarView
         android:id="@+id/barView"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -28,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom|center"
+        android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

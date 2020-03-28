@@ -37,7 +37,7 @@
         android:layout_weight="4"
         android:orientation="horizontal">
 
-        <com.example.nutriotionalbreakdown.MacroNutsPieChart
+        <com.example.meallab.Nutrients.MacroNutsPieChart
             android:id="@+id/pieChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
