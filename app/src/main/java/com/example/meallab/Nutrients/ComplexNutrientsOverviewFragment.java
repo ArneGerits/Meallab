@@ -94,7 +94,7 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
             bar.setPercentProgress(nut.progressToday());
             bar.setLeftText("0");
 
-            bar.setRightText(String.format("%.0f", nut.amountDailyTarget));
+            bar.setRightText(String.format("%.0f", nut.amountDailyTarget) + nut.unit);
             bar.setTitleText(nut.name + " - " + (int)nut.amount + nut.unit);
             bar.getBarView().setIndicatorColor(indicator);
             bar.getBarView().setBarColor(colorIDs[i]);

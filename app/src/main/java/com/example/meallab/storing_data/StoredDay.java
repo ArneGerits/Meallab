@@ -9,6 +9,8 @@ import com.example.meallab.Nutrients.Nutrient;
 
 import org.threeten.bp.LocalDate;
 
+import java.util.ArrayList;
+
 /**
  * Allows for the storage of the following data about a single day:
  * - Recipes chosen
@@ -22,10 +24,6 @@ public class StoredDay implements Parcelable {
      * The recipe the user has(s)d chosen for this day.
      */
     public StoredRecipe[] recipes;
-    /**
-     * The total nutritional value for this day (macros and micros).
-     */
-    public Nutrient[] totalNutrients;
     /**
      * The shopping list for this day.
      */
@@ -43,15 +41,51 @@ public class StoredDay implements Parcelable {
     public StoredDay(LocalDate date) {
         this.date = date;
         this.recipes = new StoredRecipe[0];
-        this.totalNutrients = new Nutrient[0];
         this.shoppingList = new StoredShoppingList(date);
+    }
+
+    /**
+     * Gets the accumulated nutritional values for all recipes in this day.
+     * @return The acc nutritional value for this day.
+     */
+    public Nutrient[] getTotalNutrients() {
+        ArrayList<String> nutrientNames = new ArrayList<>();
+        ArrayList<Nutrient> collectiveNutrients = new ArrayList<>();
+        // First add all nutrient names.
+        for (StoredRecipe recipe : this.recipes) {
+            for (Nutrient nut : recipe.nutrients) {
+                if (!nutrientNames.contains(nut.name)) {
+                    nutrientNames.add(nut.name);
+                }
+                collectiveNutrients.add(nut);
+            }
+        }
+        Nutrient[] result = new Nutrient[nutrientNames.size()];
+
+        // Then increment the amounts.
+        for (int i = 0; i < nutrientNames.size(); i++) {
+            String name = nutrientNames.get(i);
+            Nutrient nut = new Nutrient();
+            nut.name = name;
+            ArrayList<Nutrient> toRemove = new ArrayList<>();
+            for (Nutrient collNut : collectiveNutrients) {
+                if (nut.name.equals(collNut.name)) {
+                    nut.amount += collNut.amount;
+                    nut.amountDailyTarget = collNut.amountDailyTarget;
+                    nut.unit = collNut.unit;
+                    toRemove.add(collNut);
+                }
+            }
+            collectiveNutrients.removeAll(toRemove);
+            result[i] = nut;
+        }
+        return result;
     }
 
     // ---- Parcelable ----
 
     protected StoredDay(Parcel in) {
         recipes = (StoredRecipe[]) in.readArray(StoredRecipe.class.getClassLoader());
-        totalNutrients = (Nutrient[]) in.readArray(Nutrient.class.getClassLoader());
         shoppingList = (StoredShoppingList) in.readValue(StoredShoppingList.class.getClassLoader());
         date = (LocalDate) in.readSerializable();
     }
@@ -64,7 +98,6 @@ public class StoredDay implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeArray(recipes);
-        dest.writeValue(totalNutrients);
         dest.writeValue(shoppingList);
         dest.writeSerializable(date);
     }

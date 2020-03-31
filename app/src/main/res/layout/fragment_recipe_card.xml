@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ff6f4f"
-    tools:context=".fragments.RecipeCardFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".fragments.RecipeCardFragment">
 
         <LinearLayout
-            android:id="@+id/topLayout"
+            android:id="@+id/recipeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -103,12 +104,12 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <view
-            android:id="@+id/emptyView"
-            class="com.example.meallab.customViews.EmptyRecipeCardView"
+        <ImageView
+            android:id="@+id/addImageView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0"
-            android:visibility="gone" />
+            android:src="@drawable/debug_plus_button"
+            tools:visibility="gone" />
 
 </LinearLayout>

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.meallab.R;
+import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.example.meallab.customViews.RecipeCardScrollView;
 import com.example.meallab.storing_data.StoredRecipe;
 
@@ -24,7 +25,8 @@ import java.util.List;
 /**
  * Fragment that allows the user to scroll their recipe cards.
  */
-public class CardScrollerFragment extends Fragment implements RecipeCardScrollView.RecipeCardScrollViewListener {
+public class CardScrollerFragment extends Fragment implements RecipeCardScrollView.RecipeCardScrollViewListener,
+        RecipeCardFragment.RecipeCardFragmentListener {
 
     // Outlets
     private RecipeCardScrollView scrollView;
@@ -40,10 +42,11 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
     // The recipes shown by this scroller.
     private StoredRecipe[] recipes;
     private boolean[] empties;
-    private int amountOfCards;
 
     // The card fragment shown by this scroller.
     private RecipeCardFragment[] fragments;
+
+    private CardScrollerFragmentListener listener;
 
     public CardScrollerFragment() {
         // Required empty public constructor
@@ -67,46 +70,44 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
     }
     /**
      * Sets all values on the fragment and creates the view.
-     *
+     * @param recipes The recipes to create cards for.
+     * @param structure The structure of the cards, specify true, if a card should be empty, false otherwise.
      */
-    public void setValues(StoredRecipe[] recipes, boolean[] emptyIndices, int amountOfCards) {
+    public void setValues(StoredRecipe[] recipes, boolean[] structure) {
 
         CardScrollerFragment fragment = new CardScrollerFragment();
         Bundle args = new Bundle();
         args.putParcelableArray(ARG_PARAM1,recipes);
-        args.putBooleanArray(ARG_PARAM2, emptyIndices);
+        args.putBooleanArray(ARG_PARAM2, structure);
         fragment.setArguments(args);
 
         this.recipes = recipes;
-        this.empties = emptyIndices;
-        this.amountOfCards = amountOfCards;
+        this.empties = structure;
         loadAllViews();
     }
     // Loads all views
     // @pre recipes must be initialized.
     private void loadAllViews() {
 
-        this.fragments = new RecipeCardFragment[this.amountOfCards];
+        this.fragments = new RecipeCardFragment[this.empties.length];
 
         // Used to get the stored recipes.
         Iterator<StoredRecipe> it = Arrays.asList(this.recipes).iterator();
 
-        System.out.println("what: " + this.recipes.length);
-        System.out.println("empties: " + this.empties[0]);
-
         // Cycle all recipes and create cards, then add the card to the scrollview.
-        for (int i = 0; i < this.amountOfCards; i++) {
+        for (int i = 0; i < this.empties.length; i++) {
 
             RecipeCardFragment f;
 
             // Create a new card.
             if (this.empties[i]) {
-                f = RecipeCardFragment.newEmptyInstance();
+                f = RecipeCardFragment.newEmptyInstance(i);
+                f.setListener(this);
             } else {
-                System.out.println("loop: " +  i);
                 StoredRecipe r = it.next();
                 f = RecipeCardFragment.newInstance(r.name,r.cookingMins,
-                        r.numberOfServings,r.pricePerServing, r.macroNutrients);
+                        r.numberOfServings,r.pricePerServing, r.getMacroNutrients(), i);
+                f.setListener(this);
             }
             // Add it to the fragments.
             this.fragments[i] = f;
@@ -168,11 +169,57 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         super.onDetach();
     }
 
-    // region RecipeCardScrollViewListener
+    // region Recipe card listeners
 
     @Override
     public void scrolledToCard(RecipeCardFragment card) {
         this.titleTextView.setText(card.getName());
     }
+
+    @Override
+    public void clickedOnFragment(RecipeCardFragment fragment) {
+        System.out.println("CLICKED ON FRAGMENT");
+        // Determine if the fragment is an 'add' fragment or recipe.
+        int index = fragment.getIndex();
+        boolean isEmpty = this.empties[index];
+        if (this.listener != null) {
+            if (isEmpty) {
+                this.listener.selectedNewRecipeForIndex(index);
+            } else {
+                // Determine the correct offset.
+                int offset = 0;
+                for (boolean b : this.empties) {
+                    if (b) {
+                        offset++;
+                    }
+                }
+                this.listener.selectedShowDetailForIndex(index - offset);
+            }
+        }
+    }
     // endregion
+
+    public void setListener(CardScrollerFragmentListener listener) {
+        this.listener = listener;
+    }
+    public interface CardScrollerFragmentListener {
+        /**
+         * Called when the user presses the recipe card to show more details.
+         * @param index The index of the card, set in setValues().
+         */
+        void selectedShowDetailForIndex(int index);
+
+        /**
+         * Called when the user wants to edit the recipe.
+         * @param index The index of the card, set in setValues().
+         */
+        void selectedEditForIndex(int index);
+
+        /**
+         * Called when the user wants to add a new recipe.
+         * @param index The index of the card, set in setValues().
+         */
+        void selectedNewRecipeForIndex(int index);
+
+    }
 }

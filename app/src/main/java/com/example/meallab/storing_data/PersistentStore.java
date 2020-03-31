@@ -101,6 +101,8 @@ public class PersistentStore {
                 d.add(newDay);
             }
         }
+        // Add the days to the days array.
+        this.days.addAll(d);
 
         StoredDay[] arr = new StoredDay[d.size()];
         arr = d.toArray(arr);
@@ -224,7 +226,6 @@ public class PersistentStore {
             catch (FileNotFoundException e) {
                 // Do nothing
             }
-
             return json;
         }
     }
@@ -253,9 +254,12 @@ public class PersistentStore {
                 try {
 
                     String json = gson.toJson(this.days);
+                    System.out.println("Writing json: " + json);
+
                     this.writeToFile(this.fileName, json, c);
 
                 } catch (IOException e) {
+                    System.out.println("THERE HAS BEEN AN IO EXCEPTION TYRING TO WRITE.");
                     return false;
                 }
                 return true;

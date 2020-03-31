@@ -37,6 +37,8 @@ public class BarView extends View {
     private float vInset;
     private float hInset;
 
+    private boolean showsSkewed = false;
+
     // ---- Constructors ----
 
     public BarView(Context context, @Nullable AttributeSet attrs) {
@@ -129,7 +131,11 @@ public class BarView extends View {
         // Left indicator
         canvas.drawRect(left, 0, right, h, barPaint);
 
-        float multiplier = Math.max(this.percentProgress, 1.0f);
+        float multiplier = 1.0f;
+        if (showsSkewed) {
+            Math.max(this.percentProgress, 1.0f);
+        }
+
 
         left = ((w - 2 * this.hInset) * 1.0f / multiplier) + this.hInset - 0.5f * indicatorWidth;
         right = left + indicatorWidth;
@@ -158,7 +164,10 @@ public class BarView extends View {
     public float getRightIndicatorLocation() {
         this.vInset = Math.round(getMeasuredHeight() / 10.0f);
 
-        float multiplier = Math.max(this.percentProgress, 1.0f);
+        float multiplier = 1.0f;
+        if (showsSkewed) {
+            Math.max(this.percentProgress, 1.0f);
+        }
 
         float left = ((getMeasuredWidth() - 2 * this.vInset) * 1.0f / multiplier) + this.vInset - 0.5f * indicatorWidth;
         float right = left + indicatorWidth;
