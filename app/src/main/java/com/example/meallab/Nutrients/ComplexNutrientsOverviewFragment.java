@@ -113,7 +113,7 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
             LinearLayout microL = newMicroLayout(micro);
             microLayouts[i] = microL;
 
-            this.microHolder.addView(microL,0);
+            this.microHolder.addView(microL);
         }
     }
     private LinearLayout newMicroLayout(final Nutrient micro) {
