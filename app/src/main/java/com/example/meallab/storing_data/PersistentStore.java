@@ -226,7 +226,9 @@ public class PersistentStore {
             catch (FileNotFoundException e) {
                 // Do nothing
             }
-            return json;
+            //TODO:UNDO
+            return "";
+            //return json;
         }
     }
     /**

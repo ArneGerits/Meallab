@@ -47,10 +47,13 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     // The reroll button is positioned in the upper left.
     Button rerollButton;
-    // The upper right button can either be a 'next' button, to choose next recipe or a 'confirm' button,
-    // to finish the activity.
+
+    // The upper right button can either be a 'next' button, to choose next recipe or a 'confirm' button.
     Button upperRightButton;
 
+    RecipeSelectionRow topFragment;
+    RecipeSelectionRow middleFragment;
+    RecipeSelectionRow bottomFragment;
     // ------
 
     // Used for api communication with Spoonacular
@@ -69,6 +72,13 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         setContentView(R.layout.activity_recipe_selection);
 
         String jsonMeals = getIntent().getStringExtra("meals");
+
+        // ----- Setting outlets ------
+
+        this.topFragment = (RecipeSelectionRow) this.getSupportFragmentManager().findFragmentById(R.id.topInfo);
+        this.middleFragment = (RecipeSelectionRow) this.getSupportFragmentManager().findFragmentById(R.id.middleInfo);
+        this.bottomFragment = (RecipeSelectionRow) this.getSupportFragmentManager().findFragmentById(R.id.bottomInfo);
+
         this.meals = gson.fromJson(jsonMeals, SpoonacularMealType[].class);
         this.rerollButton  = this.findViewById(R.id.rerollButton);
         this.upperRightButton = this.findViewById(R.id.confirmButton);
@@ -97,6 +107,15 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             }
         });
 
+        // ------
+
+        // If there is more than 1 meal the text reads next, else confirm.
+        // TODO: Replace with icon.
+        if (this.meals.length > 1) {
+            this.upperRightButton.setText("next");
+        } else {
+            this.upperRightButton.setText("confirm");
+        }
         this.hideFragments(true);
 
         // Create the arrays.
@@ -123,10 +142,13 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             this.recipesOffset[this.mealIndex] = 0;
             // Nullify recipes loaded?
             this.recipesLoaded[this.mealIndex] = null;
+
             // Go back to the previous meal index.
             this.mealIndex--;
-            // Load new recipes
-            this.loadNewRecipes(this.recipesOffset[this.mealIndex]);
+
+            // Reload every view.
+            this.reloadAllViews();
+
         } else {
             // If were on the first meal index hide the activity.
             Intent resultIntent = new Intent();
@@ -135,7 +157,25 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         }
 
     }
+    // Restores every view to initial state, called when paging.
+    private void reloadAllViews() {
 
+        // Deselect all fragments.
+        this.topFragment.hide(true);
+        this.middleFragment.hide(true);
+        this.bottomFragment.hide(true);
+
+        // TODO: Replace with icon.
+        if (mealIndex == this.meals.length - 1) {
+            this.upperRightButton.setText("confirm");
+        } else {
+            this.upperRightButton.setText("next");
+        }
+        this.upperRightButton.setEnabled(false);
+
+        // Load new recipes
+        this.loadNewRecipes(this.recipesOffset[this.mealIndex]);
+    }
     // Hides all recipe info fragments.
     private void hideFragments(boolean showSpin) {
         int[] ids = {R.id.topInfo,R.id.middleInfo,R.id.bottomInfo};
@@ -260,8 +300,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         // Move forward a meal index.
         this.mealIndex++;
 
-        // Load new recipes.
-        loadNewRecipes(this.recipesOffset[this.mealIndex]);
+        this.reloadAllViews();
     }
     //endregion
 
@@ -310,23 +349,27 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             return;
         }
         // Top fragment was selected.
-        if (fragment.getId() == R.id.topInfo) {
+        if (fragment == this.topFragment) {
+
             // Deselect other fragments.
-            this.deselectFragments(new int[]{R.id.middleInfo,R.id.bottomInfo});
+            this.middleFragment.setSelected(false);
+            this.bottomFragment.setSelected(false);
 
             this.madeChoice(this.recipesShowing[0]);
         }
         // Middle fragment was selected.
-        else if (fragment.getId() == R.id.middleInfo) {
+        else if (fragment == middleFragment) {
             // Deselect other fragments.
-            this.deselectFragments(new int[]{R.id.topInfo,R.id.bottomInfo});
+            this.topFragment.setSelected(false);
+            this.bottomFragment.setSelected(false);
 
             this.madeChoice(this.recipesShowing[1]);
         }
         // Bottom fragment was selected.
         else {
             // Deselect other fragments.
-            this.deselectFragments(new int[]{R.id.topInfo,R.id.middleInfo});
+            this.middleFragment.setSelected(false);
+            this.topFragment.setSelected(false);
 
             this.madeChoice(this.recipesShowing[2]);
         }
