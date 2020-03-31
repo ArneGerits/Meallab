@@ -34,7 +34,7 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
     private Nutrient[] progress;
 
     private LinearLayout[] microLayouts;
-    private final int kMicroHeight = 140;
+    private final int kMicroHeight = 175;
 
     private LinearLayout microHolder;
 
