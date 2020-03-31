@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -395,12 +397,32 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     //Region onClickListener
 
     public void onClick(View view) {
+        Intent intent = new Intent(this, RecipeSelectionActivity.class);
+        intent.putExtra("date",selectedDate);
+
         switch (view.getId()) {
             case R.id.image:
+
+                intent.putExtra("mealChoice", SpoonacularMealType.BREAKFAST);
+
+            break;
+
+            case R.id.image2:
+
+                intent.putExtra("mealChoice", SpoonacularMealType.LUNCH);
+
+                break;
+
+            case R.id.image3:
+
+                intent.putExtra("mealChoice", SpoonacularMealType.DINNER);
+
+                break;
 
 
 
         }
+        startActivity(intent);
     }
 
 

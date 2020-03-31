@@ -17,4 +17,9 @@ public class DayMealPlan {
      * The date of this meal plan.
      */
     Date date;
+
+    public DayMealPlan(Recipe[] recipes, Date date){
+        this.recipes = recipes;
+        this.date = date;
+    }
 }

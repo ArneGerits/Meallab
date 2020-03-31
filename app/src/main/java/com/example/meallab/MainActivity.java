@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //this boolean will cause the activity under test to be launched on startup
-        boolean testing = true;
+        boolean testing = false;
 
         setContentView(R.layout.activity_main);
 
@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToSecondActivity() {
 
-        Intent intent = new Intent(this, SecondActivity.class);
-
+        Intent intent = new Intent(this, DayOverviewActivity.class);
+        //Intent intent = new Intent(this,RecipeSelectionActivity.class);
         startActivity(intent);
 
     }
@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("mealType", SpoonacularMealType.BREAKFAST.toString());
         startActivity(intent);*/
 
-       // Intent intent = new Intent(this, DayOverviewActivity.class);
-        Intent intent = new Intent(this,RecipeSelectionActivity.class);
+        Intent intent = new Intent(this, DayOverviewActivity.class);
+        //Intent intent = new Intent(this,RecipeSelectionActivity.class);
         startActivity(intent);
 
     }

@@ -45,7 +45,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     // The meal type of this activity.
     private SpoonacularMealType mealType = SpoonacularMealType.BREAKFAST;
-    String mealChoice = getIntent().getStringExtra("mealChoice");
+
 
 
     Gson gson = new Gson();
@@ -57,6 +57,16 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         Button reroll  = this.findViewById(R.id.rerollButton);
         Button confirm = this.findViewById(R.id.confirmButton);
+
+        //disable Confirm button initially
+        confirm.setEnabled(false);
+
+        //get mealtype from previous activity
+        SpoonacularMealType mealChoice =(SpoonacularMealType) getIntent().getSerializableExtra("mealChoice");
+        setMealType(mealChoice);
+
+
+
 
         reroll.setOnClickListener( new View.OnClickListener() {
 
@@ -78,6 +88,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         // Setup the API communication
         api = new SpoonacularAPI(this);
         // Load the recipes.
+
         loadNewRecipes(0);
     }
 
@@ -182,7 +193,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             // Load new recipes from the network.
             loadNewRecipes(currentOffset);
         } else {
-            this.recipesShowing = Arrays.copyOfRange(recipes,currentOffset % 10, (currentOffset + 3) % 10);
+            this.recipesShowing = Arrays.copyOfRange(recipes,currentOffset % 9, (currentOffset + 3) % 10);
 
             // Load recipe data for recipes that were already retrieved.
             loadRecipeData(this.recipesShowing);
@@ -191,6 +202,10 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     }
     // Called when the user clicks the confirm button.
     private void confirm() {
+
+        Intent intent = new Intent(this,DayOverviewActivity.class);
+        intent.putExtra("SelectedRecipe",gson.toJson(this.recipeChosen));
+        startActivity(intent);
 
     }
 
