@@ -228,10 +228,6 @@ public class Recipe {
             this.nutrients = new Nutrient[nuts.size()];
             this.nutrients = nuts.toArray(this.nutrients);
 
-            System.out.println("Recipe nutrients added:");
-            for (Nutrient n : this.nutrients) {
-                System.out.println("nutreint: " + n.name);
-            }
         } catch (JSONException e) {
 
         }

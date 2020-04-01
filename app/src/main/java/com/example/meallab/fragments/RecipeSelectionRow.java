@@ -134,7 +134,6 @@ public class RecipeSelectionRow extends Fragment {
      * Shows all data in the view.
      */
     public void show() {
-
         this.hidden = false;
 
         ConstraintLayout l = getView().findViewById(R.id.animLayout);

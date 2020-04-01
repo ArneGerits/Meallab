@@ -47,7 +47,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
     // The reroll button is positioned in the upper left.
     Button rerollButton;
-
+    TextView titleTextView;
     // The upper right button can either be a 'next' button, to choose next recipe or a 'confirm' button.
     Button upperRightButton;
 
@@ -72,6 +72,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         setContentView(R.layout.activity_recipe_selection);
 
         String jsonMeals = getIntent().getStringExtra("meals");
+        this.meals = gson.fromJson(jsonMeals, SpoonacularMealType[].class);
 
         // ----- Setting outlets ------
 
@@ -79,15 +80,19 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         this.middleFragment = (RecipeSelectionRow) this.getSupportFragmentManager().findFragmentById(R.id.middleInfo);
         this.bottomFragment = (RecipeSelectionRow) this.getSupportFragmentManager().findFragmentById(R.id.bottomInfo);
 
-        this.meals = gson.fromJson(jsonMeals, SpoonacularMealType[].class);
         this.rerollButton  = this.findViewById(R.id.rerollButton);
         this.upperRightButton = this.findViewById(R.id.confirmButton);
+        this.titleTextView = this.findViewById(R.id.titleTextView);
 
         this.rerollButton.setOnClickListener( new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                reroll();
+
+                // Increase the current recipe offset.
+                recipesOffset[mealIndex] += 3;
+
+                showNextRecipes(recipesOffset[mealIndex] % 9 == 0);
             }
         });
         this.upperRightButton.setOnClickListener( new View.OnClickListener() {
@@ -109,15 +114,6 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         // ------
 
-        // If there is more than 1 meal the text reads next, else confirm.
-        // TODO: Replace with icon.
-        if (this.meals.length > 1) {
-            this.upperRightButton.setText("next");
-        } else {
-            this.upperRightButton.setText("confirm");
-        }
-        this.hideFragments(true);
-
         // Create the arrays.
         this.recipesOffset = new int[this.meals.length];
         this.recipesLoaded = new Recipe[this.meals.length][];
@@ -125,14 +121,15 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         // Setup the API communication
         api = new SpoonacularAPI(this);
-        // Load the recipes.
-        loadNewRecipes(this.recipesOffset[this.mealIndex]);
+
+        this.showNextRecipes(true);
+
+        this.reloadAllViews();
     }
 
     @Override
     public void onBackPressed() {
         // your code.
-        System.out.println("back is pressed homey");
 
         if (this.mealIndex != 0) {
             // TODO: Decide on this.
@@ -149,6 +146,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             // Reload every view.
             this.reloadAllViews();
 
+            this.showNextRecipes(false);
         } else {
             // If were on the first meal index hide the activity.
             Intent resultIntent = new Intent();
@@ -173,8 +171,8 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         }
         this.upperRightButton.setEnabled(false);
 
-        // Load new recipes
-        this.loadNewRecipes(this.recipesOffset[this.mealIndex]);
+        // Set a new title
+        this.setTitle(this.meals[this.mealIndex]);
     }
     // Hides all recipe info fragments.
     private void hideFragments(boolean showSpin) {
@@ -195,7 +193,6 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         // todo: Intellegently set min/max values.
         request.maxCals = 800;
 
-        System.out.println("trying to receive recipes now");
         api.retrieveRecipes(request, this);
     }
 
@@ -203,15 +200,14 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     protected  void setTitle(SpoonacularMealType type) {
 
         //TODO: Localize.
-        TextView title = (TextView) findViewById(R.id.titleTextView);
         if (this.meals[this.mealIndex]== SpoonacularMealType.BREAKFAST) {
-            title.setText("Choose breakfast");
+            this.titleTextView.setText("Choose breakfast");
         } else if (this.meals[this.mealIndex] == SpoonacularMealType.LUNCH) {
-            title.setText("Choose lunch");
+            this.titleTextView.setText("Choose lunch");
         } else if (this.meals[this.mealIndex] == SpoonacularMealType.SNACK) {
-            title.setText("Choose snack");
+            this.titleTextView.setText("Choose snack");
         } else {
-            title.setText("Choose dinner");
+            this.titleTextView.setText("Choose dinner");
         }
     }
 
@@ -253,20 +249,17 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     //todo: show error screen.
+                    System.out.println("VOLLEY ERROR recipe select " +  error.toString());
                 }
             });
         }
-        // Increase the current recipe offset.
-        this.recipesOffset[this.mealIndex] += 3;
     }
     //region Actions
 
     // Called when the user clicks the reroll button.
-    private void reroll() {
+    private void showNextRecipes(boolean loadNew) {
 
         int currentOffset = this.recipesOffset[this.mealIndex];
-
-        boolean loadNew = (currentOffset % 9) == 0;
 
         this.hideFragments(loadNew);
         this.madeChoice(null);
@@ -276,7 +269,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             // Load new recipes from the network.
             loadNewRecipes(currentOffset);
         } else {
-            this.recipesShowing = Arrays.copyOfRange(recipesLoaded[this.mealIndex],currentOffset % 10, (currentOffset + 3) % 10);
+            this.recipesShowing = Arrays.copyOfRange(recipesLoaded[this.mealIndex],currentOffset % 9, (currentOffset % 9) + 3);
 
             // Load recipe data for recipes that were already retrieved.
             loadRecipeData(this.recipesShowing);
@@ -301,6 +294,8 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         this.mealIndex++;
 
         this.reloadAllViews();
+
+        this.showNextRecipes(true);
     }
     //endregion
 
