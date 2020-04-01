@@ -380,12 +380,14 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     SpoonacularMealType meal = mealsToEat[i];
                     structure[i] = true;
                     for (int j = 0; j < recipes.length; j++) {
-                        System.out.println("mealtype of recipe: " + recipes[j].mealType.name());
                         if (meal == recipes[j].mealType) {
                             structure[i] = false;
                         }
                     }
-                    System.out.println("s: " + structure[i]);
+                }
+                // Set the amount of calories goal.
+                for (StoredRecipe r : recipes) {
+                    r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
                 }
                 this.cardsFragment.setValues(recipes, structure);
             }
@@ -569,6 +571,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         for (StoredRecipe r : this.currentDay.recipes) {
             System.out.println("TO STORE: " + r.name);
         }
+
         // Save the changes
         this.store.synchronize();
     }

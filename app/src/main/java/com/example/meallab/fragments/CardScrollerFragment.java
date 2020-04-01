@@ -149,7 +149,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
 
         this.titleTextView = v.findViewById(R.id.titleTextView);
         this.scrollView    = v.findViewById(R.id.recipeCardScrollView);
-        this.scrollView.setLayout(20,400);
+        this.scrollView.setLayout(40,750);
         this.scrollView.setListener(this);
 
         if (this.recipes != null) {

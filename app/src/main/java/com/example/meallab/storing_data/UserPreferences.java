@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.meallab.Nutrients.Nutrient;
+import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularDiet;
 import com.example.meallab.Spoonacular.SpoonacularIntolerance;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
@@ -70,17 +71,13 @@ public class UserPreferences {
         // Get the JSON
         String result = this.pref.getString(C_INTOLERANCES,"{}");
         // Convert to objects.
-        SpoonacularIntolerance[] i = this.gson.fromJson(result, SpoonacularIntolerance[].class);
-
-        return i;
+        return this.gson.fromJson(result, SpoonacularIntolerance[].class);
     }
     /**
      * Get the nutrients the user tracks.
      * @return The current nutrients the user tracks.
      */
     public Nutrient[] getTrackedNutrients() {
-
-        final long startTime = System.currentTimeMillis();
 
         // Get the JSON
         String result = this.pref.getString(C_NUTRIENTS,"[]");
@@ -94,24 +91,12 @@ public class UserPreferences {
             Nutrient[] macros = this.getDefaultMacroNutrients();
             // Get the default micros but only take 5.
             Nutrient[] micros = this.getDefaultMicroNutrients();//Arrays.copyOf(this.getDefaultMicroNutrients(),5);
-            // 2000kcal is default for an adult man.
-            System.out.println("macros" + macros);
-            System.out.println("micros: " + micros);
             // Concat the macros and micros.
             Nutrient[] total = Arrays.copyOf(macros, macros.length + micros.length);
             System.arraycopy(micros, 0, total, macros.length, micros.length);
 
             n = total;
         }
-        /*
-        // Cache the results.
-        this.trackedNutrientsCache = n;
-
-         */
-        final long endTime = System.currentTimeMillis();
-
-        System.out.println("get tracked nutrients load time(ms): " + (endTime - startTime));
-
         return n;
     }
     /**
@@ -178,34 +163,6 @@ public class UserPreferences {
         String json = gson.toJson(meals);
         editor.putString(json, C_MEALS_DAY);
         editor.apply();
-    }
-
-    /**
-     * Cross refs the meals the user wants to eat gives recipes to return the internal structure.
-     * @return
-     */
-    public boolean[] getRecipeStructure(StoredRecipe[] recipes) {
-        // Get the meals the user wants to eat.
-        SpoonacularMealType[] meals = this.getMealsPerDay();
-
-        // Now cross reference it to respect empties.
-
-        // Duplicate in an arraylist to remove objects.
-        ArrayList<StoredRecipe> arr = new ArrayList<>(Arrays.asList(recipes));
-        boolean[] structure = new boolean[meals.length];
-        // Cross reference to create the structure.
-        for (int i = 0; i < meals.length; i++) {
-            boolean isEmpty = true;
-            for (int j = 0; j < arr.size(); j++) {
-                if (meals[i] == arr.get(j).mealType) {
-                    isEmpty = false;
-                    arr.remove(j);
-                    break;
-                }
-            }
-            structure[i] = isEmpty;
-        }
-        return structure;
     }
 
     // ---- Private Methods ----
