@@ -41,7 +41,7 @@
 
         <fragment
             android:id="@+id/detailFragment"
-            android:name="com.example.meallab.fragments.RecipeSelectionInfo"
+            android:name="com.example.meallab.fragments.RecipeSimpleInfoFragment"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginEnd="16dp"

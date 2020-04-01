@@ -10,10 +10,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.meallab.R;
@@ -22,7 +20,7 @@ import com.example.meallab.R;
 /**
  * Shows a recipes info(image, other details) in the RecipeSelectionActivity.
  */
-public class RecipeSelectionRow extends Fragment {
+public class RecipeSelectionRowFragment extends Fragment {
 
     // ----- Outlets -----
     ImageView recipeImage;
@@ -38,7 +36,7 @@ public class RecipeSelectionRow extends Fragment {
 
     private int shortAnimationDuration;
 
-    public RecipeSelectionRow() {
+    public RecipeSelectionRowFragment() {
         // Required empty public constructor
     }
 
@@ -55,7 +53,7 @@ public class RecipeSelectionRow extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_recipe_info, container, false);
+        View root = inflater.inflate(R.layout.fragment_recipe_selection_row, container, false);
 
         this.titleTextView = root.findViewById(R.id.titleTextView);
         this.spinner = root.findViewById(R.id.spinner);
@@ -183,8 +181,8 @@ public class RecipeSelectionRow extends Fragment {
         this.recipeImage.setImageBitmap(image);
         this.spinner.setVisibility(View.INVISIBLE);
     }
-    public RecipeSelectionInfo detailFragment() {
-        return (RecipeSelectionInfo) getChildFragmentManager().findFragmentById(R.id.detailFragment);
+    public RecipeSimpleInfoFragment detailFragment() {
+        return (RecipeSimpleInfoFragment) getChildFragmentManager().findFragmentById(R.id.detailFragment);
     }
 
     /**
@@ -204,12 +202,12 @@ public class RecipeSelectionRow extends Fragment {
          * @param fragment The fragment the user selected.
          * @param selected True if the user selected this fragment, false if it is deselected.
          */
-        void selectedFragment(RecipeSelectionRow fragment, boolean selected);
+        void selectedFragment(RecipeSelectionRowFragment fragment, boolean selected);
 
         /**
          * Called when the user wants more info for this fragment.
          * @param fragment The fragment the user wants more info of.
          */
-        void moreInfoFragment(RecipeSelectionRow fragment);
+        void moreInfoFragment(RecipeSelectionRowFragment fragment);
     }
 }

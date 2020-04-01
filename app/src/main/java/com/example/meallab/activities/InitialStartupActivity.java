@@ -57,7 +57,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
         bar = (SeekBar) this.findViewById(R.id.seekBar);
         bar2 = (SeekBar) this.findViewById(R.id.seekBar2);
-        mTextView = ((TextView) InitialStartupActivity.this.findViewById(R.id.timeTextView));
+        mTextView = ((TextView) InitialStartupActivity.this.findViewById(R.id.prepTimeTextView));
         mTextView2 = ((TextView) InitialStartupActivity.this.findViewById(R.id.textView10));
         int progressValue = sharedPreferences.getInt("caloriesDaily", 2000);
         mTextView.setText(String.format("%d",progressValue));

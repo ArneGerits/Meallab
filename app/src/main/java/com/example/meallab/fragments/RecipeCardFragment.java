@@ -32,7 +32,7 @@ public class RecipeCardFragment extends Fragment {
     private static final String ARG_PARAM6 = "isEmpty";
     private static final String ARG_PARAM7 = "index";
 
-    // Outlets
+    // ----- Outlets -----
     private ImageView recipeImageView;
     private SimpleNutrientsOverviewFragment nutrientsOverview;
     private TextView cookingTimeTextView;
