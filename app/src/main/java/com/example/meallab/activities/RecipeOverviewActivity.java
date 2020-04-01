@@ -57,7 +57,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
         if(json.equals("")){
             //retrieve recipe.
             SpoonacularAPI api = new SpoonacularAPI(this);
-            RecipeRequest recipeRequest = new RecipeRequest(SpoonacularMealType.SNACK);
+            RecipeRequest recipeRequest = new RecipeRequest(SpoonacularMealType.DINNER);
             recipeRequest.offset=0;
             api.retrieveRecipes(recipeRequest,this);
 

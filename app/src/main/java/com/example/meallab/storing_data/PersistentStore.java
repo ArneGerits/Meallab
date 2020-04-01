@@ -227,8 +227,7 @@ public class PersistentStore {
                 // Do nothing
             }
             //TODO:UNDO
-            return "";
-            //return json;
+            return json;
         }
     }
     /**

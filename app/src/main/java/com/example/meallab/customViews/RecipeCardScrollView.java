@@ -77,6 +77,14 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
 
     private void setup() {
         setHorizontalScrollBarEnabled(false);
+
+        // Create the horizontal view holder.
+        this.holder = new LinearLayout(this.getContext());
+        this.holder.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        this.holder.setOrientation(LinearLayout.HORIZONTAL);
+        this.holder.setGravity(Gravity.CENTER);
+        this.holder.setId(View.generateViewId());
+        this.addView(this.holder);
     }
 
     // ---- Public Setup Methods ----
@@ -101,7 +109,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         for (RecipeCardFragment f : fragments) {
             f.setLayoutListener(this);
         }
-        this.setupHolder();
+        this.addFragmentsToHolder(fragments);
 
         setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -205,19 +213,12 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
     }
 
     // Adds views and dividers to the holder view.
-    private void setupHolder() {
+    private void addFragmentsToHolder(RecipeCardFragment[] fragments) {
 
-        // Create the horizontal view holder.
-        this.holder = new LinearLayout(this.getContext());
-        this.holder.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        this.holder.setOrientation(LinearLayout.HORIZONTAL);
-        this.holder.setGravity(Gravity.CENTER);
-        this.holder.setId(View.generateViewId());
-        this.addView(this.holder);
-
+        this.holder.removeAllViews();
         // Add the fragments.
-        for (int i = 0; i < this.fragments.length; i++) {
-            RecipeCardFragment f = this.fragments[i];
+        for (int i = 0; i < fragments.length; i++) {
+            RecipeCardFragment f = fragments[i];
 
             FragmentManager fragMan = ((AppCompatActivity) this.getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = fragMan.beginTransaction();

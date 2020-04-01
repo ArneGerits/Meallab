@@ -374,8 +374,19 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 this.cardsFragment.setValues(recipes, structure);
             } else {
 
-                boolean[] structure = this.preferences.getRecipeStructure(recipes);
-
+                SpoonacularMealType[] mealsToEat = this.preferences.getMealsPerDay();
+                boolean[] structure = new boolean[mealsToEat.length];
+                for (int i = 0; i < structure.length; i++) {
+                    SpoonacularMealType meal = mealsToEat[i];
+                    structure[i] = true;
+                    for (int j = 0; j < recipes.length; j++) {
+                        System.out.println("mealtype of recipe: " + recipes[j].mealType.name());
+                        if (meal == recipes[j].mealType) {
+                            structure[i] = false;
+                        }
+                    }
+                    System.out.println("s: " + structure[i]);
+                }
                 this.cardsFragment.setValues(recipes, structure);
             }
         }
@@ -383,10 +394,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // Sets up the nutrients view.
     private void setupNutrientsView(StoredDay day) {
 
-        System.out.println("setup nutrients now.");
-        for (StoredRecipe r : day.recipes) {
-            System.out.println("RECIPE: " + r.name);
-        }
         // 1. Get all tracked nutrients.
         Nutrient[] tracked = this.preferences.getTrackedNutrients();
 
@@ -451,10 +458,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     public void initializedSuccessfully(boolean success) {
 
         StoredDay today = this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0];
-        System.out.println("INIT successfull");
-        for (StoredRecipe r : today.recipes) {
-            System.out.println("RECIPE STORED: " + r.name);
-        }
         // Load the current day, if no day exists yet a new empty day is created.
         this.switchToDay(this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0]);
     }
@@ -580,11 +583,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         // Add the recipes to storedDay.
         this.addRecipesToDay(recipes);
 
-        // Reload the card view.
-       // this.setupCardScrollView(this.currentDay.recipes);
-
-        // Reload nutrition
-        this.setupNutrientsView(this.currentDay);
+        // Reload all views.
+        this.switchToDay(this.currentDay);
     }
 
     @Override

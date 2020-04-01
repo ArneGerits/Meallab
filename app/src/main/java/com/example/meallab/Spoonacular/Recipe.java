@@ -69,7 +69,7 @@ public class Recipe {
      * @param json The top level json object
      * @param type The type of recipe this is
      */
-    public Recipe(JSONObject json, SpoonacularMealType type) throws JSONException{
+    public Recipe(JSONObject json, SpoonacularMealType type) throws JSONException {
         this.type = type;
 
         // Setting simple recipe properties.

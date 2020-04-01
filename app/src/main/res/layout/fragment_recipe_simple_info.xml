@@ -17,7 +17,7 @@
             android:id="@+id/kcalImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.7"
+            android:layout_weight="1.5"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -27,7 +27,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="center|left"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textColor="#ffffff"/>
     </LinearLayout>
 
         <LinearLayout
@@ -40,17 +41,18 @@
                 android:id="@+id/timeImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.7"
+                android:layout_weight="1.5"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
-                android:id="@+id/prepTimeTextView"
+                android:id="@+id/cookingTimeTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="center|left"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textColor="#ffffff"/>
         </LinearLayout>
 
         <LinearLayout
@@ -63,7 +65,7 @@
                 android:id="@+id/servingsImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.7"
+                android:layout_weight="1.5"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <LinearLayout
@@ -76,15 +78,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.5"
+                    android:layout_weight="1"
                     android:gravity="center|left"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="#ffffff" />
 
                 <ImageView
                     android:id="@+id/costImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="1"
                     tools:srcCompat="@tools:sample/avatars" />
             </LinearLayout>
         </LinearLayout>

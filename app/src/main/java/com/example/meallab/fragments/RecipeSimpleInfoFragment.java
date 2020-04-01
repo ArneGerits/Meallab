@@ -81,9 +81,10 @@ public class RecipeSimpleInfoFragment extends Fragment {
     @SuppressLint("DefaultLocale")
     private void loadAllViews() {
 
-        this.caloriesTextView.setText(String.format("%d", (int)this.amountOfCalories));
+        // TODO: Localize
+        this.caloriesTextView.setText(String.format("%d", (int)this.amountOfCalories) + " cals");
         this.servingsTextView.setText(String.format("%d", this.servings));
-        this.prepTimeTextView.setText(String.format("%d", this.readyTime));
+        this.prepTimeTextView.setText(String.format("%d", this.readyTime) + " mins");
 
         // TODO: HANDLE THE IMAGE FOR THE COST.
     }
@@ -107,7 +108,7 @@ public class RecipeSimpleInfoFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_recipe_simple_info, container, false);
 
         this.caloriesTextView = root.findViewById(R.id.caloriesTextView);
-        this.prepTimeTextView = root.findViewById(R.id.prepTimeTextView);
+        this.prepTimeTextView = root.findViewById(R.id.cookingTimeTextView);
         this.servingsTextView = root.findViewById(R.id.servingsTextView);
 
         this.costImageView    = root.findViewById(R.id.costImageView);

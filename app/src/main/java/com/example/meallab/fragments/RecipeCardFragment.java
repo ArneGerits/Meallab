@@ -152,6 +152,7 @@ public class RecipeCardFragment extends Fragment {
             this.recipeLayout.setVisibility(View.VISIBLE);
             this.nutrientsOverview.getView().setVisibility(View.VISIBLE);
 
+            System.out.println("cooking time text view: " + this.cookingTimeTextView);
             // Set the text views.
             this.cookingTimeTextView.setText("" + this.cookingMins + " min");
             this.servingsTextView.setText("" + this.servings);
@@ -188,7 +189,7 @@ public class RecipeCardFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_recipe_card, container, false);
         this.servingsTextView    = v.findViewById(R.id.servingsTextView);
-        this.cookingTimeTextView = v.findViewById(R.id.recipeCookingTime);
+        this.cookingTimeTextView = v.findViewById(R.id.cookingTimeTextView);
         this.costTextView        = v.findViewById(R.id.costTextView);
         this.recipeImageView     = v.findViewById(R.id.recipeImageView);
         this.recipeLayout        = v.findViewById(R.id.recipeLayout);
@@ -204,7 +205,6 @@ public class RecipeCardFragment extends Fragment {
                 }
             }
         });
-
         if (this.name != null) {
             loadAllViews();
         }

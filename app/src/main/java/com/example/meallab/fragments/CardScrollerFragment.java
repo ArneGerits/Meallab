@@ -111,7 +111,6 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
             }
             // Add it to the fragments.
             this.fragments[i] = f;
-
         }
         // Add the cards to the scrollview.
         this.scrollView.setFragments(this.fragments);

@@ -63,6 +63,7 @@ public class StoredRecipe implements Parcelable {
      */
     public StoredRecipe(Recipe r) {
         this.name = r.title;
+        this.mealType = r.type;
         this.recipeID = r.id;
         this.imageURL = r.getImageURLForSize(SpoonacularImageSize.S_636x393);
         this.isFavorite = false;

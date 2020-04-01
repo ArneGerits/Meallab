@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 import java.util.Arrays;
 
 /**
- * Allows the user to choose between 3 recipes.
+ * Allows the user to choose between 3 recipes for each meal type.
  */
 public class RecipeSelectionActivity extends AppCompatActivity implements SpoonacularAPI.SpoonacularSimpleRecipeListener, RecipeSelectionRowFragment.recipeInfoFragmentListener {
 
@@ -203,10 +203,10 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             this.titleTextView.setText("Choose breakfast");
         } else if (this.meals[this.mealIndex] == SpoonacularMealType.LUNCH) {
             this.titleTextView.setText("Choose lunch");
-        } else if (this.meals[this.mealIndex] == SpoonacularMealType.SNACK) {
-            this.titleTextView.setText("Choose snack");
-        } else {
+        } else if (this.meals[this.mealIndex] == SpoonacularMealType.DINNER) {
             this.titleTextView.setText("Choose dinner");
+        } else {
+            this.titleTextView.setText("Choose snack");
         }
     }
 
@@ -232,7 +232,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             frag.setTitle(currentRecipe.title);
             frag.setListener(this);
             frag.detailFragment().setValues(currentRecipe.nutrients[0].amount, currentRecipe.servings,
-                    currentRecipe.cookingMinutes, currentRecipe.getCost());
+                    currentRecipe.readyInMinutes, currentRecipe.getCost());
 
             // Load the image.
             imageLoader.get(url, new ImageLoader.ImageListener() {
