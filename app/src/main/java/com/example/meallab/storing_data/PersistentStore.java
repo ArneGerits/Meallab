@@ -255,8 +255,6 @@ public class PersistentStore {
                 try {
 
                     String json = gson.toJson(this.days);
-                    System.out.println("Writing json: " + json);
-
                     this.writeToFile(this.fileName, json, c);
 
                 } catch (IOException e) {

@@ -2,12 +2,14 @@ package com.example.meallab.Nutrients;
 
 
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.meallab.R;
@@ -95,6 +97,10 @@ public class MicroNutrientFragment extends Fragment {
         this.title = v.findViewById(R.id.nameTextView);
         this.amount = v.findViewById(R.id.amountTextView);
 
+        // Make sure the text size is scale to fit
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.amount,1,18,1, TypedValue.COMPLEX_UNIT_SP);
+
+        //this.amount.
         if (this.n != null) {
             loadAllViews(this.n);
         }

@@ -152,7 +152,6 @@ public class RecipeCardFragment extends Fragment {
             this.recipeLayout.setVisibility(View.VISIBLE);
             this.nutrientsOverview.getView().setVisibility(View.VISIBLE);
 
-            System.out.println("cooking time text view: " + this.cookingTimeTextView);
             // Set the text views.
             this.cookingTimeTextView.setText("" + this.cookingMins + " min");
             this.servingsTextView.setText("" + this.servings);

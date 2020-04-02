@@ -89,7 +89,7 @@ public class SimpleNutrientsOverviewFragment extends Fragment {
 
         this.barChart.setLeftText("0");
         this.barChart.setRightText(String.format("%d", (int)calories.amountDailyTarget) + calories.unit);
-        System.out.println("calories progress today: " + calories.progressToday());
+
         this.barChart.setPercentProgress(calories.progressToday());
     }
     /**
@@ -115,7 +115,6 @@ public class SimpleNutrientsOverviewFragment extends Fragment {
         if (getArguments() != null) {
             this.progress   = (Nutrient[]) getArguments().getParcelableArray(ARG_PARAM1);
         }
-        System.out.println("on create");
     }
 
     @Override

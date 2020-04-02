@@ -4,6 +4,7 @@ package com.example.meallab.Nutrients;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,9 +87,13 @@ public class HorizontalBarChart extends Fragment {
                     if (progressTextView.getMeasuredWidth() + kMargin < (barView.getRightIndicatorLocation()) - r.right) {
                         // Enough room to place it outside.
                         p.leftMargin = (int)(r.right + kMargin);
+                        // Make sure text gravity is left
+                        progressTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
                     } else {
                         // Not enough room so place it inside.
                         p.leftMargin = (int)(r.right - progressTextView.getWidth() - kMargin);
+                        // Make sure text gravity is right
+                        progressTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
                     }
                 } else {
                     float loc = barView.getRightIndicatorLocation();
@@ -98,6 +103,8 @@ public class HorizontalBarChart extends Fragment {
                     if (loc > p.leftMargin && loc < p.leftMargin + progressTextView.getWidth()) {
                         p.leftMargin = (int)(r.right - kMargin - progressTextView.getWidth());
                     }
+                    // Make sure gravity is center.
+                    progressTextView.setGravity(Gravity.CENTER);
                 }
 
                 progressTextView.setLayoutParams(p);
@@ -155,7 +162,8 @@ public class HorizontalBarChart extends Fragment {
         this.rightTextView    = v.findViewById(R.id.rightTextView);
         this.progressTextView = v.findViewById(R.id.percentageTextView);
         this.titleTextView    = v.findViewById(R.id.titleTextView);
-        
+
+        // Scale the progessview text size.
         TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.progressTextView,1,18,1,TypedValue.COMPLEX_UNIT_SP);
 
         return v;

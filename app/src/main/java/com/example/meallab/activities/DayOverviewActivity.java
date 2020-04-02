@@ -56,6 +56,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
 
 import kotlin.Unit;
@@ -121,6 +122,11 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Used for api communication with Spoonacular
     private SpoonacularAPI api;
+
+    // A cache of fully loaded recipes is kept to decrease API calls,
+    // it maps recipe IDS to Recipe objects.
+    private HashMap<Integer, Recipe> recipesCache = new HashMap<Integer, Recipe>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -394,7 +400,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         }
     }
     // Sets up the nutrients view.
-    private void setupNutrientsView(StoredDay day) {
+    private void setupNutrientsView(StoredDay day, boolean isUpdate) {
 
         // 1. Get all tracked nutrients.
         Nutrient[] tracked = this.preferences.getTrackedNutrients();
@@ -410,7 +416,12 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         }
-        this.nutrientFragment.setValues(tracked);
+
+        if (isUpdate) {
+            this.nutrientFragment.updateExistingNutrients(tracked);
+        } else {
+            this.nutrientFragment.setValues(tracked);
+        }
     }
 
     //endregion
@@ -450,7 +461,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         this.setupDayShoppingList(day.shoppingList);
 
-        this.setupNutrientsView(day);
+        this.setupNutrientsView(day,false);
     }
 
 
@@ -523,19 +534,40 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
 
 
-
     // Called when the user has finished choosing recipes in the recipe selection activity.
     // load detailed recipe info.
     private void recipesChosen(Recipe[] recipes) {
 
-        // TODO: Cross ref to avoid loading twice.
-        int[] recipeIDS                 = new int[recipes.length];
-        SpoonacularMealType[] mealTypes = new SpoonacularMealType[recipes.length];
+        // 1. Create a stored day object for each recipe.
+        this.addRecipesToDay(recipes);
+
+        // 2. Populate the recipeCardView and nutrients view.
+        this.setupCardScrollView(this.currentDay.recipes);
+        this.setupNutrientsView(this.currentDay, true);
+
+        // 3. Compute for which recipes additional data needs to be loaded.
+
+        // Array with recipes to load more data from.
+        ArrayList<Recipe> toLoadMore = new ArrayList<>();
+
+        for (Recipe r : recipes) {
+            if (!r.hasLoadedFully) {
+                // It needs to be loaded more.
+                toLoadMore.add(r);
+            } else {
+                // It is loaded fully, store it in the cache.
+                this.recipesCache.put(r.id,r);
+            }
+        }
+        // 4. Load the data from those.
+
+        int[] recipeIDS                 = new int[toLoadMore.size()];
+        SpoonacularMealType[] mealTypes = new SpoonacularMealType[toLoadMore.size()];
 
         // The recipes do not have detailed info yet we need to retrieve it.
-        for (int i = 0; i < recipes.length; i++) {
-            recipeIDS[i] = recipes[i].id;
-            mealTypes[i] = recipes[i].type;
+        for (int i = 0; i < toLoadMore.size(); i++) {
+            recipeIDS[i] = toLoadMore.get(i).id;
+            mealTypes[i] = toLoadMore.get(i).type;
         }
         // Load the data for the recipes chosen.
         this.api.retrieveRecipeDetailedInfo(recipeIDS, mealTypes, this);
@@ -557,7 +589,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             // There can only be one here.
             Recipe toAdd = recipes[0];
 
-            ArrayList<StoredRecipe> storedRecipes = new ArrayList<StoredRecipe>(Arrays.asList(this.currentDay.recipes));
+            ArrayList<StoredRecipe> storedRecipes = new ArrayList<>(Arrays.asList(this.currentDay.recipes));
             if (this.editingIndex >= storedRecipes.size()) {
                 storedRecipes.add(new StoredRecipe(toAdd));
             } else {
@@ -566,10 +598,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             StoredRecipe[] arr = new StoredRecipe[storedRecipes.size()];
             arr = storedRecipes.toArray(arr);
             this.currentDay.recipes = arr;
-        }
-        System.out.println("add recipes to the current day.");
-        for (StoredRecipe r : this.currentDay.recipes) {
-            System.out.println("TO STORE: " + r.name);
         }
 
         // Save the changes
@@ -581,13 +609,28 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     public void retrievedAdditionalInformation(Recipe[] recipes) {
 
         System.out.println("Retrieved detailed information fo the recipes");
-        // Set the recipe(s) in storedDay, update cardView, update nutrition
 
-        // Add the recipes to storedDay.
-        this.addRecipesToDay(recipes);
+        // Store the recipes in the cache.
+        for (Recipe r : recipes) {
+            this.recipesCache.put(r.id,r);
+        }
 
-        // Reload all views.
-        this.switchToDay(this.currentDay);
+        // Add the info about the nutrients to storedDay.
+        for (StoredRecipe r : this.currentDay.recipes) {
+            for (Recipe res : recipes) {
+                if (r.recipeID == res.id) {
+                    r.nutrients = res.nutrients;
+                }
+            }
+        }
+
+        // Sync the store.
+        this.store.synchronize();
+
+        // Reload the nutrients and shopping list.
+        this.setupNutrientsView(this.currentDay, true);
+
+        this.setupDayShoppingList(this.currentDay.shoppingList);
     }
 
     @Override

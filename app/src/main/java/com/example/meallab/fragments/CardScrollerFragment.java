@@ -177,7 +177,6 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
 
     @Override
     public void clickedOnFragment(RecipeCardFragment fragment) {
-        System.out.println("CLICKED ON FRAGMENT");
         // Determine if the fragment is an 'add' fragment or recipe.
         int index = fragment.getIndex();
         boolean isEmpty = this.empties[index];

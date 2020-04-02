@@ -21,9 +21,11 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.meallab.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// TODO: IF NO MICROS DONT SHOW BUTTON and TITLE.
 /**
  * This fragment shows more extensive nutritional info.
  */
@@ -146,6 +148,33 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
 
         this.setArguments(args);
     }
+    public void updateExistingNutrients(Nutrient[] newNutrients) {
+
+        // 1. Update the macronutrients.
+        HorizontalBarChart[] macroBars = new HorizontalBarChart[] {this.caloriesBar,this.carbsBar,
+                this.fatsBar, this.proteinsBar};
+
+        for (int i = 0; i < macroBars.length; i++) {
+            HorizontalBarChart bar = macroBars[i];
+            Nutrient nut = newNutrients[i];
+            bar.setPercentProgress(nut.progressToday());
+            bar.setRightText(String.format("%.0f", nut.amountDailyTarget) + nut.unit);
+            bar.setTitleText(nut.name + " - " + (int)nut.amount + nut.unit);
+        }
+
+        // Update micro nutrients.
+        Nutrient[] micros = Arrays.copyOfRange(newNutrients,4,newNutrients.length);
+        for (MicroNutrientFragment f : this.microFrags) {
+            for (Nutrient m : micros) {
+                // Update existing values.
+                if (m.name.equals(f.n.name)) {
+                    f.setValues(m);
+                    break;
+                }
+            }
+        }
+
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,13 +204,10 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-
-
                 showingMicros = !showingMicros;
 
                 // Change the button appearance
                 if (showingMicros) {
-                    System.out.println("hide now!");
                     // TODO: Change button images.
                     showButton.setText("Hide");
                 } else {
@@ -196,8 +222,6 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
                     fromValue = toValue;
                     toValue   = 0;
                 }
-                System.out.println("To value: " + toValue);
-                System.out.println("From value: " + fromValue);
 
                 microHolder.setVisibility(View.VISIBLE);
 
