@@ -66,10 +66,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_initial_startup);
 
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-        userPreferences = new UserPreferences(this);
-        microNutrients = userPreferences.getDefaultMicroNutrients();
-        mealTypes = new String[]{"Breakfast","Snack","Lunch","Extra snack", "Dinner"};
-        initLinearLayouts();
+
         initRecyclerChoices();
 
 
@@ -79,12 +76,10 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
         mTextView.setText(String.format("%d",progressValue));
         int progress = progressValue/100-5;
         bar.setProgress(progress);
-
-
-
-
-
-
+        progressValue = sharedPreferences.getInt("mealsDaily",3);
+        mTextView2.setText(String.format("%d", progressValue));
+        progress = progressValue-1;
+        bar2.setProgress(progress);
 
         saveAndContinue = (Button) InitialStartupActivity.this.findViewById(R.id.SaveAndContinue);
         saveAndContinue.setOnClickListener(this);
@@ -94,6 +89,26 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
                 int value = 500 + (progress * 100);
                 InitialStartupActivity.this.mTextView.setText(String.format("%d", value));
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        bar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                int value = 1 + progress;
+                InitialStartupActivity.this.mTextView2.setText(String.format("%d", value));
 
             }
 
@@ -198,6 +213,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
 
                 editor.commit();
+                System.out.println("clicked in second activity");
                 goToSecondActivity();
 
 

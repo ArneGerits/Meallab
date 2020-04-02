@@ -37,9 +37,9 @@ public class MicroNutrientFragment extends Fragment {
 
         this.title.setText(n.name);
 
-        this.amount.setText("" + n.amount + n.unit);
-        this.chart.setLeftText("0.0");
-        this.chart.setRightText(String.format("%.1f", n.amountDailyTarget));
+        this.amount.setText(String.format("%.2f", n.amount) + n.unit);
+        this.chart.setLeftText("0");
+        this.chart.setRightText(String.format("%.2f", n.amountDailyTarget)+ n.unit);
 
         this.chart.setPercentProgress(n.progressToday());
 

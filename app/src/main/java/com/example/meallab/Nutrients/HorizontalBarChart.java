@@ -3,15 +3,19 @@ package com.example.meallab.Nutrients;
 
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.meallab.R;
+
+import org.w3c.dom.Text;
 
 /**
  * A horizontal bar chart is used to show progress data in a horizontal bar.
@@ -117,6 +121,7 @@ public class HorizontalBarChart extends Fragment {
             }
         });
     }
+
     public static HorizontalBarChart newInstance(String leftText, String rightText, String titleText, float percentageComplete) {
         HorizontalBarChart fragment = new HorizontalBarChart();
         Bundle args = new Bundle();
@@ -150,6 +155,8 @@ public class HorizontalBarChart extends Fragment {
         this.rightTextView    = v.findViewById(R.id.rightTextView);
         this.progressTextView = v.findViewById(R.id.percentageTextView);
         this.titleTextView    = v.findViewById(R.id.titleTextView);
+        
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.progressTextView,1,18,1,TypedValue.COMPLEX_UNIT_SP);
 
         return v;
     }

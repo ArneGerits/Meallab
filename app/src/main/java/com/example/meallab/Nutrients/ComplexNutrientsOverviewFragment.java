@@ -34,7 +34,7 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
     private Nutrient[] progress;
 
     private LinearLayout[] microLayouts;
-    private final int kMicroHeight = 140;
+    private final int kMicroHeight = 175;
 
     private LinearLayout microHolder;
 
@@ -94,7 +94,7 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
             bar.setPercentProgress(nut.progressToday());
             bar.setLeftText("0");
 
-            bar.setRightText(String.format("%.0f", nut.amountDailyTarget));
+            bar.setRightText(String.format("%.0f", nut.amountDailyTarget) + nut.unit);
             bar.setTitleText(nut.name + " - " + (int)nut.amount + nut.unit);
             bar.getBarView().setIndicatorColor(indicator);
             bar.getBarView().setBarColor(colorIDs[i]);
@@ -113,7 +113,7 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
             LinearLayout microL = newMicroLayout(micro);
             microLayouts[i] = microL;
 
-            this.microHolder.addView(microL,0);
+            this.microHolder.addView(microL);
         }
     }
     private LinearLayout newMicroLayout(final Nutrient micro) {

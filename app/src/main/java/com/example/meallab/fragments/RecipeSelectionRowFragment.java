@@ -18,58 +18,33 @@ import com.example.meallab.R;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RecipeSelectionRow.recipeInfoFragmentListener} interface
- * to handle interaction events.
- * Use the {@link RecipeSelectionRow#newInstance} factory method to
- * create an instance of this fragment.
+ * Shows a recipes info(image, other details) in the RecipeSelectionActivity.
  */
-public class RecipeSelectionRow extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class RecipeSelectionRowFragment extends Fragment {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // ----- Outlets -----
+    ImageView recipeImage;
+    ImageView selectedImageView;
+    ProgressBar spinner;
+    ImageView moreButton;
+    TextView titleTextView;
+    // -----
 
     private recipeInfoFragmentListener mListener;
     private boolean isSelected = false;
+    private boolean hidden = false;
 
     private int shortAnimationDuration;
 
-    private boolean hidden = false;
-
-    public RecipeSelectionRow() {
+    public RecipeSelectionRowFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RecipeSelectionRow.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RecipeSelectionRow newInstance(String param1, String param2) {
-        RecipeSelectionRow fragment = new RecipeSelectionRow();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
         shortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
@@ -78,17 +53,19 @@ public class RecipeSelectionRow extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_recipe_info, container, false);
+        View root = inflater.inflate(R.layout.fragment_recipe_selection_row, container, false);
 
-        ImageView img = root.findViewById(R.id.imageView);
-        img.setOnClickListener(new View.OnClickListener() {
+        this.titleTextView = root.findViewById(R.id.titleTextView);
+        this.spinner = root.findViewById(R.id.spinner);
+        this.selectedImageView = root.findViewById(R.id.selectedImageView);
+        this.recipeImage       = root.findViewById(R.id.imageView);
+        this.recipeImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // your code here
                 selected();
             }
         });
 
-        ImageView moreButton = root.findViewById(R.id.moreImageView);
+        this.moreButton = root.findViewById(R.id.moreImageView);
         moreButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 more();
@@ -114,9 +91,7 @@ public class RecipeSelectionRow extends Fragment {
      * @param title
      */
     public void setTitle(String title) {
-        TextView titleView = getView().findViewById(R.id.titleTextView);
-
-        titleView.setText(title);
+        this.titleTextView.setText(title);
     }
     /**
      * Toggle between selected and non selected state.
@@ -125,14 +100,12 @@ public class RecipeSelectionRow extends Fragment {
     public void setSelected(boolean selected) {
         this.isSelected = selected;
 
-        ImageView s = getView().findViewById(R.id.selectedImageView);
-
+        // TODO: Animate?
         if (selected) {
-            s.setVisibility(View.VISIBLE);
+            this.selectedImageView.setVisibility(View.VISIBLE);
         } else {
-            s.setVisibility(View.INVISIBLE);
+            this.selectedImageView.setVisibility(View.INVISIBLE);
         }
-        //todo: Go into selected or deselected state.
     }
 
     /**
@@ -149,9 +122,9 @@ public class RecipeSelectionRow extends Fragment {
         l.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
 
         if (showSpinner) {
-            ProgressBar s = getView().findViewById(R.id.spinner);
-            s.setAlpha(0.0f);
-            s.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
+            this.spinner.setVisibility(View.VISIBLE);
+            this.spinner.setAlpha(0.0f);
+            this.spinner.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
         }
     }
 
@@ -159,14 +132,12 @@ public class RecipeSelectionRow extends Fragment {
      * Shows all data in the view.
      */
     public void show() {
-
         this.hidden = false;
 
         ConstraintLayout l = getView().findViewById(R.id.animLayout);
         l.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
 
-        final ProgressBar s = getView().findViewById(R.id.spinner);
-        s.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
+        this.spinner.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
     }
     /**
      * Sets the event listener for this info fragment.
@@ -207,11 +178,11 @@ public class RecipeSelectionRow extends Fragment {
     // --------------
 
     public void setImage(Bitmap image) {
-        ImageView i = getView().findViewById(R.id.imageView);
-        i.setImageBitmap(image);
+        this.recipeImage.setImageBitmap(image);
+        this.spinner.setVisibility(View.INVISIBLE);
     }
-    public RecipeSelectionInfo detailFragment() {
-        return (RecipeSelectionInfo) getChildFragmentManager().findFragmentById(R.id.detailFragment);
+    public RecipeSimpleInfoFragment detailFragment() {
+        return (RecipeSimpleInfoFragment) getChildFragmentManager().findFragmentById(R.id.detailFragment);
     }
 
     /**
@@ -231,12 +202,12 @@ public class RecipeSelectionRow extends Fragment {
          * @param fragment The fragment the user selected.
          * @param selected True if the user selected this fragment, false if it is deselected.
          */
-        void selectedFragment(RecipeSelectionRow fragment, boolean selected);
+        void selectedFragment(RecipeSelectionRowFragment fragment, boolean selected);
 
         /**
          * Called when the user wants more info for this fragment.
          * @param fragment The fragment the user wants more info of.
          */
-        void moreInfoFragment(RecipeSelectionRow fragment);
+        void moreInfoFragment(RecipeSelectionRowFragment fragment);
     }
 }

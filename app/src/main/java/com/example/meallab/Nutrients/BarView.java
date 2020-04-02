@@ -19,7 +19,6 @@ public class BarView extends View {
     //paint for drawing custom view
     private Paint barPaint;
     private Paint linePaint;
-    private Paint textPaint;
 
     private DashPathEffect dash;
 
@@ -38,6 +37,8 @@ public class BarView extends View {
     private float vInset;
     private float hInset;
 
+    private boolean showsSkewed = false;
+
     // ---- Constructors ----
 
     public BarView(Context context, @Nullable AttributeSet attrs) {
@@ -45,7 +46,6 @@ public class BarView extends View {
 
         barPaint = new Paint();
         linePaint = new Paint();
-        textPaint = new Paint();
 
         dash = new DashPathEffect(new float[]{30.0f, 15.0f}, 0);
 
@@ -131,7 +131,11 @@ public class BarView extends View {
         // Left indicator
         canvas.drawRect(left, 0, right, h, barPaint);
 
-        float multiplier = Math.max(this.percentProgress, 1.0f);
+        float multiplier = 1.0f;
+        if (showsSkewed) {
+            Math.max(this.percentProgress, 1.0f);
+        }
+
 
         left = ((w - 2 * this.hInset) * 1.0f / multiplier) + this.hInset - 0.5f * indicatorWidth;
         right = left + indicatorWidth;
@@ -160,7 +164,10 @@ public class BarView extends View {
     public float getRightIndicatorLocation() {
         this.vInset = Math.round(getMeasuredHeight() / 10.0f);
 
-        float multiplier = Math.max(this.percentProgress, 1.0f);
+        float multiplier = 1.0f;
+        if (showsSkewed) {
+            Math.max(this.percentProgress, 1.0f);
+        }
 
         float left = ((getMeasuredWidth() - 2 * this.vInset) * 1.0f / multiplier) + this.vInset - 0.5f * indicatorWidth;
         float right = left + indicatorWidth;

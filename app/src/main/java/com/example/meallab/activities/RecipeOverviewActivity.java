@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class RecipeOverviewActivity extends AppCompatActivity implements SpoonacularBatchRecipeListener,SpoonacularSingleRecipeListener {
+public class RecipeOverviewActivity extends AppCompatActivity implements SpoonacularSimpleRecipeListener, SpoonacularDetailedRecipeListener {
     public static final String mypreference = "mypref";
     SharedPreferences sharedPreferences;
     Recipe testRecipe;
@@ -57,7 +57,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
         if(json.equals("")){
             //retrieve recipe.
             SpoonacularAPI api = new SpoonacularAPI(this);
-            RecipeRequest recipeRequest = new RecipeRequest(SpoonacularMealType.SNACK);
+            RecipeRequest recipeRequest = new RecipeRequest(SpoonacularMealType.DINNER);
             recipeRequest.offset=0;
             api.retrieveRecipes(recipeRequest,this);
 
@@ -75,16 +75,19 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     @Override
     public void retrievedRecipes(Recipe[] recipes) {
         SpoonacularAPI api = new SpoonacularAPI(this);
-        api.retrieveAdditionalRecipeInformation(recipes[0],this);
+//        api.retrieveAdditionalRecipeInformation(recipes[0],this);
 
     }
 
     @Override
+    public void simpleSpoonacularErrorHandler() {
+
+    }
+
     public void batchRecipesErrorHandler() {
 
     }
 
-    @Override
     public void retrievedAdditionalInformation(Recipe recipe) {
         testRecipe = recipe;
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
@@ -101,7 +104,6 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
 
     }
 
-    @Override
     public void singleRecipeErrorHandler() {
 
     }
@@ -125,7 +127,17 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     public void setRecipe(Recipe recipe){
 
         SpoonacularAPI api = new SpoonacularAPI(this);
-        api.retrieveAdditionalRecipeInformation(recipe,this);
+       // api.retrieveAdditionalRecipeInformation(recipe,this);
         this.recipe = recipe;
+    }
+
+    @Override
+    public void retrievedAdditionalInformation(Recipe[] recipe) {
+
+    }
+
+    @Override
+    public void complexSpoonacularErrorHandler() {
+
     }
 }

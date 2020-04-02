@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.meallab.Nutrients.Nutrient;
+import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularDiet;
 import com.example.meallab.Spoonacular.SpoonacularIntolerance;
+import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -23,11 +26,10 @@ public class UserPreferences {
     // Constant keys
     private static final String C_PREFERENCES   = "MY_PREF";
     // ---
-    private static final String C_MEALS_PER_DAY = "meals_day";
+    private static final String C_MEALS_DAY     = "_meals_day";
     private static final String C_DIETS         = "diets";
     private static final String C_INTOLERANCES  = "intolerances";
     private static final String C_NUTRIENTS     = "nutrients";
-    private static final String C_NUT
 
     private static final String C_MACRO_FILENAME      = "Default_Macronutrients.json";
     private static final String C_MICRO_FILENAME      = "Default_Micronutrients.json";
@@ -69,23 +71,13 @@ public class UserPreferences {
         // Get the JSON
         String result = this.pref.getString(C_INTOLERANCES,"{}");
         // Convert to objects.
-        SpoonacularIntolerance[] i = this.gson.fromJson(result, SpoonacularIntolerance[].class);
-
-        return i;
+        return this.gson.fromJson(result, SpoonacularIntolerance[].class);
     }
     /**
      * Get the nutrients the user tracks.
      * @return The current nutrients the user tracks.
      */
     public Nutrient[] getTrackedNutrients() {
-
-        final long startTime = System.currentTimeMillis();
-
-        /*
-        // Return the cache.
-        if (this.trackedNutrientsCache != null) {
-            return this.trackedNutrientsCache;
-        }*/
 
         // Get the JSON
         String result = this.pref.getString(C_NUTRIENTS,"[]");
@@ -99,33 +91,23 @@ public class UserPreferences {
             Nutrient[] macros = this.getDefaultMacroNutrients();
             // Get the default micros but only take 5.
             Nutrient[] micros = this.getDefaultMicroNutrients();//Arrays.copyOf(this.getDefaultMicroNutrients(),5);
-            // 2000kcal is default for an adult man.
-            System.out.println("macros" + macros);
-            System.out.println("micros: " + micros);
             // Concat the macros and micros.
             Nutrient[] total = Arrays.copyOf(macros, macros.length + micros.length);
             System.arraycopy(micros, 0, total, macros.length, micros.length);
 
             n = total;
         }
-        /*
-        // Cache the results.
-        this.trackedNutrientsCache = n;
-
-         */
-        final long endTime = System.currentTimeMillis();
-
-        System.out.println("get tracked nutrients load time(ms): " + (endTime - startTime));
-
         return n;
     }
     /**
-     * Get the number of meals the user wants to eat per day.
-     * @return Number of meals user wants to eat per day.
+     * Get the meals the user wants to eat every day.
+     * @return The meals the user wants to eat.
      */
-    public Boolean[] getMealsPerDay() {
-        String json = pref.getString(C_MEALS_PER_DAY,"");
-        return gson.fromJson(json,Boolean[].class);
+    public SpoonacularMealType[] getMealsPerDay() {
+        // The default meals are breakfast lunch and dinner.
+        String defaultMeals = "[BREAKFAST,LUNCH,DINNER]";
+        String json = this.pref.getString(C_MEALS_DAY, defaultMeals);
+        return this.gson.fromJson(json, SpoonacularMealType[].class);
     }
     /**
      * Get the full list of macronutrients that can be tracked.
@@ -167,34 +149,22 @@ public class UserPreferences {
         editor.putString(C_INTOLERANCES, json);
         editor.apply();
     }
-    public void setTrackedNutrients(Nutrient[] n, int[] amounts) {
-
-        // Cache.
-        //this.trackedNutrientsCache = n;
-
+    public void setTrackedNutrients(Nutrient[] n) {
         // Create the JSON
         String json = this.gson.toJson(n);
 
         SharedPreferences.Editor editor = this.pref.edit();
         editor.putString(C_NUTRIENTS, json);
-        json = this.gson.toJson(amounts);
         editor.apply();
-
-
     }
-    public void setMealsPerDay(Boolean[] mealChoices) {
-        String json = this.gson.toJson(mealChoices);
+    public void setMealsPerDay(SpoonacularMealType[] meals) {
         SharedPreferences.Editor editor = this.pref.edit();
-        editor.putString(C_MEALS_PER_DAY, json);
+
+        String json = gson.toJson(meals);
+        editor.putString(json, C_MEALS_DAY);
         editor.apply();
     }
 
-    /*
-    public void invalidateCache() {
-        SharedPreferences.Editor editor = this.pref.edit();
-        editor.putBoolean(C_INVALIDATE_CACHE, true);
-        editor.apply();
-    }*/
     // ---- Private Methods ----
 
     private Nutrient[] readDefaultFile(String filename) {
@@ -209,7 +179,7 @@ public class UserPreferences {
             }
             br.close();
         } catch (IOException e) {
-            System.out.println("IOEXecption critical");
+            System.out.println("USERPrefs IOEXecption critical");
         }
         Nutrient[] macros = this.gson.fromJson(sb.toString(), Nutrient[].class);
 

@@ -10,7 +10,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.LayoutTransition;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.example.meallab.Spoonacular.Recipe;
+import com.example.meallab.Spoonacular.SpoonacularAPI;
+import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.example.meallab.customViews.CustomScrollView;
 import com.example.meallab.customViews.DayViewContainer;
 import com.example.meallab.customViews.MonthHeader;
@@ -47,7 +52,10 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.TextStyle;
 import org.threeten.bp.temporal.WeekFields;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
 
 import kotlin.Unit;
@@ -61,7 +69,11 @@ import com.example.meallab.customViews.DayViewContainer.DayViewContainerListener
  * This is the most important activity, here the user can see the meal plan for a given day, view
  * meal detail screens, select different dates to plan ahead and access settings.
  */
-public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener, PersistentStore.PersistentStoreListener {
+public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener, PersistentStore.PersistentStoreListener,
+        CardScrollerFragment.CardScrollerFragmentListener, SpoonacularAPI.SpoonacularDetailedRecipeListener {
+
+    // ----- Constants ------
+    private static final int RECIPE_SELECTION_CODE = 12345;
 
     private ArrayList<Object> mIngredientNames = new ArrayList<>();
     private ArrayList<String> mIngredientQuantities = new ArrayList<>();
@@ -102,7 +114,13 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // ------
 
     SharedPreferences sharedPreferences;
+    Gson gson = new Gson();
 
+    // The index of the recipe currently being edited.
+    int editingIndex;
+
+    // Used for api communication with Spoonacular
+    private SpoonacularAPI api;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +139,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.setupScrollView(this.scrollView);
 
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+
+        // Setup the API communication
+        api = new SpoonacularAPI(this);
 
         // Getting the text views of the nav bar.
         this.dateTextView  = this.findViewById(R.id.dateTextView);
@@ -145,6 +166,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         // Setting the fragments.
         this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
+        this.cardsFragment.setListener(this);
         this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
     }
 
@@ -340,12 +362,55 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
     // Sets up the card scroll view.
     private void setupCardScrollView(StoredRecipe[] recipes) {
+        // If there are no recipes chosen yet we present a single empty card.
+        if (recipes.length == 0) {
+            this.cardsFragment.setValues(recipes, new boolean[]{true});
+        } else {
+            // If the current day is in the past, we do not care about the user prefs get meals per day.
+            if (this.currentDay.date.isBefore(LocalDate.now())) {
+                // Set the recipes chosen for that day, no empties.
 
+                boolean[] structure = new boolean[recipes.length];
+                this.cardsFragment.setValues(recipes, structure);
+            } else {
+
+                SpoonacularMealType[] mealsToEat = this.preferences.getMealsPerDay();
+                boolean[] structure = new boolean[mealsToEat.length];
+                for (int i = 0; i < structure.length; i++) {
+                    SpoonacularMealType meal = mealsToEat[i];
+                    structure[i] = true;
+                    for (int j = 0; j < recipes.length; j++) {
+                        if (meal == recipes[j].mealType) {
+                            structure[i] = false;
+                        }
+                    }
+                }
+                // Set the amount of calories goal.
+                for (StoredRecipe r : recipes) {
+                    r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
+                }
+                this.cardsFragment.setValues(recipes, structure);
+            }
+        }
     }
     // Sets up the nutrients view.
-    private void setupNutrientsView(Nutrient[] nutrients) {
+    private void setupNutrientsView(StoredDay day) {
 
-        this.nutrientFragment.setValues(nutrients);
+        // 1. Get all tracked nutrients.
+        Nutrient[] tracked = this.preferences.getTrackedNutrients();
+
+        // 2. Get the nutrients for the current day.
+        Nutrient[] nutrientsToday = day.getTotalNutrients();
+
+        // 3. Cross reference and fill tracked.
+        for (Nutrient tr : tracked) {
+            for (Nutrient td : nutrientsToday) {
+                if (tr.name.equals(td.name)) {
+                    tr.amount += td.amount;
+                }
+            }
+        }
+        this.nutrientFragment.setValues(tracked);
     }
 
     //endregion
@@ -385,22 +450,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         this.setupDayShoppingList(day.shoppingList);
 
-        // 1. Get all tracked nutrients.
-        Nutrient[] tracked = this.preferences.getTrackedNutrients();
-
-        // 2. Get the nutrients for the current day.
-        Nutrient[] nutrientsToday = day.totalNutrients;
-
-        // 3. Cross reference and fill tracked.
-        for (Nutrient tr : tracked) {
-            for (Nutrient td : nutrientsToday) {
-                if (tr.name.equals(td.name)) {
-                    tr.amount += td.amount;
-                }
-            }
-        }
-
-        this.setupNutrientsView(tracked);
+        this.setupNutrientsView(day);
     }
 
 
@@ -409,12 +459,139 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     @Override
     public void initializedSuccessfully(boolean success) {
 
+        StoredDay today = this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0];
         // Load the current day, if no day exists yet a new empty day is created.
         this.switchToDay(this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0]);
     }
 
+    // endregion
+
+    // region Recipe Card Scroller Listener
+
     @Override
     public void completedSynchronize(boolean success) {
+
+    }
+
+    @Override
+    public void selectedShowDetailForIndex(int index) {
+        //System.out.println("show detail for " + r.name);
+    }
+
+    @Override
+    public void selectedEditForIndex(int index) {
+        this.editingIndex = index;
+    }
+
+    @Override
+    public void selectedNewRecipeForIndex(int index) {
+
+        RecipeSelectionActivity recipeSelection = new RecipeSelectionActivity();
+        Intent intent = new Intent(this, RecipeSelectionActivity.class);
+        SpoonacularMealType[] meals = this.preferences.getMealsPerDay();
+
+        // If there is not a single recipe selected yet, we need to allow the user to select the whole day.
+        if (this.currentDay.recipes.length == 0) {
+            intent.putExtra("meals", gson.toJson(meals));
+        }
+        // Only select the recipe for the meal type in the preferences.
+        else {
+            intent.putExtra("meals", gson.toJson(new SpoonacularMealType[]{meals[index]}));
+            this.editingIndex = index;
+        }
+        // Start the recipe selection.
+        startActivityForResult(intent, RECIPE_SELECTION_CODE);
+    }
+
+    // Called when a launched activity completes.
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case (RECIPE_SELECTION_CODE) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    // Get the chosen recipes from the activity.
+                    String recipesJson = data.getStringExtra(RecipeSelectionActivity.RECIPES_SELECTED);
+                    Recipe[] recipesChosen = this.gson.fromJson(recipesJson, Recipe[].class);
+                    this.recipesChosen(recipesChosen);
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+
+                }
+                break;
+            }
+        }
+    }
+
+
+
+    // Called when the user has finished choosing recipes in the recipe selection activity.
+    // load detailed recipe info.
+    private void recipesChosen(Recipe[] recipes) {
+
+        // TODO: Cross ref to avoid loading twice.
+        int[] recipeIDS                 = new int[recipes.length];
+        SpoonacularMealType[] mealTypes = new SpoonacularMealType[recipes.length];
+
+        // The recipes do not have detailed info yet we need to retrieve it.
+        for (int i = 0; i < recipes.length; i++) {
+            recipeIDS[i] = recipes[i].id;
+            mealTypes[i] = recipes[i].type;
+        }
+        // Load the data for the recipes chosen.
+        this.api.retrieveRecipeDetailedInfo(recipeIDS, mealTypes, this);
+    }
+
+    private void addRecipesToDay(Recipe[] recipes) {
+
+        // Check if there was already data in the stored day.
+        if (this.currentDay.recipes.length == 0) {
+            // Set the entire recipes array.
+            this.currentDay.recipes = new StoredRecipe[recipes.length];
+            for (int i = 0; i < recipes.length; i++) {
+                // Create a stored recipe from the recipe.
+                StoredRecipe r = new StoredRecipe(recipes[i]);
+                this.currentDay.recipes[i] = r;
+            }
+        } else {
+            // Only set the editing index.
+            // There can only be one here.
+            Recipe toAdd = recipes[0];
+
+            ArrayList<StoredRecipe> storedRecipes = new ArrayList<StoredRecipe>(Arrays.asList(this.currentDay.recipes));
+            if (this.editingIndex >= storedRecipes.size()) {
+                storedRecipes.add(new StoredRecipe(toAdd));
+            } else {
+                storedRecipes.add(this.editingIndex, new StoredRecipe(toAdd));
+            }
+            StoredRecipe[] arr = new StoredRecipe[storedRecipes.size()];
+            arr = storedRecipes.toArray(arr);
+            this.currentDay.recipes = arr;
+        }
+        System.out.println("add recipes to the current day.");
+        for (StoredRecipe r : this.currentDay.recipes) {
+            System.out.println("TO STORE: " + r.name);
+        }
+
+        // Save the changes
+        this.store.synchronize();
+    }
+    // region Spoonacular API callbacks
+
+    @Override
+    public void retrievedAdditionalInformation(Recipe[] recipes) {
+
+        System.out.println("Retrieved detailed information fo the recipes");
+        // Set the recipe(s) in storedDay, update cardView, update nutrition
+
+        // Add the recipes to storedDay.
+        this.addRecipesToDay(recipes);
+
+        // Reload all views.
+        this.switchToDay(this.currentDay);
+    }
+
+    @Override
+    public void complexSpoonacularErrorHandler() {
 
     }
     // endregion

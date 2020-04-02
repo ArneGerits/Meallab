@@ -82,10 +82,10 @@ public class RecyclerViewAdapterRecipe extends  RecyclerView.Adapter<RecyclerVie
                 Recipe recipe = (Recipe) mObjects.get(position);
                 System.out.println(recipe.sourceURL);
                 ((ViewHolder1) holder).recipeName.setText(recipe.title);
-                ((ViewHolder1) holder).recipekCalValue.setText(""+(int)Math.round(recipe.calories));
-                ((ViewHolder1) holder).recipeFatsValue.setText(""+(int)Math.round(recipe.fats));
-                ((ViewHolder1) holder).recipeCarbsValue.setText(""+(int)Math.round(recipe.carbs));
-                ((ViewHolder1) holder).recipeProtiensValue.setText(""+(int)Math.round(recipe.protein));
+                ((ViewHolder1) holder).recipekCalValue.setText(""+(int)Math.round(recipe.nutrients[0].amount));
+                ((ViewHolder1) holder).recipeFatsValue.setText(""+(int)Math.round(recipe.nutrients[2].amount));
+                ((ViewHolder1) holder).recipeCarbsValue.setText(""+(int)Math.round(recipe.nutrients[1].amount));
+                ((ViewHolder1) holder).recipeProtiensValue.setText(""+(int)Math.round(recipe.nutrients[3].amount));
                 ((ViewHolder1) holder).recipePrepTimeValue.setText(""+recipe.prepMinutes );
                 ((ViewHolder1) holder).recipeCookTimeValue.setText(""+recipe.cookingMinutes);
                 ((ViewHolder1) holder).recipeServingsValue.setText(""+recipe.servings);

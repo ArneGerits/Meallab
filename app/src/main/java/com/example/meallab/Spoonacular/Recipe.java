@@ -2,11 +2,15 @@ package com.example.meallab.Spoonacular;
 
 import android.graphics.Bitmap;
 
+import com.example.meallab.Nutrients.Nutrient;
+import com.google.gson.JsonArray;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Represents a single recipe, recipes can be created by passing Spoonacular JSON recipe data.
@@ -37,10 +41,9 @@ public class Recipe {
 
     // ------ Nutritional data ------
 
-    public float calories = 0.0f; // The amount of calories in this recipe per serving in kCal.
-    public float carbs = 0.0f; // The amount of carbohydrates in this recipe per serving in grams.
-    public float protein = 0.0f; // The amount of protein in the recipe per serving in grams.
-    public float fats = 0.0f; // The amount of fats in this recipe per serving in grams.
+    // List of all macro + micro nutrients, the first 4 will be:
+    // Calories, Carbohydrates, Fats, Proteins.
+    public Nutrient[] nutrients;
 
     // ------- Instructions -------
 
@@ -66,7 +69,7 @@ public class Recipe {
      * @param json The top level json object
      * @param type The type of recipe this is
      */
-    public Recipe(JSONObject json, SpoonacularMealType type) throws JSONException{
+    public Recipe(JSONObject json, SpoonacularMealType type) throws JSONException {
         this.type = type;
 
         // Setting simple recipe properties.
@@ -88,13 +91,23 @@ public class Recipe {
 
         this.popular = json.optBoolean("veryPopular",false);
 
+
         // Setting the nutritional properties.
 
+        // Nutrients can be nested in 2 ways.
         JSONArray nutrition = json.optJSONArray("nutrition");
-        this.storeNutrition(nutrition);
+        if (nutrition == null) {
+            nutrition = json.getJSONObject("nutrition").getJSONArray("nutrients");
+        }
+        this.setNutrients(nutrition);
 
         JSONArray instructions = json.optJSONArray("analyzedInstructions");
         this.storeInstructions(instructions);
+
+        JSONArray ingredients = json.optJSONArray("extendedIngredients");
+        if (ingredients != null) {
+            this.addIngredientInfo(ingredients);
+        }
     }
     // ------ Private Methods ------
 
@@ -129,33 +142,6 @@ public class Recipe {
         } else {
             return RecipeCost.HIGH;
         }
-    }
-
-    // Stores nutrition data
-    private void storeNutrition(JSONArray nutrition) throws JSONException {
-
-        // Input can be null.
-        if (nutrition == null) {
-            return;
-        }
-        for (int i = 0; i < nutrition.length(); i++) {
-            // Get the JSON object representing the recipe.
-            JSONObject val = nutrition.getJSONObject(i);
-
-            String title = val.getString("title");
-            float value = (float) Double.valueOf(val.optString("amount","-1")).doubleValue();
-
-            if (title.equals("Calories")) {
-                this.calories = value;
-            } else if (title.equals("Carbohydrates")) {
-                this.carbs = value;
-            } else if (title.equals("Protein")) {
-                this.protein = value;
-            } else if (title.equals("Fat")) {
-                this.fats = value;
-            }
-        }
-
     }
 
     // Stores instruction data
@@ -196,6 +182,51 @@ public class Recipe {
             }
             this.ingredients = new RecipeIngredient[ingredients.size()];
             ingredients.toArray(this.ingredients);
+
+        } catch (JSONException e) {
+
+        }
+    }
+    public void setNutrients(JSONArray nutrients) {
+        try {
+            // Input can be null.
+            if (nutrients == null) {
+                return;
+            }
+            ArrayList<Nutrient> nuts = new ArrayList<>(nutrients.length());
+
+            for (int i = 0; i < nutrients.length(); i++) {
+                // Get the JSON object representing the recipe.
+                JSONObject val = nutrients.getJSONObject(i);
+
+                float value = (float) Double.valueOf(val.optString("amount", "-1")).doubleValue();
+                String unit = val.optString("unit","");
+                String title = val.optString("title","");
+
+                // Create a new nutrient.
+                Nutrient n = new Nutrient();
+                n.name = title;
+                n.amount = value;
+                n.unit = unit;
+
+                nuts.add(i,n);
+            }
+            // Perform reordering swaps.
+            for (int i = 0; i < nuts.size(); i++) {
+                Nutrient n = nuts.get(i);
+                if (n.name.equals("Calories")) {
+                    Collections.swap(nuts,0,i);
+                } else if(n.name.equals("Carbohydrates")) {
+                    Collections.swap(nuts,1,i);
+                } else if(n.name.equals("Fat")) {
+                    Collections.swap(nuts,2,i);
+                } else if(n.name.equals("Protein")) {
+                    Collections.swap(nuts,3,i);
+                }
+            }
+            // Convert arraylist to array.
+            this.nutrients = new Nutrient[nuts.size()];
+            this.nutrients = nuts.toArray(this.nutrients);
 
         } catch (JSONException e) {
 

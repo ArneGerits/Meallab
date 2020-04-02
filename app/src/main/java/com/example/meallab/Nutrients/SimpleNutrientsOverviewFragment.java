@@ -1,6 +1,7 @@
 package com.example.meallab.Nutrients;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,7 @@ public class SimpleNutrientsOverviewFragment extends Fragment {
     }
 
     // Sets all relevant values on every view.
+    @SuppressLint("DefaultLocale")
     private void loadAllViews(Nutrient[] progress) {
 
         Nutrient calories = progress[0];
@@ -83,7 +85,12 @@ public class SimpleNutrientsOverviewFragment extends Fragment {
         int indicator = ContextCompat.getColor(this.getContext(),R.color.woodBrown);
         this.barChart.getBarView().setBarColor(cColor);
         this.barChart.getBarView().setIndicatorColor(indicator);
-        this.barChart.setTitleText((int)calories.amount + " kcal");
+        this.barChart.setTitleText((int)calories.amount + " " + calories.unit);
+
+        this.barChart.setLeftText("0");
+        this.barChart.setRightText(String.format("%d", (int)calories.amountDailyTarget) + calories.unit);
+        System.out.println("calories progress today: " + calories.progressToday());
+        this.barChart.setPercentProgress(calories.progressToday());
     }
     /**
      * Sets all values on the fragment and creates the view.

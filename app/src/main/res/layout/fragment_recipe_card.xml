@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ff6f4f"
-    tools:context=".fragments.RecipeCardFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".fragments.RecipeCardFragment">
 
         <LinearLayout
+            android:id="@+id/recipeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -41,12 +43,12 @@
                                     tools:src="@tools:sample/avatars" />
 
                                 <TextView
-                                    android:id="@+id/timeTextView"
+                                    android:id="@+id/cookingTimeTextView"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:text="TextView"
-                                    android:gravity="center|left"/>
+                                    android:gravity="center|left"
+                                    android:text="TextView" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -67,8 +69,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:text="TextView"
-                                    android:gravity="center|left"/>
+                                    android:gravity="center|left"
+                                    android:text="TextView" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -89,8 +91,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:text="test"
-                                    android:gravity="center|left"/>
+                                    android:gravity="center|left"
+                                    android:text="test" />
                         </LinearLayout>
                 </LinearLayout>
         </LinearLayout>
@@ -101,5 +103,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/addImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:src="@drawable/debug_plus_button"
+            tools:visibility="gone" />
 
 </LinearLayout>
