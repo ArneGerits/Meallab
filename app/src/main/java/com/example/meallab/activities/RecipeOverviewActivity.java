@@ -1,4 +1,4 @@
-package com.example.meallab;
+package com.example.meallab.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 
+import com.example.meallab.R;
+import com.example.meallab.RecyclerViewAdapterRecipe;
 import com.example.meallab.Spoonacular.*;
 import com.example.meallab.Spoonacular.SpoonacularAPI.*;
 

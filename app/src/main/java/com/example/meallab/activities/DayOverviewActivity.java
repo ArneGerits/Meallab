@@ -1,24 +1,34 @@
-package com.example.meallab;
+package com.example.meallab.activities;
 
-import com.example.meallab.Spoonacular.RecipeIngredient;
+import com.example.meallab.Nutrients.ComplexNutrientsOverviewFragment;
+import com.example.meallab.Nutrients.Nutrient;
+import com.example.meallab.R;
+import com.example.meallab.RecyclerViewAdapterIngredients;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.meallab.Spoonacular.SpoonacularMealType;
+import com.example.meallab.customViews.CustomScrollView;
+import com.example.meallab.customViews.DayViewContainer;
+import com.example.meallab.customViews.MonthHeader;
+import com.example.meallab.fragments.CardScrollerFragment;
+import com.example.meallab.storing_data.PersistentStore;
+import com.example.meallab.storing_data.StoredDay;
+import com.example.meallab.storing_data.StoredRecipe;
+import com.example.meallab.storing_data.StoredShoppingList;
+import com.example.meallab.storing_data.UserPreferences;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -43,15 +53,15 @@ import java.util.Locale;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import static com.example.meallab.InitialStartupActivity.mypreference;
+import static com.example.meallab.activities.InitialStartupActivity.mypreference;
 
-import com.example.meallab.DayViewContainer.DayViewContainerListener;
+import com.example.meallab.customViews.DayViewContainer.DayViewContainerListener;
 
 /**
  * This is the most important activity, here the user can see the meal plan for a given day, view
  * meal detail screens, select different dates to plan ahead and access settings.
  */
-public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener,View.OnClickListener {
+public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener, PersistentStore.PersistentStoreListener {
 
     private ArrayList<Object> mIngredientNames = new ArrayList<>();
     private ArrayList<String> mIngredientQuantities = new ArrayList<>();
@@ -59,8 +69,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // True if the calendar is currently showing, False otherwise
     boolean calendarShowing = false;
-
-    public static String firstTimeKey = "firstTimeKey";
 
     // The date selected by the user, on create it is always the current date.
     LocalDate selectedDate = LocalDate.now();
@@ -72,7 +80,14 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // The distance between dateTextView and the edge of the screen.
     private float leftDistance;
 
-    // ------ Views ------
+    // The day this day overview activity shows info for.
+    StoredDay currentDay;
+
+    // Used to store objects to disk.
+    PersistentStore store;
+    UserPreferences preferences;
+
+    // ------ Outlets ------
 
     private CustomScrollView scrollView;
     private CalendarView calendar;
@@ -81,6 +96,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private TextView yearTextView;
     private TextView monthTextView;
 
+    private CardScrollerFragment cardsFragment;
+    private ComplexNutrientsOverviewFragment nutrientFragment;
+
     // ------
 
     SharedPreferences sharedPreferences;
@@ -88,18 +106,21 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_overview);
+
+        setContentView(R.layout.activity_day_overview);
+
+        // Init the store, will give callback on completion.
+        this.store = new PersistentStore(this,this);
+        this.preferences = new UserPreferences(this);
 
         // Perform view first time setup.
-        this.scrollView = (CustomScrollView) findViewById(R.id.scrollView);
+        this.scrollView = findViewById(R.id.scrollView);
         this.calendar   = this.findViewById(R.id.calendarView);
 
         this.setupCalendar(this.calendar);
         this.setupScrollView(this.scrollView);
 
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-
-        testRecycler();
 
         // Getting the text views of the nav bar.
         this.dateTextView  = this.findViewById(R.id.dateTextView);
@@ -122,18 +143,13 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             }
         });
 
-
-        //set listener for recipe selection
-        ImageView breakfast = (ImageView) DayOverviewActivity.this.findViewById(R.id.image);
-        ImageView lunch = (ImageView) DayOverviewActivity.this.findViewById(R.id.image2);
-        ImageView dinner = (ImageView) DayOverviewActivity.this.findViewById(R.id.image3);
-        breakfast.setOnClickListener(this);
-        lunch.setOnClickListener(this);
-        dinner.setOnClickListener(this);
-
+        // Setting the fragments.
+        this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
+        this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
     }
 
-    //region Date Selection
+
+    // region Date Selection
 
     // Called when the user selects a date in the calendar.
     // @pre calendar and dateTextView must be initialized.
@@ -199,7 +215,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
 
         scrollView.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
-        testRecycler();
 
         scrollView.setCustomListener(new CustomScrollView.CustomScrollViewListener() {
             @Override
@@ -318,6 +333,21 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             }
         });
     }
+
+    // Sets up the shopping list view for this day.
+    private void setupDayShoppingList(StoredShoppingList list) {
+
+    }
+    // Sets up the card scroll view.
+    private void setupCardScrollView(StoredRecipe[] recipes) {
+
+    }
+    // Sets up the nutrients view.
+    private void setupNutrientsView(Nutrient[] nutrients) {
+
+        this.nutrientFragment.setValues(nutrients);
+    }
+
     //endregion
 
     //region Calendar view hiding/showing
@@ -344,86 +374,48 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     //endregion
 
-    public void testRecycler(){
+    // ----
 
-        ArrayList<RecipeIngredient> ingredients = new ArrayList<>();
+    // Initializes all views to the passed day.
+    private void switchToDay(StoredDay day) {
+        this.currentDay = day;
 
-        RecipeIngredient ingredient = new RecipeIngredient();
-        RecipeIngredient ingredient2 = new RecipeIngredient();
-        ingredient.name = "Egg";
-        ingredient.amountMetric = 3;
-        ingredient.unitLongMetric = "";
-        ingredient.metaInformation = new String[]{};
+        // Set views (Calendar, and views for current day).
+        this.setupCardScrollView(this.currentDay.recipes);
 
-        for(int i = 0; i < 10 ; i++){
-            ingredients.add(ingredient);
-        }
-        ingredient2.name="pasta";
-        ingredient2.amountMetric = 2;
-        ingredient2.unitLongMetric = "cups";
-        ingredient2.metaInformation = new String[]{"salted", "boiled", "cooled"};
-        ingredients.add(ingredient2);
+        this.setupDayShoppingList(day.shoppingList);
 
+        // 1. Get all tracked nutrients.
+        Nutrient[] tracked = this.preferences.getTrackedNutrients();
 
+        // 2. Get the nutrients for the current day.
+        Nutrient[] nutrientsToday = day.totalNutrients;
 
-        initRecyclerView(ingredients);
-
-    }
-
-    private void initRecyclerView(ArrayList<RecipeIngredient> ingredients){
-
-        String name;
-        String quantity;
-
-        for(RecipeIngredient r : ingredients){
-
-            name = r.name;
-            quantity = r.amountMetric + " " + r.unitLongMetric;
-            if(r.metaInformation.length != 0){
-                for(int i = 0; i < r.metaInformation.length ; i++){
-                    quantity = quantity + ", " + r.metaInformation[i];
+        // 3. Cross reference and fill tracked.
+        for (Nutrient tr : tracked) {
+            for (Nutrient td : nutrientsToday) {
+                if (tr.name.equals(td.name)) {
+                    tr.amount += td.amount;
                 }
             }
-            //mIngredientNames.add(name);
-           // mIngredientQuantities.add(quantity);
         }
-        RecyclerView recyclerViewShoppingList = findViewById(R.id.recyclerv_view_shopping_list_overview);
-        adapter = new RecyclerViewAdapterIngredients(this, mIngredientNames, mIngredientQuantities);
-        recyclerViewShoppingList.setAdapter(adapter);
-        recyclerViewShoppingList.setLayoutManager(new LinearLayoutManager(this));
 
-    }
-
-    //Region onClickListener
-
-    public void onClick(View view) {
-        Intent intent = new Intent(this, RecipeSelectionActivity.class);
-        intent.putExtra("date",selectedDate);
-
-        switch (view.getId()) {
-            case R.id.image:
-
-                intent.putExtra("mealChoice", SpoonacularMealType.BREAKFAST);
-
-            break;
-
-            case R.id.image2:
-
-                intent.putExtra("mealChoice", SpoonacularMealType.LUNCH);
-
-                break;
-
-            case R.id.image3:
-
-                intent.putExtra("mealChoice", SpoonacularMealType.DINNER);
-
-                break;
-
-
-
-        }
-        startActivity(intent);
+        this.setupNutrientsView(tracked);
     }
 
 
+    // region Persistent Store Listener
+
+    @Override
+    public void initializedSuccessfully(boolean success) {
+
+        // Load the current day, if no day exists yet a new empty day is created.
+        this.switchToDay(this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0]);
+    }
+
+    @Override
+    public void completedSynchronize(boolean success) {
+
+    }
+    // endregion
 }

@@ -1,0 +1,4 @@
+[{"amount":0.0,"amountDailyTarget":2000.0,"name":"Calories","unit":"cal"},
+{"amount":0.0,"amountDailyTarget":300.0,"name":"Carbohydrates","unit":"g"},
+{"amount":0.0,"amountDailyTarget":65.0,"name":"Fat","unit":"g"},
+{"amount":0.0,"amountDailyTarget":50.0,"name":"Protein","unit":"g"}]

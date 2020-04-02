@@ -1,4 +1,4 @@
-package com.example.meallab;
+package com.example.meallab.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.meallab.R;
 import com.example.meallab.Spoonacular.SpoonacularAPI.SpoonacularBatchRecipeListener;
 
 import com.android.volley.VolleyError;

@@ -1,4 +1,4 @@
-package com.example.meallab;
+package com.example.meallab.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,10 +6,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.content.SharedPreferences;
 import android.widget.Button;
 
-import static com.example.meallab.InitialStartupActivity.mypreference;
+import com.example.meallab.R;
+
+import static com.example.meallab.activities.InitialStartupActivity.mypreference;
 
 
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {

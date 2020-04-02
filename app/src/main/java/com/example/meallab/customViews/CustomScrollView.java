@@ -1,4 +1,4 @@
-package com.example.meallab;
+package com.example.meallab.customViews;
 
 import android.content.Context;
 import android.util.AttributeSet;
