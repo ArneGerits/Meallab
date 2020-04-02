@@ -1,6 +1,7 @@
 package com.example.meallab.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ import com.example.meallab.storing_data.StoredRecipe;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,6 +49,9 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
     private RecipeCardFragment[] fragments;
 
     private CardScrollerFragmentListener listener;
+
+    // Maps recipe ids to values.
+    private HashMap<Integer, RecipeCardFragment> recipeIDtoFragment = new HashMap<>();
 
     public CardScrollerFragment() {
         // Required empty public constructor
@@ -108,7 +113,9 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
                 f = RecipeCardFragment.newInstance(r.name,r.cookingMins,
                         r.numberOfServings,r.pricePerServing, r.getMacroNutrients(), i);
                 f.setListener(this);
+                this.recipeIDtoFragment.put(r.recipeID, f);
             }
+
             // Add it to the fragments.
             this.fragments[i] = f;
         }
@@ -149,7 +156,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
 
         this.titleTextView = v.findViewById(R.id.titleTextView);
         this.scrollView    = v.findViewById(R.id.recipeCardScrollView);
-        this.scrollView.setLayout(40,750);
+        this.scrollView.setLayout(40,800);
         this.scrollView.setListener(this);
 
         if (this.recipes != null) {
@@ -158,6 +165,11 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         return v;
     }
 
+    public void setImageOnRecipe(Bitmap image, StoredRecipe recipe) {
+        // Get the fragment and set the image.
+        RecipeCardFragment f = this.recipeIDtoFragment.get(recipe.recipeID);
+        f.setRecipeImage(image);
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

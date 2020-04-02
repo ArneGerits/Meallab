@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.meallab.Nutrients.Nutrient;
@@ -40,8 +41,8 @@ public class RecipeCardFragment extends Fragment {
     private TextView costTextView;
 
     private LinearLayout topLayout;
-    private LinearLayout recipeLayout;
     private ImageView addImageView;
+    private LinearLayout infoLayout;
 
     // ----
 
@@ -126,12 +127,11 @@ public class RecipeCardFragment extends Fragment {
         this.servings = servings;
         this.pricePerServing = pricePerServing;
         this.nutrients = nutrients;
-
-        //this.loadAllViews();
     }
     public String getName() {
         return name;
     }
+
     public void setRecipeImage(Bitmap image) {
         this.recipeImage = image;
 
@@ -149,7 +149,8 @@ public class RecipeCardFragment extends Fragment {
         if (!isEmpty) {
 
             addImageView.setVisibility(View.GONE);
-            this.recipeLayout.setVisibility(View.VISIBLE);
+            this.infoLayout.setVisibility(View.VISIBLE);
+            this.recipeImageView.setVisibility(View.VISIBLE);
             this.nutrientsOverview.getView().setVisibility(View.VISIBLE);
 
             // Set the text views.
@@ -162,7 +163,8 @@ public class RecipeCardFragment extends Fragment {
             this.nutrientsOverview.setValues(this.nutrients);
         } else {
             // Set all to GONE
-            this.recipeLayout.setVisibility(View.GONE);
+            this.infoLayout.setVisibility(View.GONE);
+            this.recipeImageView.setVisibility(View.GONE);
             this.nutrientsOverview.getView().setVisibility(View.GONE);
 
             addImageView.setVisibility(View.VISIBLE);
@@ -191,7 +193,7 @@ public class RecipeCardFragment extends Fragment {
         this.cookingTimeTextView = v.findViewById(R.id.cookingTimeTextView);
         this.costTextView        = v.findViewById(R.id.costTextView);
         this.recipeImageView     = v.findViewById(R.id.recipeImageView);
-        this.recipeLayout        = v.findViewById(R.id.recipeLayout);
+        this.infoLayout          = v.findViewById(R.id.infoContainer);
         this.nutrientsOverview   = (SimpleNutrientsOverviewFragment) getChildFragmentManager().findFragmentById(R.id.nutrientsFragment);
         this.addImageView        = v.findViewById(R.id.addImageView);
         this.topLayout           = v.findViewById(R.id.topLayout);

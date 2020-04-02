@@ -1,5 +1,7 @@
 package com.example.meallab.activities;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.meallab.Nutrients.ComplexNutrientsOverviewFragment;
 import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.R;
@@ -14,6 +16,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,7 @@ import android.widget.TextView;
 import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularAPI;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
+import com.example.meallab.Spoonacular.VolleySingleton;
 import com.example.meallab.customViews.CustomScrollView;
 import com.example.meallab.customViews.DayViewContainer;
 import com.example.meallab.customViews.MonthHeader;
@@ -368,6 +372,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
     // Sets up the card scroll view.
     private void setupCardScrollView(StoredRecipe[] recipes) {
+
         // If there are no recipes chosen yet we present a single empty card.
         if (recipes.length == 0) {
             this.cardsFragment.setValues(recipes, new boolean[]{true});
@@ -396,7 +401,35 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
                 }
                 this.cardsFragment.setValues(recipes, structure);
+
+                // Now load the images of the recipes.
+                loadAndSetRecipeImages(recipes);
             }
+        }
+    }
+    // Loads the recipe images and sets them on the card view.
+    private void loadAndSetRecipeImages(StoredRecipe[] recipes) {
+        // Used to load images.
+        ImageLoader imageLoader = VolleySingleton.getInstance(this).getImageLoader();
+        for (final StoredRecipe r : recipes) {
+            // Load the image.
+            imageLoader.get(r.imageURL, new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                    if (response.getBitmap() != null) {
+                        System.out.println("GOT THE IMAGE");
+                        Bitmap result = response.getBitmap();
+
+                        cardsFragment.setImageOnRecipe(result,r);
+                    }
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //todo: show error screen.
+                    System.out.println("VOLLEY ERROR recipe select " +  error.toString());
+                }
+            });
         }
     }
     // Sets up the nutrients view.
