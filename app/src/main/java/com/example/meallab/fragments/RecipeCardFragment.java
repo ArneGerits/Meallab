@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.Nutrients.SimpleNutrientsOverviewFragment;
 import com.example.meallab.R;
-import com.example.meallab.storing_data.StoredRecipe;
 
 
 /**
@@ -189,7 +188,7 @@ public class RecipeCardFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_recipe_card, container, false);
         this.servingsTextView    = v.findViewById(R.id.servingsTextView);
-        this.cookingTimeTextView = v.findViewById(R.id.cookingTimeTextView);
+        this.cookingTimeTextView = v.findViewById(R.id.caloriesSelected);
         this.costTextView        = v.findViewById(R.id.costTextView);
         this.recipeImageView     = v.findViewById(R.id.recipeImageView);
         this.recipeLayout        = v.findViewById(R.id.recipeLayout);

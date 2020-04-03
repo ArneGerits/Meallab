@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This class acts as a facade for sharedPreferences.
@@ -89,11 +90,36 @@ public class UserPreferences {
 
             // Get the default macros
             Nutrient[] macros = this.getDefaultMacroNutrients();
-            // Get the default micros but only take 5.
-            Nutrient[] micros = this.getDefaultMicroNutrients();//Arrays.copyOf(this.getDefaultMicroNutrients(),5);
+            // Get the default micros but only take 4.
+            Nutrient[] micros = this.getDefaultMicroNutrients();
+            String[] topFourMicroNutrients = new String[]{"Calcium", "Sodium" , "Vitamin C", "Vitamin K" };
+            ArrayList<Nutrient> microsList = new ArrayList<>();
+            for(int i = 0; i < micros.length ; i++){
+                for(int j = 0; j < topFourMicroNutrients.length; j++){
+                    if(micros[i].name.equals(topFourMicroNutrients[j])){
+                        micros[i].amount = micros[i].amountDailyTarget;
+                        microsList.add(micros[i]);
+
+
+                    }
+                }
+            }
+            Nutrient[] microsNew = new Nutrient[microsList.size()];
+            for(int i = 0; i< microsNew.length; i++){
+                microsNew[i] = microsList.get(i);
+            }
+
+
+            for(int i = 0; i< microsNew.length; i++){
+                System.out.println("DSDASDASDASDASDASDASDASDASDASDASDADASDASDAS");
+                System.out.println(microsNew[i]==null);
+            }
+
+
+
             // Concat the macros and micros.
-            Nutrient[] total = Arrays.copyOf(macros, macros.length + micros.length);
-            System.arraycopy(micros, 0, total, macros.length, micros.length);
+            Nutrient[] total = Arrays.copyOf(macros, macros.length + microsNew.length);
+            System.arraycopy(microsNew, 0, total, macros.length, microsNew.length);
 
             n = total;
         }
@@ -161,7 +187,7 @@ public class UserPreferences {
         SharedPreferences.Editor editor = this.pref.edit();
 
         String json = gson.toJson(meals);
-        editor.putString(json, C_MEALS_DAY);
+        editor.putString(C_MEALS_DAY,json);
         editor.apply();
     }
 

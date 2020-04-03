@@ -51,7 +51,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
         <TextView
-            android:id="@+id/cookingTimeTextView"
+            android:id="@+id/caloriesSelected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -72,8 +72,8 @@
             android:text="500"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="14sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/cookingTimeTextView"
-            app:layout_constraintEnd_toStartOf="@+id/cookingTimeTextView"
+            app:layout_constraintBaseline_toBaselineOf="@+id/caloriesSelected"
+            app:layout_constraintEnd_toStartOf="@+id/caloriesSelected"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="parent" />
@@ -88,24 +88,36 @@
             android:text="3500"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="14sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/cookingTimeTextView"
+            app:layout_constraintBaseline_toBaselineOf="@+id/caloriesSelected"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/cookingTimeTextView" />
+            app:layout_constraintStart_toEndOf="@+id/caloriesSelected" />
 
         <Button
             android:id="@+id/SaveAndContinue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="36dp"
             android:text="Save &amp; continue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.458"
-            app:layout_constraintStart_toStartOf="@+id/recyclerv_view_diets"
+            app:layout_constraintTop_toBottomOf="@+id/layout_micro_nutrients" />
+        <Button
+            android:id="@+id/resetPreferences"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="36dp"
+            android:text="Reset to defaults"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.458"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layout_micro_nutrients" />
 
         <TextView
@@ -143,11 +155,23 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:textSize="20dp"
             android:gravity="center"
-            android:text="Select your allergies below \n (yes if allergic, no otherwise)"
+            android:text="Select your allergies below. Yes if allergic, no otherwise. \n(You can scroll to the right for more options)"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cookingTimeTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/caloriesSelected" />
+        <View
+            android:id="@+id/divider31"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textView6"
+            tools:layout_editor_absoluteY="777dp"
+            />
 
         <TextView
             android:id="@+id/textView7"
@@ -157,37 +181,77 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:text="Select your diets below \n(yes if you allow this diet, no otherwise)"
+            android:textSize="20dp"
+            android:text="Select your diets below. Yes if you allow this diet, no otherwise. \n(You can scroll to the right for more options)"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recyclerv_view_allergies" />
 
+        <View
+            android:id="@+id/divider32"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textView7"
+            tools:layout_editor_absoluteY="777dp"
+            />
+
         <TextView
             android:id="@+id/textView8"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:textSize="20dp"
             android:gravity="center"
-            android:text="How many calories do you want to eat daily? \n adjust the slider below to match your \n preferred amount of daily calories"
+            android:text="How many calories do you want to eat daily? Adjust the slider below to match your preferred amount of daily calories"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
+
+        <View
+            android:id="@+id/divider29"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textView8"
+            tools:layout_editor_absoluteY="777dp"
+            />
         <TextView
             android:id="@+id/textView9"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="172dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="180dp"
+            android:layout_marginEnd="8dp"
             android:gravity="center"
-            android:text="How many, and what kind of meals do you want to eat daily? \n Check the boxes of the \n meals you want to eat every day"
+            android:textSize="20dp"
+            android:text="How many, and what kind of meals do you want to eat daily?  Check the boxes of the meals you want to eat every day."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.467"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recyclerv_view_diets" />
+        <View
+            android:id="@+id/divider30"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textView9"
+            tools:layout_editor_absoluteY="777dp"
+            />
+
+
 
 
         <LinearLayout
@@ -198,7 +262,7 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_meal_selection"></LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/microNutrientText"></LinearLayout>
 
         <View
             android:id="@+id/divider21"
@@ -214,13 +278,28 @@
         <View
             android:id="@+id/divider22"
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="4dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_micro_nutrients"
             tools:layout_editor_absoluteY="777dp"
             />
+
+        <TextView
+            android:id="@+id/microNutrientText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:text="Which micronutrients would you like to track? Check the boxes of the nutrients you want to track and enter an amount on the right side. Within the parentheses you can see the advised daily amount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.467"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider27" />
 
         <View
             android:id="@+id/divider26"
@@ -236,7 +315,7 @@
         <View
             android:id="@+id/divider27"
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="4dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
