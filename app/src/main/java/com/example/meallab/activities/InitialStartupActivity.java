@@ -123,6 +123,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
     //Initialize linear layouts that hold checkboxes for the mealtypes and micronutrients
     private void initLinearLayouts() {
         Nutrient[] nutrients = userPreferences.getTrackedNutrients();
+        Nutrient[] defaultMicroNutrients = userPreferences.getDefaultMicroNutrients();
         System.out.println(nutrients.length);
         System.out.println("REEEEEEEEEEEEEEEE");
         for(int i = 0; i < nutrients.length;i++){
@@ -130,7 +131,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
                 System.out.println("i = " + i + " and j : " + j);
                 if(nutrients[i].name.equals(microNutrients[j].name)){
 
-                    microNutrients[j].amount = nutrients[i].amount;
+                    microNutrients[j].amountDailyTarget = nutrients[i].amountDailyTarget;
                 }
             }
         }
@@ -174,7 +175,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
             TextView microNutrientUnit = listItem.findViewById(R.id.micro_nutrient_unit);
             microNutrientUnit.setText(microNutrients[i].unit);
             TextView microNutrientRecommended = listItem.findViewById(R.id.microNutrientDailyDose);
-            microNutrientRecommended.setText("("+microNutrients[i].amountDailyTarget+" " + microNutrients[i].unit+ ")");
+            microNutrientRecommended.setText("("+defaultMicroNutrients[i].amountDailyTarget+" " + microNutrients[i].unit+ ")");
 
 
         }
