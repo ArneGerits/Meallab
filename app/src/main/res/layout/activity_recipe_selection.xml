@@ -4,19 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.RecipeSelectionActivity">
+    tools:context=".activities.RecipeSelectionActivity"
+    android:background="@color/creamWhite">
 
 
     <TextView
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/airbagfree_regular"
         android:text="Title TEXT"
-        android:textSize="18sp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="60sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/rerollButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/button_circle"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/reroll_button"
+        android:elevation="30dp"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -40,7 +56,7 @@
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="8dp"
-            android:background="#ffffff" />
+            android:background="@color/creamWhite" />
 
         <fragment
             android:id="@+id/middleInfo"
@@ -53,7 +69,7 @@
             android:id="@+id/divider2"
             android:layout_width="match_parent"
             android:layout_height="8dp"
-            android:background="#ffffff" />
+            android:background="@color/creamWhite" />
 
         <fragment
             android:id="@+id/bottomInfo"
@@ -67,28 +83,22 @@
             android:layout_width="match_parent"
             android:layout_height="8dp"
             android:layout_weight="0"
-            android:background="#FFFFFF" />
+            android:background="@color/creamWhite" />
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/rerollButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:text="Reroll"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/confirmButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:text="Confirm"
+    <ImageButton
+        android:id="@+id/nextButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/button_circle"
+        android:scaleType="centerInside"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/checkmark"
+        android:elevation="30dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

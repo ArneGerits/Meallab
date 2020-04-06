@@ -13,4 +13,6 @@
     <color name="fat">#ffd67c</color>
     <color name="protein">#ff9f86</color>
     <color name="calories">#abcdef</color>
+    <color name="slightGrey">#AEAEAE</color>
+    <color name="buttonGrey">#CACBCE</color>
 </resources>

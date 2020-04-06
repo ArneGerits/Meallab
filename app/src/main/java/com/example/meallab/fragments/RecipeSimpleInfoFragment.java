@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.meallab.R;
+import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.RecipeCost;
 
 /**
@@ -87,6 +88,15 @@ public class RecipeSimpleInfoFragment extends Fragment {
         this.prepTimeTextView.setText(String.format("%d", this.readyTime) + " mins");
 
         // TODO: HANDLE THE IMAGE FOR THE COST.
+        if (cost == RecipeCost.LOW) {
+            this.costImageView.setImageResource(R.drawable.price_1);
+        } else if (cost == RecipeCost.MEDIUM) {
+            this.costImageView.setImageResource(R.drawable.price_2);
+        } else if (cost == RecipeCost.HIGH) {
+            this.costImageView.setImageResource(R.drawable.price_3);
+        } else {
+            // Nothing
+        }
     }
     // ----- Overrides -----
 

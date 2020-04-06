@@ -419,7 +419,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     if (response.getBitmap() != null) {
                         System.out.println("GOT THE IMAGE");
                         Bitmap result = response.getBitmap();
-
+                        // TODO: FIX HEREEEE ABCD
                         cardsFragment.setImageOnRecipe(result,r);
                     }
                 }

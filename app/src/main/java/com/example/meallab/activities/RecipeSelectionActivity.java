@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,10 +49,10 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     // ------ Outlets ------
 
     // The reroll button is positioned in the upper left.
-    Button rerollButton;
+    ImageButton rerollButton;
     TextView titleTextView;
     // The upper right button can either be a 'next' button, to choose next recipe or a 'confirm' button.
-    Button upperRightButton;
+    ImageButton upperRightButton;
 
     RecipeSelectionRowFragment topFragment;
     RecipeSelectionRowFragment middleFragment;
@@ -80,7 +84,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         this.bottomFragment = (RecipeSelectionRowFragment) this.getSupportFragmentManager().findFragmentById(R.id.bottomInfo);
 
         this.rerollButton  = this.findViewById(R.id.rerollButton);
-        this.upperRightButton = this.findViewById(R.id.confirmButton);
+        this.upperRightButton = this.findViewById(R.id.nextButton);
         this.titleTextView = this.findViewById(R.id.titleTextView);
 
         this.rerollButton.setOnClickListener( new View.OnClickListener() {
@@ -162,13 +166,15 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         this.middleFragment.hide(true);
         this.bottomFragment.hide(true);
 
-        // TODO: Replace with icon.
         if (mealIndex == this.meals.length - 1) {
-            this.upperRightButton.setText("confirm");
+            this.upperRightButton.setVisibility(View.INVISIBLE);
+            this.upperRightButton.setImageResource(R.drawable.checkmark);
         } else {
-            this.upperRightButton.setText("next");
+            this.upperRightButton.setVisibility(View.INVISIBLE);
+            this.upperRightButton.setImageResource(R.drawable.button_next);
         }
         this.upperRightButton.setEnabled(false);
+        this.rerollButton.setEnabled(true);
 
         // Set a new title
         this.setTitle(this.meals[this.mealIndex]);
@@ -200,13 +206,13 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         //TODO: Localize.
         if (this.meals[this.mealIndex]== SpoonacularMealType.BREAKFAST) {
-            this.titleTextView.setText("Choose breakfast");
+            this.titleTextView.setText("Breakfast");
         } else if (this.meals[this.mealIndex] == SpoonacularMealType.LUNCH) {
-            this.titleTextView.setText("Choose lunch");
+            this.titleTextView.setText("Lunch");
         } else if (this.meals[this.mealIndex] == SpoonacularMealType.DINNER) {
-            this.titleTextView.setText("Choose dinner");
+            this.titleTextView.setText("Dinner");
         } else {
-            this.titleTextView.setText("Choose snack");
+            this.titleTextView.setText("Snack");
         }
     }
 
@@ -252,11 +258,15 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
                 }
             });
         }
+        this.rerollButton.setEnabled(true);
     }
     //region Actions
 
     // Called when the user clicks the reroll button.
     private void showNextRecipes(boolean loadNew) {
+
+        // Disable the reload button when a reload is occuring.
+        this.rerollButton.setEnabled(false);
 
         int currentOffset = this.recipesOffset[this.mealIndex];
 
@@ -328,8 +338,47 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         this.recipesChosen[this.mealIndex] = r;
 
-        // Enable/Disable the upper right button accordingly.
-        this.upperRightButton.setEnabled((r != null));
+        if (r == null) {
+            if (this.upperRightButton.getVisibility() != View.INVISIBLE) {
+                // Animate the hiding of the upper right button.
+                Animation expandOut = AnimationUtils.loadAnimation(this, R.anim.expand_out);
+                expandOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        upperRightButton.setEnabled(false);
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        upperRightButton.setVisibility(View.INVISIBLE);
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                upperRightButton.startAnimation(expandOut);
+            }
+
+        } else {
+            if (this.upperRightButton.getVisibility() != View.VISIBLE) {
+                Animation expandIn = AnimationUtils.loadAnimation(this, R.anim.expand_in);
+                expandIn.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        upperRightButton.setVisibility(View.VISIBLE);
+                        upperRightButton.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        upperRightButton.setScaleX(1.0f);
+                        upperRightButton.setScaleX(1.0f);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                upperRightButton.startAnimation(expandIn);
+            }
+        }
     }
     //region
 
@@ -339,6 +388,8 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
         // If a fragment became deselected invalidate the choice.
         if (!selected) {
             this.madeChoice(null);
+
+            // Hide the upper right button.
 
             return;
         }
