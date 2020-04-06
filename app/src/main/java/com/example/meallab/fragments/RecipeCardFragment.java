@@ -3,6 +3,8 @@ package com.example.meallab.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.Layout;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.meallab.Nutrients.Nutrient;
@@ -42,7 +45,7 @@ public class RecipeCardFragment extends Fragment {
 
     private LinearLayout topLayout;
     private ImageView addImageView;
-    private LinearLayout infoLayout;
+    private ConstraintLayout infoLayout;
 
     // ----
 
@@ -157,7 +160,9 @@ public class RecipeCardFragment extends Fragment {
             this.cookingTimeTextView.setText("" + this.cookingMins + " min");
             this.servingsTextView.setText("" + this.servings);
             // TODO: Find out how to localize costs
-            this.costTextView.setText("" + this.pricePerServing  + "$/serving");
+            // Price per servings is given in cents.
+            String price = String.format("%.2f$/sv",(this.pricePerServing / 100));
+            this.costTextView.setText(price);
 
             // Set the nutrients.
             this.nutrientsOverview.setValues(this.nutrients);
@@ -210,6 +215,9 @@ public class RecipeCardFragment extends Fragment {
             loadAllViews();
         }
         this.layoutListener.loadedView(v);
+
+        // Make sure the text size is scale to fit
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.costTextView,1,17,1, TypedValue.COMPLEX_UNIT_SP);
 
         return v;
     }

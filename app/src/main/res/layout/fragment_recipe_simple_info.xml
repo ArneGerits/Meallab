@@ -14,29 +14,20 @@
         android:orientation="horizontal"
         android:background="@color/colorPrimaryDark">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5">
 
             <ImageView
                 android:id="@+id/kcalImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:layout_weight="1.5"
                 android:scaleType="fitCenter"
+                android:layout_margin="8dp"
                 android:src="@drawable/calories"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@drawable/calories" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <TextView
             android:id="@+id/caloriesTextView"
             android:layout_width="match_parent"
@@ -57,19 +48,11 @@
             android:orientation="horizontal"
             android:background="@color/colorPrimaryDark">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1.5">
 
                 <ImageView
                     android:id="@+id/timeImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
                     android:layout_weight="1.5"
                     android:scaleType="fitCenter"
                     android:src="@drawable/clock"
@@ -77,8 +60,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:srcCompat="@drawable/clock" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    tools:srcCompat="@drawable/clock"
+                    android:layout_margin="8dp"/>
 
             <TextView
                 android:id="@+id/cookingTimeTextView"
@@ -100,19 +83,11 @@
             android:orientation="horizontal"
             android:background="@color/colorPrimaryDark">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1.5">
 
                 <ImageView
                     android:id="@+id/servingsImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
                     android:layout_weight="1.5"
                     android:scaleType="fitCenter"
                     android:src="@drawable/person"
@@ -120,9 +95,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:srcCompat="@drawable/person" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+                    tools:srcCompat="@drawable/person"
+                    android:layout_margin="8dp"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
