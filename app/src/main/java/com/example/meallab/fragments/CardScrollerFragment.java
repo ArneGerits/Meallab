@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.meallab.R;
@@ -32,8 +33,8 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
 
     // Outlets
     private RecipeCardScrollView scrollView;
-    private Button leftButton;
-    private Button rightButton;
+    private ImageButton leftButton;
+    private ImageButton rightButton;
     private TextView titleTextView;
 
     // ----
@@ -52,6 +53,8 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
 
     // Maps recipe ids to values.
     private HashMap<Integer, RecipeCardFragment> recipeIDtoFragment = new HashMap<>();
+
+    private int currentIndex = 0;
 
     public CardScrollerFragment() {
         // Required empty public constructor
@@ -143,14 +146,16 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         this.leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("scroll to left");
+                // Scroll to previous fragment
+                scrollView.focusFragment(fragments[currentIndex - 1]);
             }
         });
         this.rightButton   = v.findViewById(R.id.rightButton);
         this.rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("scroll to right");
+                // Scroll to next fragment
+                scrollView.focusFragment(fragments[currentIndex + 1]);
             }
         });
 
@@ -184,7 +189,23 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
 
     @Override
     public void scrolledToCard(RecipeCardFragment card) {
+
+        // Hide show paging buttons.
+        this.currentIndex = card.getIndex();
+        if (this.currentIndex > 0) {
+            this.leftButton.setVisibility(View.VISIBLE);
+        } else {
+            this.leftButton.setVisibility(View.INVISIBLE);
+        }
+        if (this.currentIndex < (this.fragments.length - 1)) {
+            this.rightButton.setVisibility(View.VISIBLE);
+        } else {
+            this.rightButton.setVisibility(View.INVISIBLE);
+        }
         this.titleTextView.setText(card.getName());
+
+        rightButton.setEnabled(true);
+        leftButton.setEnabled(true);
     }
 
     @Override

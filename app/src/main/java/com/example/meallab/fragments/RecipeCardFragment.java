@@ -45,7 +45,7 @@ public class RecipeCardFragment extends Fragment {
 
     private LinearLayout topLayout;
     private ImageView addImageView;
-    private ConstraintLayout infoLayout;
+    private LinearLayout infoLayout;
 
     // ----
 
@@ -218,6 +218,7 @@ public class RecipeCardFragment extends Fragment {
 
         // Make sure the text size is scale to fit
         TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.costTextView,1,17,1, TypedValue.COMPLEX_UNIT_SP);
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.cookingTimeTextView,1,17,1, TypedValue.COMPLEX_UNIT_SP);
 
         return v;
     }

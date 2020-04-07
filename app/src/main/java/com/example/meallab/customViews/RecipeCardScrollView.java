@@ -58,6 +58,11 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
 
     int cardsLayedOut = 0;
 
+    // Smooth scroll to destination.
+    int scrollTo;
+    // True if currenlty scrolling.
+    boolean isScrolling = false;
+
     // ---- Constructors ----
 
     public RecipeCardScrollView(Context context, AttributeSet attrs, int defStyle) {
@@ -122,7 +127,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
                     RecipeCardFragment closest = getClosest();
 
                     // Center that view.
-                    focusFragment(closest);
+                    focusFragmentPrivate(closest);
 
                     return true;
                 } else {
@@ -174,6 +179,13 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
     // Center given view using smooth scroll.
     public void focusFragment(RecipeCardFragment f) {
 
+        if (this.isScrolling) {
+            return;
+        }
+        this.focusFragmentPrivate(f);
+    }
+
+    private void focusFragmentPrivate(RecipeCardFragment f) {
         View v = f.getView();
         // Get the middle of this scrollview.
         float sv = this.getWidth();
@@ -182,8 +194,18 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         // Calculate the distance to scroll.
         float scrollX = (v.getX() + v.getWidth() / 2.0f) - middle;
 
+        // Keep track of where to scroll to.
+        this.scrollTo = (int)scrollX;
+        this.isScrolling = true;
+
         // Position the view in the center.
         smoothScrollTo((int)scrollX,0);
+    }
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+
+        this.isScrolling = (this.getScrollX() != this.scrollTo);
     }
 
     // ---- Private Methods ----

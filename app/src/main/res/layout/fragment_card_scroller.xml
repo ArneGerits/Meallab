@@ -30,25 +30,31 @@
         app:layout_constraintTop_toTopOf="parent"
         android:gravity="center"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/leftButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#00ffffff"
+        android:src="@drawable/page_left"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="2dp"
-        android:text="Left"
+        app:layout_constraintDimensionRatio="W,1:1"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/recipeCardScrollView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/rightButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="2dp"
-        android:text="Right"
+        android:layout_width="0dp"
+        app:layout_constraintDimensionRatio="W,1:1"
+        android:background="#00ffffff"
+        android:scaleType="fitCenter"
+        android:src="@drawable/page_right"
         app:layout_constraintBottom_toTopOf="@+id/recipeCardScrollView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

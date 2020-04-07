@@ -85,7 +85,7 @@ public class SimpleNutrientsOverviewFragment extends Fragment {
         int indicator = ContextCompat.getColor(this.getContext(),R.color.woodBrown);
         this.barChart.getBarView().setBarColor(cColor);
         this.barChart.getBarView().setIndicatorColor(indicator);
-        this.barChart.setTitleText((int)calories.amount + " " + calories.unit);
+        this.barChart.setTitleText(calories.name + " - " + (int)calories.amount + " " + calories.unit);
 
         this.barChart.setLeftText("0");
         this.barChart.setRightText(String.format("%d", (int)calories.amountDailyTarget) + calories.unit);
