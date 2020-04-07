@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.meallab.R;
+import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.example.meallab.customViews.RecipeCardScrollView;
 import com.example.meallab.storing_data.StoredRecipe;
@@ -36,6 +39,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
     private ImageButton leftButton;
     private ImageButton rightButton;
     private TextView titleTextView;
+    private TextView typeTextView;
 
     // ----
 
@@ -160,6 +164,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         });
 
         this.titleTextView = v.findViewById(R.id.titleTextView);
+        this.typeTextView = v.findViewById(R.id.typeLabel);
         this.scrollView    = v.findViewById(R.id.recipeCardScrollView);
         this.scrollView.setLayout(40,800);
         this.scrollView.setListener(this);
@@ -167,6 +172,8 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         if (this.recipes != null) {
             loadAllViews();
         }
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.titleTextView,16,26,1, TypedValue.COMPLEX_UNIT_SP);
+
         return v;
     }
 
@@ -202,10 +209,18 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         } else {
             this.rightButton.setVisibility(View.INVISIBLE);
         }
-        this.titleTextView.setText(card.getName());
-
-        rightButton.setEnabled(true);
-        leftButton.setEnabled(true);
+        StoredRecipe recipe = this.recipes[this.currentIndex];
+        this.titleTextView.setText(recipe.name);
+        //TODO: Localize
+        if (recipe.mealType == SpoonacularMealType.BREAKFAST) {
+            this.typeTextView.setText("Breakfast");
+        } else if (recipe.mealType == SpoonacularMealType.LUNCH) {
+            this.typeTextView.setText("Lunch");
+        } else if (recipe.mealType == SpoonacularMealType.DINNER) {
+            this.typeTextView.setText("Dinner");
+        } else {
+            this.typeTextView.setText("Snack");
+        }
     }
 
     @Override

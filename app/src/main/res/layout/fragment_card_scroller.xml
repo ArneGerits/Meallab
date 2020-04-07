@@ -11,7 +11,7 @@
         class="com.example.meallab.customViews.RecipeCardScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="75dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,41 +20,55 @@
     <TextView
         android:id="@+id/titleTextView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="0dp"
+        android:fontFamily="cursive"
+        android:gravity="center"
         android:text="TextView"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="24sp"
+        android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toTopOf="@+id/recipeCardScrollView"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"/>
+        app:layout_constraintTop_toBottomOf="@id/typeLabel" />
 
     <ImageButton
         android:id="@+id/leftButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#00ffffff"
-        android:src="@drawable/page_left"
         android:layout_marginStart="8dp"
-        app:layout_constraintDimensionRatio="W,1:1"
+        android:background="#00ffffff"
         android:scaleType="fitCenter"
+        android:src="@drawable/page_left"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/recipeCardScrollView"
+        app:layout_constraintDimensionRatio="W,1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toTopOf="@id/titleTextView" />
 
     <ImageButton
         android:id="@+id/rightButton"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
-        android:layout_width="0dp"
-        app:layout_constraintDimensionRatio="W,1:1"
         android:background="#00ffffff"
         android:scaleType="fitCenter"
         android:src="@drawable/page_right"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/recipeCardScrollView"
+        app:layout_constraintDimensionRatio="W,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toTopOf="@id/titleTextView" />
+
+    <TextView
+        android:id="@+id/typeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/greycliff_cf_medium"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/rightButton"
+        app:layout_constraintStart_toEndOf="@+id/leftButton"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
