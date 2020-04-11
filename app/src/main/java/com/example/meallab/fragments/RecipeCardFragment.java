@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ public class RecipeCardFragment extends Fragment {
     private LinearLayout topLayout;
     private ImageView addImageView;
     private LinearLayout infoLayout;
+    private ImageButton editButton;
 
     // ----
 
@@ -138,7 +140,9 @@ public class RecipeCardFragment extends Fragment {
     public void setRecipeImage(Bitmap image) {
         this.recipeImage = image;
 
-        this.recipeImageView.setImageBitmap(image);
+        if (this.recipeImageView != null) {
+            this.recipeImageView.setImageBitmap(image);
+        }
     }
     public void setListener(RecipeCardFragmentListener listener) {
         this.listener = listener;
@@ -166,6 +170,10 @@ public class RecipeCardFragment extends Fragment {
 
             // Set the nutrients.
             this.nutrientsOverview.setValues(this.nutrients);
+
+            if (this.recipeImage != null) {
+                this.recipeImageView.setImageBitmap(this.recipeImage);
+            }
         } else {
             // Set all to GONE
             this.infoLayout.setVisibility(View.GONE);
@@ -202,19 +210,31 @@ public class RecipeCardFragment extends Fragment {
         this.nutrientsOverview   = (SimpleNutrientsOverviewFragment) getChildFragmentManager().findFragmentById(R.id.nutrientsFragment);
         this.addImageView        = v.findViewById(R.id.addImageView);
         this.topLayout           = v.findViewById(R.id.topLayout);
+        this.editButton          = v.findViewById(R.id.editButton);
+
         this.topLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Decide if we want to perform some sort of scrolling actions.
                 if (listener != null) {
                     listener.clickedOnFragment(RecipeCardFragment.this);
                 }
             }
         });
+        this.editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.editFragment(RecipeCardFragment.this);
+                }
+            }
+        });
+
         if (this.name != null) {
             loadAllViews();
         }
-        this.layoutListener.loadedView(v);
+        if (this.layoutListener != null) {
+            this.layoutListener.loadedView(v);
+        }
 
         // Make sure the text size is scale to fit
         TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.costTextView,1,17,1, TypedValue.COMPLEX_UNIT_SP);
@@ -226,6 +246,9 @@ public class RecipeCardFragment extends Fragment {
     public int getIndex() {
         return this.index;
     }
+    public boolean getIsEmpty() {
+        return this.isEmpty;
+    }
     /**
      * Interface that communicates user events with the recipe card.
      */
@@ -236,9 +259,19 @@ public class RecipeCardFragment extends Fragment {
          * @param fragment The fragment the user selected.
          */
         void clickedOnFragment(RecipeCardFragment fragment);
+
+        /**
+         * Called when the user wants to edit this fragment
+         * @param fragment The fragment the user wants to edit.
+         */
+        void editFragment(RecipeCardFragment fragment);
     }
     public interface RecipeCardFragmentLayoutListener {
 
+        /**
+         * Called when the given view is loaded.
+         * @param v The view that is loaded.
+         */
         void loadedView(View v);
     }
 }

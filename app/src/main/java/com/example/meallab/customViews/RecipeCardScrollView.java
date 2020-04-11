@@ -40,8 +40,8 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
     // The recipe cards this scrollview controls
     private RecipeCardFragment[] fragments;
 
-    // The recipe card currenlty in the center of the screen.
-    private RecipeCardFragment inFocus;
+    // The index currently in the center of the screen.
+    private int focusIndex = 0;
 
     // Holds the recipe carrds.
     private LinearLayout holder;
@@ -62,6 +62,8 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
     int scrollTo;
     // True if currenlty scrolling.
     boolean isScrolling = false;
+
+    RecipeCardFragment fragmentToScrollTo;
 
     // ---- Constructors ----
 
@@ -109,8 +111,9 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
      * @param fragments The card fragments to present.
      */
     public void setFragments(final RecipeCardFragment[] fragments) {
-        this.fragments = fragments;
 
+        this.fragments = fragments;
+        this.cardsLayedOut = 0;
         for (RecipeCardFragment f : fragments) {
             f.setLayoutListener(this);
         }
@@ -127,7 +130,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
                     RecipeCardFragment closest = getClosest();
 
                     // Center that view.
-                    focusFragmentPrivate(closest);
+                    focusFragmentPrivate(closest, true);
 
                     return true;
                 } else {
@@ -177,15 +180,24 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
      * @param f The fragment to focus on
      */
     // Center given view using smooth scroll.
-    public void focusFragment(RecipeCardFragment f) {
+    public void focusFragment(RecipeCardFragment f, boolean animated) {
 
         if (this.isScrolling) {
             return;
         }
-        this.focusFragmentPrivate(f);
+        System.out.println("Called focus fragment: " + f.getName());
+
+        // Scroll if the root view is loaded already, else rember the fragment.
+        if (f.getView() != null) {
+            System.out.println("we can acutally focus there.");
+            this.focusFragmentPrivate(f, animated);
+        } else {
+            System.out.println("Stored for later focus.");
+            this.fragmentToScrollTo = f;
+        }
     }
 
-    private void focusFragmentPrivate(RecipeCardFragment f) {
+    private void focusFragmentPrivate(RecipeCardFragment f, boolean animated) {
         View v = f.getView();
         // Get the middle of this scrollview.
         float sv = this.getWidth();
@@ -198,8 +210,12 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         this.scrollTo = (int)scrollX;
         this.isScrolling = true;
 
-        // Position the view in the center.
-        smoothScrollTo((int)scrollX,0);
+        if (animated) {
+            // Position the view in the center.
+            smoothScrollTo((int)scrollX,0);
+        } else {
+            scrollTo((int)scrollX,0);
+        }
     }
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
@@ -320,7 +336,10 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
 
                         inner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                        adjustFragmentHeights();
+                        focusFragmentPrivate(fragments[focusIndex], false);
+                        if (listener != null) {
+                            listener.scrolledToCard(fragments[focusIndex]);
+                        }
                     }
                 });
             }
@@ -333,24 +352,26 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
 
         // Keep track of the card view in focus.
         float largest = 0.0f;
-        RecipeCardFragment currentFocus = fragments[0];
-        for (RecipeCardFragment f : fragments) {
+        int focusIndex = 0;
+        for (int i = 0; i < fragments.length; i++) {
 
+            RecipeCardFragment f = fragments[i];
             // Adjust the height
             float newH = adjustHeight(f,middle);
             if (newH > largest) {
                 largest = newH;
-                currentFocus = f;
+                focusIndex = i;
             }
 
         }
 
         // Update the card in focus.
-        if (inFocus != currentFocus) {
-            inFocus = currentFocus;
+        if (focusIndex != this.focusIndex) {
+            this.focusIndex = focusIndex;
+
             // Inform the listener
             if (this.listener != null) {
-                this.listener.scrolledToCard(inFocus);
+                this.listener.scrolledToCard(this.fragments[this.focusIndex]);
             }
         }
 

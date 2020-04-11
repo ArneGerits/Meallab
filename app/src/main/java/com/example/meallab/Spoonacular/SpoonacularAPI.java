@@ -25,8 +25,8 @@ import java.util.ArrayList;
 public class SpoonacularAPI {
 
     // API key used for authentication.
-    //private final String API_KEY = "17ec74bd49124b45960ffb5d3b2b0b93"; // MAIN KEY
-    private final String API_KEY = "45c0adb7abff40c69e59feb277e379aa"; // BACKUP KEY
+    private final String API_KEY = "17ec74bd49124b45960ffb5d3b2b0b93"; // MAIN KEY
+    //private final String API_KEY = "45c0adb7abff40c69e59feb277e379aa"; // BACKUP KEY
     // The base URL for searching recipes.
     private final String SEARCH_BASE_URL = "https://api.spoonacular.com/recipes/complexSearch";
 

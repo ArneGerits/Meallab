@@ -57,6 +57,8 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
 
     // Maps recipe ids to values.
     private HashMap<Integer, RecipeCardFragment> recipeIDtoFragment = new HashMap<>();
+    // Maps recipe ids to images.
+    private HashMap<Integer, Bitmap> recipeIDtoImage = new HashMap<>();
 
     private int currentIndex = 0;
 
@@ -121,6 +123,11 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
                         r.numberOfServings,r.pricePerServing, r.getMacroNutrients(), i);
                 f.setListener(this);
                 this.recipeIDtoFragment.put(r.recipeID, f);
+                // Get the image.
+                Bitmap image = this.recipeIDtoImage.get(r.recipeID);
+                if (image != null) {
+                    f.setRecipeImage(image);
+                }
             }
 
             // Add it to the fragments.
@@ -128,6 +135,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         }
         // Add the cards to the scrollview.
         this.scrollView.setFragments(this.fragments);
+       // this.scrollView.focusFragment(this.fragments[this.currentIndex],false);
     }
 
     @Override
@@ -151,7 +159,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
             @Override
             public void onClick(View v) {
                 // Scroll to previous fragment
-                scrollView.focusFragment(fragments[currentIndex - 1]);
+                scrollView.focusFragment(fragments[currentIndex - 1], true);
             }
         });
         this.rightButton   = v.findViewById(R.id.rightButton);
@@ -159,7 +167,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
             @Override
             public void onClick(View v) {
                 // Scroll to next fragment
-                scrollView.focusFragment(fragments[currentIndex + 1]);
+                scrollView.focusFragment(fragments[currentIndex + 1], true);
             }
         });
 
@@ -178,9 +186,14 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
     }
 
     public void setImageOnRecipe(Bitmap image, StoredRecipe recipe) {
+
+        // Store the image.
+        this.recipeIDtoImage.put(recipe.recipeID, image);
         // Get the fragment and set the image.
         RecipeCardFragment f = this.recipeIDtoFragment.get(recipe.recipeID);
-        f.setRecipeImage(image);
+        if (f != null) {
+            f.setRecipeImage(image);
+        }
     }
     @Override
     public void onAttach(Context context) {
@@ -209,17 +222,22 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         } else {
             this.rightButton.setVisibility(View.INVISIBLE);
         }
-        StoredRecipe recipe = this.recipes[this.currentIndex];
-        this.titleTextView.setText(recipe.name);
         //TODO: Localize
-        if (recipe.mealType == SpoonacularMealType.BREAKFAST) {
-            this.typeTextView.setText("Breakfast");
-        } else if (recipe.mealType == SpoonacularMealType.LUNCH) {
-            this.typeTextView.setText("Lunch");
-        } else if (recipe.mealType == SpoonacularMealType.DINNER) {
-            this.typeTextView.setText("Dinner");
+        if (!card.getIsEmpty()) {
+            StoredRecipe recipe = this.recipes[this.currentIndex];
+            this.titleTextView.setText(recipe.name);
+            if (recipe.mealType == SpoonacularMealType.BREAKFAST) {
+                this.typeTextView.setText("Breakfast");
+            } else if (recipe.mealType == SpoonacularMealType.LUNCH) {
+                this.typeTextView.setText("Lunch");
+            } else if (recipe.mealType == SpoonacularMealType.DINNER) {
+                this.typeTextView.setText("Dinner");
+            } else {
+                this.typeTextView.setText("Snack");
+            }
         } else {
-            this.typeTextView.setText("Snack");
+            this.typeTextView.setText("No meal(s) planned!");
+            this.titleTextView.setText("");
         }
     }
 
@@ -228,19 +246,26 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         // Determine if the fragment is an 'add' fragment or recipe.
         int index = fragment.getIndex();
         boolean isEmpty = this.empties[index];
-        if (this.listener != null) {
-            if (isEmpty) {
-                this.listener.selectedNewRecipeForIndex(index);
-            } else {
-                // Determine the correct offset.
-                int offset = 0;
-                for (boolean b : this.empties) {
-                    if (b) {
-                        offset++;
-                    }
+
+        if (fragment.getIndex() != this.currentIndex) {
+            this.scrollView.focusFragment(fragment, true);
+        } else {
+            if (this.listener != null) {
+                if (isEmpty) {
+                    // Listener should create a new fragment.
+                    this.listener.selectedNewRecipeForIndex(index);
+                } else {
+                    this.listener.selectedShowDetailForIndex(fragment.getIndex());
                 }
-                this.listener.selectedShowDetailForIndex(index - offset);
             }
+        }
+    }
+
+    @Override
+    public void editFragment(RecipeCardFragment fragment) {
+        // Relay to the listener.
+        if (this.listener != null) {
+            this.listener.selectedNewRecipeForIndex(fragment.getIndex());
         }
     }
     // endregion
@@ -254,12 +279,6 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
          * @param index The index of the card, set in setValues().
          */
         void selectedShowDetailForIndex(int index);
-
-        /**
-         * Called when the user wants to edit the recipe.
-         * @param index The index of the card, set in setValues().
-         */
-        void selectedEditForIndex(int index);
 
         /**
          * Called when the user wants to add a new recipe.

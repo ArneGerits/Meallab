@@ -7,6 +7,7 @@ import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterIngredients;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -22,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularAPI;
@@ -417,9 +420,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 @Override
                 public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                     if (response.getBitmap() != null) {
-                        System.out.println("GOT THE IMAGE");
+                        System.out.println("GOT THE IMAGE for: " + r.name);
                         Bitmap result = response.getBitmap();
-                        // TODO: FIX HEREEEE ABCD
                         cardsFragment.setImageOnRecipe(result,r);
                     }
                 }
@@ -510,21 +512,16 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // endregion
 
-    // region Recipe Card Scroller Listener
-
     @Override
     public void completedSynchronize(boolean success) {
 
     }
 
-    @Override
-    public void selectedShowDetailForIndex(int index) {
-        //System.out.println("show detail for " + r.name);
-    }
+    // region Recipe Card Scroller Listener
 
     @Override
-    public void selectedEditForIndex(int index) {
-        this.editingIndex = index;
+    public void selectedShowDetailForIndex(int index) {
+        System.out.println("show detail");
     }
 
     @Override
@@ -553,6 +550,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
             case (RECIPE_SELECTION_CODE) : {
+
                 if (resultCode == Activity.RESULT_OK) {
                     // Get the chosen recipes from the activity.
                     String recipesJson = data.getStringExtra(RecipeSelectionActivity.RECIPES_SELECTED);
@@ -626,7 +624,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             if (this.editingIndex >= storedRecipes.size()) {
                 storedRecipes.add(new StoredRecipe(toAdd));
             } else {
-                storedRecipes.add(this.editingIndex, new StoredRecipe(toAdd));
+                storedRecipes.set(this.editingIndex, new StoredRecipe(toAdd));
             }
             StoredRecipe[] arr = new StoredRecipe[storedRecipes.size()];
             arr = storedRecipes.toArray(arr);
