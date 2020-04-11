@@ -155,7 +155,7 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/divider21"
+            android:id="@+id/dividerBottom"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/colorPrimaryDark" />
@@ -167,12 +167,53 @@
             android:layout_height="match_parent"
             android:layout_weight="0.9" />
 
-        <ImageView
-            android:id="@+id/addImageView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/addLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:src="@drawable/debug_plus_button"
-            tools:visibility="gone" />
+            android:background="@color/creamWhite"
+            tools:visibility="visible">
+
+                <ImageButton
+                    android:id="@+id/plusButton"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/white_circle"
+                    android:elevation="30dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/add_button"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/infoTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp"
+                    android:fontFamily="@font/greycliff_cf_heavy"
+                    android:text="Start planning"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    app:layout_constraintBottom_toTopOf="@+id/plusButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/greycliff_cf_heavy"
+                    android:text="No meal(s) planned"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toTopOf="@+id/infoTextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

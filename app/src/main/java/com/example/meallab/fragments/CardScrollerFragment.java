@@ -236,7 +236,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
                 this.typeTextView.setText("Snack");
             }
         } else {
-            this.typeTextView.setText("No meal(s) planned!");
+            this.typeTextView.setText("");
             this.titleTextView.setText("");
         }
     }

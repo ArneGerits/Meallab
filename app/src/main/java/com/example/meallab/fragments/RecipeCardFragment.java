@@ -2,6 +2,7 @@ package com.example.meallab.fragments;
 
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Layout;
 import android.util.TypedValue;
@@ -43,11 +44,14 @@ public class RecipeCardFragment extends Fragment {
     private TextView cookingTimeTextView;
     private TextView servingsTextView;
     private TextView costTextView;
+    public TextView infoTextView;
 
     private LinearLayout topLayout;
-    private ImageView addImageView;
+    private ConstraintLayout addLayout;
     private LinearLayout infoLayout;
     private ImageButton editButton;
+
+    private View divider;
 
     // ----
 
@@ -152,14 +156,16 @@ public class RecipeCardFragment extends Fragment {
         this.layoutListener = listener;
     }
     // Loads all view objects.
-    private void loadAllViews() {
+    private void loadAllViews(View v) {
         if (!isEmpty) {
 
-            addImageView.setVisibility(View.GONE);
+            addLayout.setVisibility(View.GONE);
             this.infoLayout.setVisibility(View.VISIBLE);
             this.recipeImageView.setVisibility(View.VISIBLE);
             this.nutrientsOverview.getView().setVisibility(View.VISIBLE);
+            this.divider.setVisibility(View.VISIBLE);
 
+            v.setBackgroundResource(android.R.drawable.dialog_holo_light_frame);
             // Set the text views.
             this.cookingTimeTextView.setText("" + this.cookingMins + " min");
             this.servingsTextView.setText("" + this.servings);
@@ -175,12 +181,13 @@ public class RecipeCardFragment extends Fragment {
                 this.recipeImageView.setImageBitmap(this.recipeImage);
             }
         } else {
+            v.setBackgroundColor(Color.TRANSPARENT);
             // Set all to GONE
             this.infoLayout.setVisibility(View.GONE);
             this.recipeImageView.setVisibility(View.GONE);
             this.nutrientsOverview.getView().setVisibility(View.GONE);
-
-            addImageView.setVisibility(View.VISIBLE);
+            this.divider.setVisibility(View.GONE);
+            addLayout.setVisibility(View.VISIBLE);
         }
     }
     @Override
@@ -208,15 +215,25 @@ public class RecipeCardFragment extends Fragment {
         this.recipeImageView     = v.findViewById(R.id.recipeImageView);
         this.infoLayout          = v.findViewById(R.id.infoContainer);
         this.nutrientsOverview   = (SimpleNutrientsOverviewFragment) getChildFragmentManager().findFragmentById(R.id.nutrientsFragment);
-        this.addImageView        = v.findViewById(R.id.addImageView);
+        this.addLayout           = v.findViewById(R.id.addLayout);
         this.topLayout           = v.findViewById(R.id.topLayout);
         this.editButton          = v.findViewById(R.id.editButton);
-
+        this.infoTextView        = v.findViewById(R.id.infoTextView);
+        this.divider             = v.findViewById(R.id.dividerBottom);
         this.topLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
                     listener.clickedOnFragment(RecipeCardFragment.this);
+                }
+            }
+        });
+        ImageButton b = v.findViewById(R.id.plusButton);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.editFragment(RecipeCardFragment.this);
                 }
             }
         });
@@ -230,7 +247,7 @@ public class RecipeCardFragment extends Fragment {
         });
 
         if (this.name != null) {
-            loadAllViews();
+            loadAllViews(v);
         }
         if (this.layoutListener != null) {
             this.layoutListener.loadedView(v);
