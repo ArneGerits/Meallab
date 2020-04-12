@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -38,19 +39,18 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
     private LinearLayout[] microLayouts;
     private final int kMicroHeight = 175;
 
-    private LinearLayout microHolder;
-
     private boolean showingMicros = false;
 
     ArrayList<MicroNutrientFragment> microFrags = new ArrayList<>();
 
-    // ---- Views ----
+    // ---- Outlets ----
     HorizontalBarChart caloriesBar;
     HorizontalBarChart carbsBar;
     HorizontalBarChart fatsBar;
     HorizontalBarChart proteinsBar;
+    LinearLayout microHolder;
+    ImageButton showButton;
 
-    Button showButton;
     public ComplexNutrientsOverviewFragment() {
         // Required empty public constructor
     }
@@ -206,15 +206,6 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
 
                 showingMicros = !showingMicros;
 
-                // Change the button appearance
-                if (showingMicros) {
-                    // TODO: Change button images.
-                    showButton.setText("Hide");
-                } else {
-                    System.out.println("show now!");
-                    showButton.setText("Show");
-                }
-
                 int toValue   = kMicroHeight * microLayouts.length;
                 int fromValue = 0;
 
@@ -248,8 +239,10 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
                     {
                         if (showingMicros) {
                             microHolder.setVisibility(View.VISIBLE);
+                            showButton.setImageResource(R.drawable.expand_up);
                         } else {
                             microHolder.setVisibility(View.GONE);
+                            showButton.setImageResource(R.drawable.expand_down);
                         }
                     }
                 });

@@ -8,6 +8,7 @@
     <color name="colorCalendarCircleGray">#AAAAAA</color>
     <color name="colorCalendarTextOutday">#B1B1B1</color>
     <color name="creamWhite">#fdf6e4</color>
+    <color name="creamWhiteDarker">#f2ebda</color>
     <color name="woodBrown">#6D574E</color>
     <color name="carb">#A2E4C1</color>
     <color name="fat">#ffd67c</color>

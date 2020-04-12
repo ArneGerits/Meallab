@@ -11,8 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/greycliff_cf_medium"
         android:text="Macro nutrients"
-        android:textSize="18sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,43 +27,78 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView">
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+        android:layout_marginRight="0dp"
+        android:layout_marginLeft="0dp"
+        android:background="#00ffffff">
 
-        <fragment
-            android:id="@+id/caloriesBar"
-            android:name="com.example.meallab.Nutrients.HorizontalBarChart"
+
+        <FrameLayout
+            android:layout_margin="4dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/creamWhite"
+            android:elevation="0dp">
+            <fragment
+                android:id="@+id/caloriesBar"
+                android:name="com.example.meallab.Nutrients.HorizontalBarChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
+        <FrameLayout
+            android:layout_margin="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/creamWhite"
+            android:elevation="0dp">
         <fragment
             android:id="@+id/carbsBar"
             android:name="com.example.meallab.Nutrients.HorizontalBarChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-
+        </FrameLayout>
+        <FrameLayout
+            android:layout_margin="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/creamWhite"
+            android:elevation="0dp">
         <fragment
             android:id="@+id/fatsBar"
             android:name="com.example.meallab.Nutrients.HorizontalBarChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-
+        </FrameLayout>
+        <FrameLayout
+            android:layout_margin="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/creamWhite"
+            android:elevation="0dp">
         <fragment
             android:id="@+id/proteinsBar"
             android:name="com.example.meallab.Nutrients.HorizontalBarChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
+        </FrameLayout>
     </LinearLayout>
 
     <TextView
         android:id="@+id/costTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/greycliff_cf_medium"
         android:text="Micro nutrients"
-        android:textSize="18sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
@@ -70,19 +107,24 @@
         android:id="@+id/microHolder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/costTextView" />
 
-    <Button
+    <ImageButton
         android:id="@+id/showButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Show"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/white_circle"
+        android:elevation="30dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/expand_down"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/microHolder" />
