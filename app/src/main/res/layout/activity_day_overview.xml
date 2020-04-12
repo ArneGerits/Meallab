@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navBar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="66dp"
         android:layout_weight="0"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,15 +50,31 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/yearTextView" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="Settings"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="11dp"
+            android:src="@drawable/settings_2"
+            android:scaleType="fitCenter"
+            android:elevation="30dp"
+            android:background="@drawable/white_circle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/shopping_3"
+            android:elevation="30dp"
+            android:background="@drawable/white_circle"
+            android:scaleType="fitCenter"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.example.meallab.customViews.CustomScrollView

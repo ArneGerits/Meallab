@@ -67,6 +67,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     // The current index of the mealtype to choose recipes for.
     private int mealIndex = 0;
 
+    boolean firstLoad = false;
     Gson gson = new Gson();
 
     @Override
@@ -318,6 +319,31 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
 
         // Load the 3 images.
         this.loadRecipeData(this.recipesShowing);
+
+        // Animate the reroll button on first load.
+        if (!this.firstLoad) {
+            this.firstLoad = true;
+
+
+            Animation expandIn = AnimationUtils.loadAnimation(this, R.anim.expand_in);
+            expandIn.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    rerollButton.setVisibility(View.VISIBLE);
+                    rerollButton.setEnabled(true);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    rerollButton.setScaleX(1.0f);
+                    rerollButton.setScaleX(1.0f);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            rerollButton.startAnimation(expandIn);
+        }
     }
 
     @Override

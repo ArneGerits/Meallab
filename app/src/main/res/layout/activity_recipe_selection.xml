@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.RecipeSelectionActivity"
-    android:background="@color/creamWhite">
+    android:background="@color/colorPrimary">
 
 
     <TextView
@@ -13,8 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/airbagfree_regular"
-        android:textColor="@color/colorPrimary"
-        android:textSize="60sp"
+        android:textColor="#ffffff"
+        android:textSize="50sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,26 +24,33 @@
         android:id="@+id/rerollButton"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/button_circle"
+        android:layout_marginStart="11dp"
+        android:background="@drawable/white_circle"
+        android:elevation="30dp"
         android:scaleType="centerInside"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/reroll_button"
-        android:elevation="30dp"/>
+        tools:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="426dp"
         android:layout_height="0dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="66dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <View
+            android:id="@+id/divider0"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="@color/creamWhite" />
         <fragment
             android:id="@+id/topInfo"
             android:name="com.example.meallab.fragments.RecipeSelectionRowFragment"
@@ -90,14 +97,14 @@
         android:id="@+id/nextButton"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/button_circle"
+        android:layout_marginEnd="11dp"
+        android:background="@drawable/white_circle"
+        android:elevation="30dp"
         android:scaleType="centerInside"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/checkmark"
-        android:elevation="30dp"/>
+        app:srcCompat="@drawable/checkmark" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
