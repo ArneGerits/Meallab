@@ -219,9 +219,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         DateTimeFormatter f;
         if (date.getDayOfMonth() > 9) {
-            f = DateTimeFormatter.ofPattern("EEE dd MMMM yyyy");
+            f = DateTimeFormatter.ofPattern("EEE dd MMMM");
         } else {
-            f = DateTimeFormatter.ofPattern("EEE d MMMM yyyy");
+            f = DateTimeFormatter.ofPattern("EEE d MMMM");
         }
         String result = f.format(this.selectedDate);
         this.dateTextView.setText(result);

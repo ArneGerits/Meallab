@@ -92,7 +92,7 @@ public class DayViewContainer extends ViewContainer {
             this.setCircleColor(color);
         } else {
             if (!this.isToday) {
-                this.setCircleColor(Color.WHITE);
+                this.setCircleColor(Color.TRANSPARENT);
             } else {
                 int color = ContextCompat.getColor(this.getView().getContext(), R.color.colorCalendarCircleGray);
                 this.setCircleColor(color);

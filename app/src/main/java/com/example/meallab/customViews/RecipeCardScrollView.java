@@ -333,7 +333,6 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
                         RecipeCardScrollView inner = RecipeCardScrollView.this;
 
                         inner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        // TODO: THIS IS OFF?
                         focusFragmentPrivate(fragments[focusIndex], false);
                         if (listener != null) {
                             listener.scrolledToCard(fragments[focusIndex]);

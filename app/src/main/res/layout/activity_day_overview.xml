@@ -204,7 +204,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textSize="22sp"
+            android:fontFamily="@font/greycliff_cf_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -218,18 +219,20 @@
             android:layout_marginTop="4dp"
             android:alpha="0"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/monthTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/greycliff_cf_light"
             android:layout_marginStart="16dp"
             android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
             android:textColor="#FFFFFF"
-            android:textSize="22sp"
+            android:textSize="32sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/yearTextView" />
 
