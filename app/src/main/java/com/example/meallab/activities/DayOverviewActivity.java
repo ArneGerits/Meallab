@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,7 +86,11 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         CardScrollerFragment.CardScrollerFragmentListener, SpoonacularAPI.SpoonacularDetailedRecipeListener {
 
     // ----- Constants ------
-    private static final int RECIPE_SELECTION_CODE = 12345;
+
+    private static final int RECIPE_SELECTION_CODE = 1;
+    private static final int SHOPPING_CODE         = 2;
+
+    // -----
 
     private ArrayList<Object> mIngredientNames = new ArrayList<>();
     private ArrayList<String> mIngredientQuantities = new ArrayList<>();
@@ -122,6 +127,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     private CardScrollerFragment cardsFragment;
     private ComplexNutrientsOverviewFragment nutrientFragment;
+
+    private ImageButton settingsButton;
+    private ImageButton shoppingButton;
 
     // ------
 
@@ -170,11 +178,11 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         api = new SpoonacularAPI(this);
 
         // Getting the text views of the nav bar.
-        this.dateTextView  = this.findViewById(R.id.dateTextView);
-        this.yearTextView  = this.findViewById(R.id.yearTextView);
-        this.monthTextView = this.findViewById(R.id.monthTextView);
-
-        //selected(this.selectedDate);
+        this.dateTextView   = this.findViewById(R.id.dateTextView);
+        this.yearTextView   = this.findViewById(R.id.yearTextView);
+        this.monthTextView  = this.findViewById(R.id.monthTextView);
+        this.settingsButton = this.findViewById(R.id.settingsButton);
+        this.shoppingButton = this.findViewById(R.id.shoppingButton);
 
         ConstraintLayout navBar = this.findViewById(R.id.navBar);
         navBar.setOnClickListener(new View.OnClickListener() {
@@ -189,11 +197,46 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         });
-
-        ConstraintLayout l = this.findViewById(R.id.navBar);
-        l.bringToFront();
+        this.settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchSettings();
+            }
+        });
+        this.shoppingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchShoppingList();
+            }
+        });
     }
 
+    // ----- Actions ------
+
+    // Launches the settings activity.
+    private void launchSettings() {
+
+    }
+    // Launches the shopping list activity.
+    private void launchShoppingList() {
+
+        ShoppingListActivity recipeSelection = new ShoppingListActivity();
+        Intent intent = new Intent(this, ShoppingListActivity.class);
+
+        // Get the next 6 stored days.
+        StoredDay[] days = new StoredDay[7];
+
+        // Get the stored days.
+        LocalDate selectedDate = LocalDate.now();
+        for (int i = 0; i < days.length; i++) {
+            StoredDay d =  this.store.retrieveDay(selectedDate.plusDays(i));
+            days[i]     = d;
+        }
+
+        intent.putExtra("days", gson.toJson(days));
+        // Start the recipe selection.
+        startActivityForResult(intent, SHOPPING_CODE);
+    }
 
     // region Date Selection
 
@@ -582,6 +625,18 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     String recipesJson = data.getStringExtra(RecipeSelectionActivity.RECIPES_SELECTED);
                     Recipe[] recipesChosen = this.gson.fromJson(recipesJson, Recipe[].class);
                     this.recipesChosen(recipesChosen);
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+
+                }
+                break;
+            }
+            case (SHOPPING_CODE) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    // Get the chosen recipes from the activity.
+                    String daysJson = data.getStringExtra(ShoppingListActivity.DAYS);
+                    StoredDay[] days = this.gson.fromJson(daysJson, StoredDay[].class);
+
+                    // Do something with days.
                 } else if (resultCode == Activity.RESULT_CANCELED) {
 
                 }

@@ -33,6 +33,9 @@ public class DayViewContainer extends ViewContainer {
     // True when this day is selected.
     private boolean isSelected = false;
 
+    // -----
+    int selectedColor;
+
     private DayViewContainerListener listener;
 
     public DayViewContainer(View view) {
@@ -92,7 +95,8 @@ public class DayViewContainer extends ViewContainer {
             this.setCircleColor(color);
         } else {
             if (!this.isToday) {
-                this.setCircleColor(Color.TRANSPARENT);
+                this.getView().setBackgroundColor(Color.TRANSPARENT);
+                //this.setCircleColor(Color.TRANSPARENT);
             } else {
                 int color = ContextCompat.getColor(this.getView().getContext(), R.color.colorCalendarCircleGray);
                 this.setCircleColor(color);

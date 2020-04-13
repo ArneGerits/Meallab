@@ -116,7 +116,15 @@ public class PersistentStore {
      */
     public StoredDay retrieveDay(LocalDate date) {
 
-        return retrieveDays(new LocalDate[]{date})[0];
+        for (StoredDay day: this.days) {
+            if (day.date.isEqual(date)) {
+                return day;
+            }
+        }
+        StoredDay newDay = new StoredDay(date);
+        this.days.add(newDay);
+
+        return newDay;
     }
 
     /**
