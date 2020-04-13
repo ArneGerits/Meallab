@@ -185,14 +185,11 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         if (this.isScrolling) {
             return;
         }
-        System.out.println("Called focus fragment: " + f.getName());
 
         // Scroll if the root view is loaded already, else rember the fragment.
         if (f.getView() != null) {
-            System.out.println("we can acutally focus there.");
             this.focusFragmentPrivate(f, animated);
         } else {
-            System.out.println("Stored for later focus.");
             this.fragmentToScrollTo = f;
         }
     }
@@ -209,13 +206,14 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         // Keep track of where to scroll to.
         this.scrollTo = (int)scrollX;
         this.isScrolling = true;
-
+        
         if (animated) {
             // Position the view in the center.
             smoothScrollTo((int)scrollX,0);
         } else {
             scrollTo((int)scrollX,0);
         }
+        adjustFragmentHeights();
     }
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {

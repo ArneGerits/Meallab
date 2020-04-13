@@ -355,13 +355,22 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         v.setup(first, last, firstDayOfWeek);
         v.scrollToMonth(current);
 
+        //int wrapSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+       // v.measure(wrapSpec, wrapSpec);
+
+        System.out.println("measured height 1: " + v.getMeasuredHeight());
+        System.out.println("measured height 3: " + v.getHeight());
         v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                System.out.println("call to global layout list");
                 v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 topBound = v.getHeight();
                 leftDistance = v.getWidth() / 2.0f;
 
+                System.out.println(" height 2: " + v.getHeight());
+                System.out.println("measured height 2: " + v.getMeasuredHeight());
+                System.out.println("too bound: " + topBound);
                 scrollView.boundYTop = topBound;
                 scrollView.topBoundEnabled = true;
                 scrollView.scrollTo(0,topBound);
@@ -466,6 +475,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // Shows the calendar.
     private void showCalendar() {
 
+        System.out.println("show calendar");
         CalendarView v = this.findViewById(R.id.calendarView);
         CustomScrollView scrollView = (CustomScrollView) findViewById(R.id.scrollView);
 
