@@ -4,78 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/creamWhite">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/navBar"
-        android:layout_width="match_parent"
-        android:layout_height="66dp"
-        android:layout_weight="0"
-        android:background="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/yearTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:alpha="0"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/monthTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="2dp"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/yearTextView" />
-
-        <ImageButton
-            android:id="@+id/button2"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="11dp"
-            android:src="@drawable/settings"
-            android:scaleType="fitCenter"
-            android:elevation="30dp"
-            android:background="@drawable/white_circle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="11dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/shopping_list"
-            android:elevation="30dp"
-            android:background="@drawable/white_circle"
-            android:scaleType="fitCenter"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    android:background="@color/creamWhite"
+    android:clipChildren="false">
 
     <com.example.meallab.customViews.CustomScrollView
         android:id="@+id/scrollView"
@@ -87,8 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/navBar"
-        android:scrollbars="none"
-        >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,18 +26,32 @@
             android:clipChildren="false"
             android:clipToPadding="false">
 
-            <com.kizitonwose.calendarview.CalendarView
-                android:id="@+id/calendarView"
-                android:layout_width="0dp"
-                android:layout_height="250dp"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                app:cv_dayViewResource="@layout/calendar_day_layout"
-                app:cv_monthHeaderResource="@layout/calendar_month_header"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:id="@+id/calendarContainer"
+                android:layout_height="1dp"
+                android:orientation="vertical"
+                android:clipChildren="true"
+                android:clipToPadding="true"
                 app:layout_constraintBottom_toTopOf="@+id/divider3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.kizitonwose.calendarview.CalendarView
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    app:cv_dayViewResource="@layout/calendar_day_layout"
+                    app:cv_monthHeaderResource="@layout/calendar_month_header"
+                    android:clipChildren="true"
+                    android:clipToPadding="true"
+                    />
+
+            </FrameLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -243,5 +186,78 @@
 
         </LinearLayout>
     </com.example.meallab.customViews.CustomScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/navBar"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:layout_weight="0"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:clipToPadding="false"
+        android:clipChildren="false">
+
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/yearTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:alpha="0"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/monthTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/yearTextView" />
+
+        <ImageButton
+            android:id="@+id/button2"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="11dp"
+            android:src="@drawable/settings"
+            android:scaleType="fitCenter"
+            android:elevation="30dp"
+            android:background="@drawable/white_circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="11dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/shopping_list"
+            android:elevation="30dp"
+            android:background="@drawable/white_circle"
+            android:scaleType="fitCenter" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

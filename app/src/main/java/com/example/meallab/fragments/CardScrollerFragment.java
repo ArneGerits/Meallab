@@ -287,4 +287,21 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
         void selectedNewRecipeForIndex(int index);
 
     }
+
+    /*
+    public static interface OnCompleteListener {
+        public abstract void onComplete();
+    }
+
+    private OnCompleteListener mListener;
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            this.mListener = (OnCompleteListener)context;
+        }
+        catch (final ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnCompleteListener");
+        }
+    }*/
 }

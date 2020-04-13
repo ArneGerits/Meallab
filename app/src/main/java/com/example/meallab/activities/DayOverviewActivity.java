@@ -18,11 +18,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -134,11 +138,18 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // it maps recipe IDS to Recipe objects.
     private HashMap<Integer, Recipe> recipesCache = new HashMap<Integer, Recipe>();
 
+    private FrameLayout calendarContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_day_overview);
+
+        // Setting the fragments.
+        this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
+        this.cardsFragment.setListener(this);
+        this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
+
 
         // Init the store, will give callback on completion.
         this.store = new PersistentStore(this,this);
@@ -147,6 +158,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         // Perform view first time setup.
         this.scrollView = findViewById(R.id.scrollView);
         this.calendar   = this.findViewById(R.id.calendarView);
+
+        this.calendarContainer = this.findViewById(R.id.calendarContainer);
 
         this.setupCalendar(this.calendar);
         this.setupScrollView(this.scrollView);
@@ -161,7 +174,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.yearTextView  = this.findViewById(R.id.yearTextView);
         this.monthTextView = this.findViewById(R.id.monthTextView);
 
-        selected(this.selectedDate);
+        //selected(this.selectedDate);
 
         ConstraintLayout navBar = this.findViewById(R.id.navBar);
         navBar.setOnClickListener(new View.OnClickListener() {
@@ -177,10 +190,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             }
         });
 
-        // Setting the fragments.
-        this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
-        this.cardsFragment.setListener(this);
-        this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
+        ConstraintLayout l = this.findViewById(R.id.navBar);
+        l.bringToFront();
     }
 
 
@@ -189,21 +200,19 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // Called when the user selects a date in the calendar.
     // @pre calendar and dateTextView must be initialized.
     public void selected(LocalDate date) {
-
-        LocalDate old = this.selectedDate;
+        // Set the new selected date.
         this.selectedDate = date;
-
         // Update the calendar.
-        this.calendar.notifyDateChanged(old);
-        this.calendar.notifyDateChanged(date);
-
+        this.calendar.notifyCalendarChanged();
+        // Update the text view.
         this.updateDateTextView(this.selectedDate);
+
+        // Ask the persistent store for the date selected, and switch to that day.
+        this.switchToDay(this.store.retrieveDay(date));
 
     }
     public void selectedInOrOutDate(LocalDate date) {
         selected(date);
-
-        //this.calendar.smoothScrollToDate(date);
     }
     // Updates the dateTextView with the correct date.
     private void updateDateTextView(LocalDate date) {
@@ -268,8 +277,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     scrollView.topBoundEnabled = true;
                     calendarShowing = false;
 
-                    System.out.println("HIDE");
-
                     DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM");
                     String result = f.format(selectedDate);
                     monthTextView.setText(result);
@@ -286,6 +293,37 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Sets up the calendar view.
     private void setupCalendar(final CalendarView v) {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        // Calculate the dimensions of a cell, 7 cells need to be next to eachother.
+
+        float dip = 30f;
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.getDisplayMetrics()
+        );
+
+
+        int cellDimension = width / 7;
+        int calendarHeight = cellDimension * 5 + (int)px;
+
+        ViewGroup.LayoutParams p =  this.calendarContainer.getLayoutParams();
+        p.height = calendarHeight;
+        this.calendarContainer.setLayoutParams(p);
+
+        v.setDayHeight(cellDimension);
+        v.setDayWidth(cellDimension);
+        topBound = calendarHeight;
+        leftDistance = width / 2.0f;
+
+        scrollView.boundYTop = topBound;
+        scrollView.topBoundEnabled = true;
+        scrollView.scrollTo(0,topBound);
+
         v.setOrientation(RecyclerView.HORIZONTAL);
         v.setScrollMode(ScrollMode.PAGED);
         v.setOutDateStyle(OutDateStyle.END_OF_GRID);
@@ -354,28 +392,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         DayOfWeek firstDayOfWeek = WeekFields.of(Locale.getDefault()).getFirstDayOfWeek();
         v.setup(first, last, firstDayOfWeek);
         v.scrollToMonth(current);
-
-        //int wrapSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-       // v.measure(wrapSpec, wrapSpec);
-
-        System.out.println("measured height 1: " + v.getMeasuredHeight());
-        System.out.println("measured height 3: " + v.getHeight());
-        v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                System.out.println("call to global layout list");
-                v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                topBound = v.getHeight();
-                leftDistance = v.getWidth() / 2.0f;
-
-                System.out.println(" height 2: " + v.getHeight());
-                System.out.println("measured height 2: " + v.getMeasuredHeight());
-                System.out.println("too bound: " + topBound);
-                scrollView.boundYTop = topBound;
-                scrollView.topBoundEnabled = true;
-                scrollView.scrollTo(0,topBound);
-            }
-        });
     }
 
     // Sets up the shopping list view for this day.
@@ -515,9 +531,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     @Override
     public void initializedSuccessfully(boolean success) {
 
-        StoredDay today = this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0];
         // Load the current day, if no day exists yet a new empty day is created.
-        this.switchToDay(this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0]);
+        //this.switchToDay(this.store.retrieveDay(this.selectedDate));
+        this.selected(this.selectedDate);
     }
 
     // endregion

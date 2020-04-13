@@ -206,7 +206,10 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
 
                 showingMicros = !showingMicros;
 
-                int toValue   = kMicroHeight * microLayouts.length;
+                int toValue = 0;
+                if (microLayouts != null) {
+                    toValue   = kMicroHeight * microLayouts.length;
+                }
                 int fromValue = 0;
 
                 if (!showingMicros) {

@@ -206,7 +206,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         // Keep track of where to scroll to.
         this.scrollTo = (int)scrollX;
         this.isScrolling = true;
-        
+
         if (animated) {
             // Position the view in the center.
             smoothScrollTo((int)scrollX,0);
@@ -333,7 +333,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
                         RecipeCardScrollView inner = RecipeCardScrollView.this;
 
                         inner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
+                        // TODO: THIS IS OFF?
                         focusFragmentPrivate(fragments[focusIndex], false);
                         if (listener != null) {
                             listener.scrolledToCard(fragments[focusIndex]);

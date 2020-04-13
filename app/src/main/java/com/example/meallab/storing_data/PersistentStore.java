@@ -108,6 +108,16 @@ public class PersistentStore {
 
         return arr;
     }
+    /**
+     * Retrieves a StoredDay object from given date.
+     * If a storedDay object did not yet exist it is created.
+     * @param date The date of the StoredDay object.
+     * @return The day.
+     */
+    public StoredDay retrieveDay(LocalDate date) {
+
+        return retrieveDays(new LocalDate[]{date})[0];
+    }
 
     /**
      * Retrieves all stored days.
