@@ -160,8 +160,6 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
      * @param fragments The card fragments to present.
      */
     public void setFragments(final RecipeCardFragment[] fragments) {
-
-        System.out.println("set fragments.");
         this.fragments = fragments;
         this.cardsLayedOut = 0;
         for (RecipeCardFragment f : fragments) {
@@ -333,7 +331,6 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
                         RecipeCardScrollView inner = RecipeCardScrollView.this;
 
                         inner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        System.out.println("focus fragment private.");
                         focusFragmentPrivate(fragments[focusIndex], false);
                         if (listener != null) {
                             listener.scrolledToCard(fragments[focusIndex]);
@@ -345,7 +342,6 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
     }
     // Adjust the height of all fragments, according to scroll position.
     private void adjustFragmentHeights() {
-        System.out.println("adjust fragment heights + " + fragments.length);
         float sv = RecipeCardScrollView.this.getWidth();
         float middle = (sv / 2.0f) + getScrollX();
 
@@ -405,8 +401,6 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
 
     @Override
     public void loadedView(View v) {
-
-        System.out.println("loaded view B + " + this.cardsLayedOut);
         ViewGroup.LayoutParams p = v.getLayoutParams();
         p.width = cardWidth;
         v.setLayoutParams(p);
