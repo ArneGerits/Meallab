@@ -92,32 +92,6 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         this.holder.setGravity(Gravity.CENTER);
         this.holder.setId(View.generateViewId());
         this.addView(this.holder);
-    }
-
-    // ---- Public Setup Methods ----
-
-    /**
-     * Sets custom layout.
-     * @param margin The margin between the cards
-     * @param cardWidth The width of the cards.
-     */
-    public void setLayout(int margin, int cardWidth ) {
-        this.margin    = margin;
-        this.cardWidth = cardWidth;
-    }
-
-    /**
-     * Sets the card fragments, loads the view.
-     * @param fragments The card fragments to present.
-     */
-    public void setFragments(final RecipeCardFragment[] fragments) {
-
-        this.fragments = fragments;
-        this.cardsLayedOut = 0;
-        for (RecipeCardFragment f : fragments) {
-            f.setLayoutListener(this);
-        }
-        this.addFragmentsToHolder(fragments);
 
         setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -136,6 +110,13 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
                 } else {
                     return false;
                 }
+            }
+        });
+        setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                adjustFragmentHeights();
             }
         });
         class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -160,14 +141,33 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
             }
         }
         mGestureDetector = new GestureDetector(this.getContext(), new MyGestureDetector());
+    }
 
-        setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+    // ---- Public Setup Methods ----
 
-                adjustFragmentHeights();
-            }
-        });
+    /**
+     * Sets custom layout.
+     * @param margin The margin between the cards
+     * @param cardWidth The width of the cards.
+     */
+    public void setLayout(int margin, int cardWidth ) {
+        this.margin    = margin;
+        this.cardWidth = cardWidth;
+    }
+
+    /**
+     * Sets the card fragments, loads the view.
+     * @param fragments The card fragments to present.
+     */
+    public void setFragments(final RecipeCardFragment[] fragments) {
+
+        System.out.println("set fragments.");
+        this.fragments = fragments;
+        this.cardsLayedOut = 0;
+        for (RecipeCardFragment f : fragments) {
+            f.setLayoutListener(this);
+        }
+        this.addFragmentsToHolder(fragments);
     }
 
     public void setListener(RecipeCardScrollViewListener listener) {
@@ -333,6 +333,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
                         RecipeCardScrollView inner = RecipeCardScrollView.this;
 
                         inner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        System.out.println("focus fragment private.");
                         focusFragmentPrivate(fragments[focusIndex], false);
                         if (listener != null) {
                             listener.scrolledToCard(fragments[focusIndex]);
@@ -344,6 +345,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
     }
     // Adjust the height of all fragments, according to scroll position.
     private void adjustFragmentHeights() {
+        System.out.println("adjust fragment heights + " + fragments.length);
         float sv = RecipeCardScrollView.this.getWidth();
         float middle = (sv / 2.0f) + getScrollX();
 
@@ -353,13 +355,14 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
         for (int i = 0; i < fragments.length; i++) {
 
             RecipeCardFragment f = fragments[i];
-            // Adjust the height
-            float newH = adjustHeight(f,middle);
-            if (newH > largest) {
-                largest = newH;
-                focusIndex = i;
+            if (f.getView() != null) {
+                // Adjust the height
+                float newH = adjustHeight(f,middle);
+                if (newH > largest) {
+                    largest = newH;
+                    focusIndex = i;
+                }
             }
-
         }
 
         // Update the card in focus.
@@ -367,7 +370,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
             this.focusIndex = focusIndex;
 
             // Inform the listener
-            if (this.listener != null) {
+            if (this.listener != null && this.fragments[this.focusIndex].getView() != null) {
                 this.listener.scrolledToCard(this.fragments[this.focusIndex]);
             }
         }
@@ -403,6 +406,7 @@ public class RecipeCardScrollView extends HorizontalScrollView implements Recipe
     @Override
     public void loadedView(View v) {
 
+        System.out.println("loaded view B + " + this.cardsLayedOut);
         ViewGroup.LayoutParams p = v.getLayoutParams();
         p.width = cardWidth;
         v.setLayoutParams(p);

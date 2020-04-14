@@ -448,16 +448,15 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         if (recipes.length == 0) {
             this.cardsFragment.setValues(recipes, new boolean[]{true});
         } else {
+            boolean[] structure;
+
             // If the current day is in the past, we do not care about the user prefs get meals per day.
             if (this.currentDay.date.isBefore(LocalDate.now())) {
                 // Set the recipes chosen for that day, no empties.
-
-                boolean[] structure = new boolean[recipes.length];
-                this.cardsFragment.setValues(recipes, structure);
+                structure = new boolean[recipes.length];
             } else {
-
                 SpoonacularMealType[] mealsToEat = this.preferences.getMealsPerDay();
-                boolean[] structure = new boolean[mealsToEat.length];
+                structure = new boolean[mealsToEat.length];
                 for (int i = 0; i < structure.length; i++) {
                     SpoonacularMealType meal = mealsToEat[i];
                     structure[i] = true;
@@ -467,15 +466,16 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                         }
                     }
                 }
-                // Set the amount of calories goal.
-                for (StoredRecipe r : recipes) {
-                    r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
-                }
-                this.cardsFragment.setValues(recipes, structure);
-
-                // Now load the images of the recipes.
-                loadAndSetRecipeImages(recipes);
             }
+
+            // Set the amount of calories goal.
+            for (StoredRecipe r : recipes) {
+                r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
+            }
+            this.cardsFragment.setValues(recipes, structure);
+
+            // Now load the images of the recipes.
+            loadAndSetRecipeImages(recipes);
         }
     }
     // Loads the recipe images and sets them on the card view.
@@ -503,8 +503,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         }
     }
     // Sets up the nutrients view.
-    private void setupNutrientsView(StoredDay day, boolean isUpdate) {
-        
+    private void setupNutrientsView(StoredDay day) {
+
         // 1. Get all tracked nutrients.
         Nutrient[] tracked = this.preferences.getTrackedNutrients();
 
@@ -558,7 +558,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         this.setupDayShoppingList(day.shoppingList);
 
-        this.setupNutrientsView(day,false);
+        this.setupNutrientsView(day);
     }
 
 
@@ -648,7 +648,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         // 2. Populate the recipeCardView and nutrients view.
         this.setupCardScrollView(this.currentDay.recipes);
-        this.setupNutrientsView(this.currentDay, true);
+        this.setupNutrientsView(this.currentDay);
 
         // 3. Compute for which recipes additional data needs to be loaded.
 
@@ -733,7 +733,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.store.synchronize();
 
         // Reload the nutrients and shopping list.
-        this.setupNutrientsView(this.currentDay, true);
+        this.setupNutrientsView(this.currentDay);
 
         this.setupDayShoppingList(this.currentDay.shoppingList);
     }

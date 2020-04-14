@@ -88,7 +88,7 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
      * @param structure The structure of the cards, specify true, if a card should be empty, false otherwise.
      */
     public void setValues(StoredRecipe[] recipes, boolean[] structure) {
-
+        System.out.println("set values!");
         CardScrollerFragment fragment = new CardScrollerFragment();
         Bundle args = new Bundle();
         args.putParcelableArray(ARG_PARAM1,recipes);
@@ -102,6 +102,8 @@ public class CardScrollerFragment extends Fragment implements RecipeCardScrollVi
     // Loads all views
     // @pre recipes must be initialized.
     private void loadAllViews() {
+
+        this.currentIndex = 0;
 
         this.fragments = new RecipeCardFragment[this.empties.length];
 
