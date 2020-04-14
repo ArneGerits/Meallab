@@ -189,10 +189,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             @Override
             public void onClick(View v) {
                 if (!calendarShowing) {
-                    calendarShowing = true;
                     showCalendar();
                 } else {
-                    calendarShowing = false;
                     hideCalendar();
                 }
             }
@@ -315,8 +313,10 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 float progress = Math.min(1.0f,(float) y/top);
                 animateTextViews(progress);
 
+                //System.out.println("bleh" + scrollView.getScrollY());
+                //System.out.println("s" + scrollView.getIsScrolling());
                 // Only bound the view when the scrollview is not performing a smooth scroll.
-                if (scrollView.getScrollY() >= topBound && !scrollView.getIsScrolling() && calendarShowing == true) {
+                if (scrollView.getScrollY() >= topBound && !scrollView.getIsScrolling() && calendarShowing) {
                     scrollView.topBoundEnabled = true;
                     calendarShowing = false;
 
@@ -504,7 +504,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
     // Sets up the nutrients view.
     private void setupNutrientsView(StoredDay day, boolean isUpdate) {
-
+        
         // 1. Get all tracked nutrients.
         Nutrient[] tracked = this.preferences.getTrackedNutrients();
 
@@ -519,12 +519,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         }
-
-        if (isUpdate) {
-            this.nutrientFragment.updateExistingNutrients(tracked);
-        } else {
-            this.nutrientFragment.setValues(tracked);
-        }
+        this.nutrientFragment.setValues(tracked);
     }
 
     //endregion
@@ -533,8 +528,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Shows the calendar.
     private void showCalendar() {
+        calendarShowing = true;
 
-        System.out.println("show calendar");
         CalendarView v = this.findViewById(R.id.calendarView);
         CustomScrollView scrollView = (CustomScrollView) findViewById(R.id.scrollView);
 
@@ -547,9 +542,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private void hideCalendar() {
 
         CustomScrollView scrollView = (CustomScrollView) findViewById(R.id.scrollView);
-
-
-        scrollView.smoothScrollTo(0,topBound);
+        scrollView.customSmoothScrollTo(0,topBound);
     }
 
     //endregion

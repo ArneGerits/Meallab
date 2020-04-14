@@ -41,6 +41,8 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
 
     private boolean showingMicros = false;
 
+    private boolean isUpdate = false;
+
     ArrayList<MicroNutrientFragment> microFrags = new ArrayList<>();
 
     // ---- Outlets ----
@@ -144,11 +146,17 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
         args.putParcelableArray(ARG_PARAM1,progress);
 
         this.progress = progress;
-        this.loadAllViews(this.progress);
 
+        if (this.isUpdate) {
+            this.updateExistingNutrients(progress);
+        } else {
+            this.loadAllViews(this.progress);
+        }
+
+        this.isUpdate = true;
         this.setArguments(args);
     }
-    public void updateExistingNutrients(Nutrient[] newNutrients) {
+    private void updateExistingNutrients(Nutrient[] newNutrients) {
 
         // 1. Update the macronutrients.
         HorizontalBarChart[] macroBars = new HorizontalBarChart[] {this.caloriesBar,this.carbsBar,
