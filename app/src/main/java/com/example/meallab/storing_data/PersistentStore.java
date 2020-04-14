@@ -143,7 +143,9 @@ public class PersistentStore {
         if (match == null) {
             return false;
         }
-        if (match.recipes.length == this.)
+        //TODO: not sure how to implement this yet.
+        //if (match.recipes.length == this.)
+        return false;
     }
     /**
      * Retrieves all stored days.

@@ -3,6 +3,8 @@ package com.example.meallab.storing_data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.meallab.Spoonacular.RecipeIngredient;
+
 /**
  * Class that allows for the storage of shopping items.
  */
@@ -26,13 +28,20 @@ public class StoredShoppingItem implements Parcelable {
     /**
      * True if the user has checked off this item, false otherwise.
      */
-    public boolean isChecked;
+    public boolean isChecked = false;
 
     // Empty constructor.
     public StoredShoppingItem() {
 
     }
 
+    public StoredShoppingItem(RecipeIngredient i) {
+        // TODO: Swap according to locales.
+        this.amount = i.amountMetric;
+        this.unit   = i.unitShortMetric;
+        this.itemID = i.id;
+        this.name   = i.name;
+    }
     protected StoredShoppingItem(Parcel in) {
         name = in.readString();
         amount = in.readFloat();

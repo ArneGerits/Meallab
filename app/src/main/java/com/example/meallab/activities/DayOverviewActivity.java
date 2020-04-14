@@ -7,7 +7,6 @@ import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterIngredients;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -25,11 +23,9 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularAPI;
@@ -42,10 +38,8 @@ import com.example.meallab.fragments.CardScrollerFragment;
 import com.example.meallab.storing_data.PersistentStore;
 import com.example.meallab.storing_data.StoredDay;
 import com.example.meallab.storing_data.StoredRecipe;
-import com.example.meallab.storing_data.StoredShoppingList;
 import com.example.meallab.storing_data.UserPreferences;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -64,10 +58,8 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.TextStyle;
 import org.threeten.bp.temporal.WeekFields;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -438,7 +430,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
 
     // Sets up the shopping list view for this day.
-    private void setupDayShoppingList(StoredShoppingList list) {
+    private void setupDayShoppingList(StoredRecipe[] recipes) {
 
     }
     // Sets up the card scroll view.
@@ -556,7 +548,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         // Set views (Calendar, and views for current day).
         this.setupCardScrollView(this.currentDay.recipes);
 
-        this.setupDayShoppingList(day.shoppingList);
+        this.setupDayShoppingList(day.recipes);
 
         this.setupNutrientsView(day);
     }
@@ -725,6 +717,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             for (Recipe res : recipes) {
                 if (r.recipeID == res.id) {
                     r.nutrients = res.nutrients;
+                    r.setItems(res.ingredients);
                 }
             }
         }
@@ -735,7 +728,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         // Reload the nutrients and shopping list.
         this.setupNutrientsView(this.currentDay);
 
-        this.setupDayShoppingList(this.currentDay.shoppingList);
+        this.setupDayShoppingList(this.currentDay.recipes);
     }
 
     @Override
