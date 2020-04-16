@@ -17,7 +17,7 @@ public class ShoppingItemRecipeEntryView extends ConstraintLayout {
     public TextView recipeNameTextView;
     public TextView amountTextView;
     public TextView unitTextView;
-    public ImageView checkImage;
+    private ImageView checkImage;
 
     public ShoppingItemRecipeEntryView(Context context) {
         super(context);
@@ -38,6 +38,17 @@ public class ShoppingItemRecipeEntryView extends ConstraintLayout {
         View.inflate(c, R.layout.layout_shopping_item_recipe_entry, this);
 
         recipeNameTextView = (TextView) findViewById(R.id.recipeName);
+        amountTextView     = (TextView) findViewById(R.id.amountTextView);
+        unitTextView       = (TextView) findViewById(R.id.unitTextView);
+        checkImage         = (ImageView) findViewById(R.id.checkImageView);
     }
 
+    public void setSelected(boolean selected) {
+        // TODO: Set images here.
+        if (selected) {
+
+        } else {
+
+        }
+    }
 }
