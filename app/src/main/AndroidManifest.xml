@@ -14,7 +14,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activities.ShoppingListActivity"></activity>
         <activity android:name=".activities.RecipeOverviewActivity" />
-        <activity android:name=".activities.SecondActivity" />
         <activity android:name=".activities.RecipeSelectionActivity" />
         <activity android:name=".activities.InitialStartupActivity" />
         <activity android:name=".activities.DayOverviewActivity" />

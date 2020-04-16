@@ -24,35 +24,39 @@ public class PersistentStore {
     private final String C_FILE_NAME = "stored_data.json";
 
     // The listener
-    private final PersistentStoreListener listener;
-
-    // The current context.
-    private Context context;
+    private PersistentStoreListener listener;
 
     // The days.
     private ArrayList<StoredDay> days = new ArrayList<>();
 
-    // region Constructor
-    public PersistentStore(final PersistentStoreListener listener, final Context context) {
+    private static final PersistentStore store = new PersistentStore();
+
+    private PersistentStore() {}
+
+    public static PersistentStore getSharedInstance() {
+        return store;
+    }
+    public void setListener(PersistentStoreListener listener) {
         this.listener = listener;
-        this.context  = context;
+    }
+    public void initialize(Context c) {
 
         // Execute the read async.
         AsyncRead read = new AsyncRead(C_FILE_NAME, this.days, listener);
-        read.execute(context);
+        read.execute(c);
     }
     // endregion
 
     /**
      * Synchronizes(stores) all objects to the file system.
      */
-    public void synchronize() {
+    public void synchronize(Context c) {
         StoredDay[] arr = new StoredDay[days.size()];
         arr = days.toArray(arr);
 
         // Execute the write async.
         AsyncWrite write = new AsyncWrite(C_FILE_NAME, arr, listener);
-        write.execute(this.context);
+        write.execute(c);
     }
 
     /**

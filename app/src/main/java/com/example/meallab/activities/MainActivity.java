@@ -3,63 +3,36 @@ package com.example.meallab.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import android.content.Context;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
-import android.content.SharedPreferences;
 
-import java.util.ArrayList;
 import android.content.Intent;
 
 import com.example.meallab.R;
-import com.example.meallab.activities.InitialStartupActivity;
-import com.example.meallab.activities.RecipeSelectionActivity;
-import com.example.meallab.activities.SecondActivity;
-
-import org.threeten.bp.DayOfWeek;
+import com.example.meallab.storing_data.PersistentStore;
+import com.example.meallab.storing_data.UserPreferences;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PersistentStore.PersistentStoreListener {
 
-
-    private static final String TAG = "MainActivity";
-
-    //vars
-    private ArrayList<String> mIntolerances = new ArrayList<>();
-    private ArrayList<String> mDiets = new ArrayList<>();
-    private TextView mTextView;
-    private Button saveAndContinue;
-    SharedPreferences sharedPreferences;
-    public boolean firstTime;
-    public ArrayList<String> allergies = new ArrayList<>();
-    public ArrayList<String> diets = new ArrayList<>();
-    public static final String mypreference = "mypref";
-    public static String firstTimeKey = "firstTimeKey";
-
+    PersistentStore store = PersistentStore.getSharedInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //this boolean will cause the activity under test to be launched on startup
-        boolean testing = true;
 
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+        // Creating the persistent store singleton.
+        store.setListener(this);
+        store.initialize(this);
+    }
 
-        firstTime = sharedPreferences.getBoolean(firstTimeKey, true);
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-        
-        if(testing){
-            goToActivityUnderTest();
-        }else{
-        if (firstTime) {
-            goToInitialStartupActivity();
-        } else {
-            goToSecondActivity();
-        }}
-
+        // Sync the store on pause.
+        this.store.synchronize(this);
     }
 
     private void goToInitialStartupActivity() {
@@ -70,25 +43,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void goToSecondActivity() {
+    private void goToDayOverViewActivity() {
 
-        Intent intent = new Intent(this, SecondActivity.class);
+        System.out.println("go to day overview.");
+        Intent intent = new Intent(this, DayOverviewActivity.class);
 
         startActivity(intent);
-
     }
 
-    private void goToActivityUnderTest() {
+    @Override
+    public void initializedSuccessfully(boolean success) {
 
-        /*
-        Intent intent = new Intent(this, RecipeSelectionActivity.class);
-        intent.putExtra("mealType", SpoonacularMealType.BREAKFAST.toString());
-        startActivity(intent);*/
+        UserPreferences prefs = new UserPreferences(this);
 
-       // Intent intent = new Intent(this, DayOverviewActivity.class);
-        //Intent intent = new Intent(this, RecipeSelectionActivity.class);
-        //startActivity(intent);
-        Intent intent = new Intent(this, DayOverviewActivity.class);
-        startActivity(intent);
+        boolean first = prefs.getIsFirstTime();
+
+        if (first) {
+            goToInitialStartupActivity();
+        } else {
+            goToDayOverViewActivity();
+        }
+    }
+
+    @Override
+    public void completedSynchronize(boolean success) {
+
     }
 }

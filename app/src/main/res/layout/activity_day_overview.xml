@@ -170,7 +170,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_weight="0"
                     android:fontFamily="@font/greycliff_cf_heavy"
-                    android:text="OPTIONS"
+                    android:text="INGREDIENTS FOR THIS DAY"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="18sp" />
 

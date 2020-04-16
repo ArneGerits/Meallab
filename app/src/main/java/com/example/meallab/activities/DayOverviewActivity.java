@@ -66,15 +66,13 @@ import java.util.Locale;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import static com.example.meallab.activities.InitialStartupActivity.mypreference;
-
 import com.example.meallab.customViews.DayViewContainer.DayViewContainerListener;
 
 /**
  * This is the most important activity, here the user can see the meal plan for a given day, view
  * meal detail screens, select different dates to plan ahead and access settings.
  */
-public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener, PersistentStore.PersistentStoreListener,
+public class DayOverviewActivity extends AppCompatActivity implements DayViewContainerListener,
         CardScrollerFragment.CardScrollerFragmentListener, SpoonacularAPI.SpoonacularDetailedRecipeListener {
 
     // ----- Constants ------
@@ -152,7 +150,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
 
         // Init the store, will give callback on completion.
-        this.store = new PersistentStore(this,this);
+        this.store = PersistentStore.getSharedInstance();
+
         this.preferences = new UserPreferences(this);
 
         // Perform view first time setup.
@@ -163,8 +162,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         this.setupCalendar(this.calendar);
         this.setupScrollView(this.scrollView);
-
-        sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
 
         // Setup the API communication
         api = new SpoonacularAPI(this);
@@ -199,6 +196,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 launchShoppingList();
             }
         });
+        this.selected(this.selectedDate);
     }
 
     // ----- Actions ------
@@ -212,18 +210,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         ShoppingListActivity recipeSelection = new ShoppingListActivity();
         Intent intent = new Intent(this, ShoppingListActivity.class);
-
-        // Get the next 6 stored days.
-        StoredDay[] days = new StoredDay[7];
-
-        // Get the stored days.
-        LocalDate selectedDate = LocalDate.now();
-        for (int i = 0; i < days.length; i++) {
-            StoredDay d =  this.store.retrieveDay(selectedDate.plusDays(i));
-            days[i]     = d;
-        }
-
-        intent.putExtra("days", gson.toJson(days));
         // Start the recipe selection.
         startActivityForResult(intent, SHOPPING_CODE);
     }
@@ -553,26 +539,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.setupNutrientsView(day);
     }
 
-
-    // region Persistent Store Listener
-
-    @Override
-    public void initializedSuccessfully(boolean success) {
-
-        // Load the current day, if no day exists yet a new empty day is created.
-        //this.switchToDay(this.store.retrieveDay(this.selectedDate));
-        this.selected(this.selectedDate);
-    }
-
-    // endregion
-
-    @Override
-    public void completedSynchronize(boolean success) {
-
-    }
-
-    // region Recipe Card Scroller Listener
-
     @Override
     public void selectedShowDetailForIndex(int index) {
         System.out.println("show detail");
@@ -604,27 +570,17 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
             case (RECIPE_SELECTION_CODE) : {
-
                 if (resultCode == Activity.RESULT_OK) {
                     // Get the chosen recipes from the activity.
                     String recipesJson = data.getStringExtra(RecipeSelectionActivity.RECIPES_SELECTED);
                     Recipe[] recipesChosen = this.gson.fromJson(recipesJson, Recipe[].class);
                     this.recipesChosen(recipesChosen);
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-
                 }
                 break;
             }
             case (SHOPPING_CODE) : {
-                if (resultCode == Activity.RESULT_OK) {
-                    // Get the chosen recipes from the activity.
-                    String daysJson = data.getStringExtra(ShoppingListActivity.DAYS);
-                    StoredDay[] days = this.gson.fromJson(daysJson, StoredDay[].class);
+                // todo: update the ingredient list to reflect selected.
 
-                    // Do something with days.
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-
-                }
                 break;
             }
         }
@@ -698,7 +654,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         }
 
         // Save the changes
-        this.store.synchronize();
+        this.store.synchronize(this);
     }
     // region Spoonacular API callbacks
 
@@ -723,7 +679,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         }
 
         // Sync the store.
-        this.store.synchronize();
+        this.store.synchronize(this);
 
         // Reload the nutrients and shopping list.
         this.setupNutrientsView(this.currentDay);

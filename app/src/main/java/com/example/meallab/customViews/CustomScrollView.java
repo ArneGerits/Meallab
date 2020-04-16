@@ -4,10 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ScrollView;
 
+import androidx.core.widget.NestedScrollView;
+
 /**
  * Adds the ability to scrollView that allows the addition of a 'bound' that cant be scrolled past.
  */
-public class CustomScrollView extends ScrollView {
+public class CustomScrollView extends NestedScrollView {
 
     /**
      * The top bound of this scrollview.
@@ -21,9 +23,6 @@ public class CustomScrollView extends ScrollView {
 
     CustomScrollViewListener listener;
 
-    public CustomScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
     public CustomScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }

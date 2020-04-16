@@ -23,6 +23,7 @@ import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterToggle;
 import com.example.meallab.Spoonacular.SpoonacularDiet;
 import com.example.meallab.Spoonacular.SpoonacularIntolerance;
+import com.example.meallab.storing_data.UserPreferences;
 
 
 public class InitialStartupActivity extends AppCompatActivity implements View.OnClickListener {
@@ -33,12 +34,10 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
     private TextView mTextView;
     private TextView mTextView2;
     private Button saveAndContinue;
-    SharedPreferences sharedPreferences;
-    public boolean firstTime;
+
     public ArrayList<String> allergies = new ArrayList<>();
     public ArrayList<String> diets = new ArrayList<>();
-    public static final String mypreference = "mypref";
-    public static String firstTimeKey = "firstTimeKey";
+
     RecyclerViewAdapterToggle adapter;
     RecyclerViewAdapterToggle adapter1;
     public ArrayList<String> allergyNames;
@@ -46,12 +45,14 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
     private SeekBar bar;
     private SeekBar bar2;
 
+    private UserPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_startup);
 
-        sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
+        this.prefs = new UserPreferences(this);
 
         initRecyclerChoices();
 
@@ -59,11 +60,11 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
         bar2 = (SeekBar) this.findViewById(R.id.seekBar2);
         mTextView = ((TextView) InitialStartupActivity.this.findViewById(R.id.cookingTimeTextView));
         mTextView2 = ((TextView) InitialStartupActivity.this.findViewById(R.id.textView10));
-        int progressValue = sharedPreferences.getInt("caloriesDaily", 2000);
+        int progressValue = 2000;
         mTextView.setText(String.format("%d",progressValue));
         int progress = progressValue/100-5;
         bar.setProgress(progress);
-        progressValue = sharedPreferences.getInt("mealsDaily",3);
+        progressValue = 3;
         mTextView2.setText(String.format("%d", progressValue));
         progress = progressValue-1;
         bar2.setProgress(progress);
@@ -120,24 +121,25 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
             case R.id.SaveAndContinue:
                 boolean allergies[] = adapter.getChoices();
                 boolean diets[] = adapter1.getChoices();
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(firstTimeKey,false);
-                editor.putInt("caloriesDaily",(bar.getProgress()*100 + 500));
-                editor.putInt("mealsDaily",(bar2.getProgress()+1));
+                this.prefs.setIsFirstTime(false);
+                // TODO: Make user of UserPreferences.
+
+                //editor.putInt("caloriesDaily",(bar.getProgress()*100 + 500));
+                //editor.putInt("mealsDaily",(bar2.getProgress()+1));
                 int count = 0;
                 for(SpoonacularIntolerance i : SpoonacularIntolerance.values()){
-                    editor.putBoolean(i.getValue(),allergies[count]);
+                    //editor.putBoolean(i.getValue(),allergies[count]);
                     System.out.println(allergies[count]);
                     count++;
                 }
                 count = 0;
 
                 for(SpoonacularDiet d : SpoonacularDiet.values()){
-                    editor.putBoolean(d.getValue(),diets[count]);
+                    //editor.putBoolean(d.getValue(),diets[count]);
                     count++;
                 }
 
-                editor.commit();
+                //editor.commit();
                 System.out.println("clicked in second activity");
                 goToSecondActivity();
 

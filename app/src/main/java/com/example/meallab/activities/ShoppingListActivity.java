@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.meallab.R;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.example.meallab.fragments.DateSelectionFragment;
+import com.example.meallab.storing_data.PersistentStore;
 import com.example.meallab.storing_data.StoredDay;
 import com.example.meallab.storing_data.UserPreferences;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -21,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.TextStyle;
 
@@ -46,6 +48,8 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
     // Get this from the user preferences.
     SORT_OPTION currentSort = SORT_OPTION.ALPHABET;
 
+    private PersistentStore store;
+
     // ----- Outlets ------
     private DateSelectionFragment dateFragment;
     private TextView monthTextView;
@@ -70,14 +74,22 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list);
 
-        // Set the days.
-        String jsonDays = getIntent().getStringExtra("days");
-        this.days = gson.fromJson(jsonDays, StoredDay[].class);
-
         // Set the structure.
         this.prefs = new UserPreferences(this);
+        this.store = PersistentStore.getSharedInstance();
 
-        // TODO: figure out how to structure.
+        // Get the next 7 days from the store.
+        // Get the next 6 stored days.
+        this.days = new StoredDay[7];
+
+        // Get the stored days.
+        LocalDate selectedDate = LocalDate.now();
+        for (int i = 0; i < days.length; i++) {
+            StoredDay d =  this.store.retrieveDay(selectedDate.plusDays(i));
+            days[i]     = d;
+        }
+
+        // Set the structure.
         this.structure = this.prefs.getShoppingListSelectionStructure();
 
         // Setting the outlets
@@ -180,6 +192,9 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
 
     // Called when the user clicks the confirm button.
     private void confirm() {
+        // Sync data.
+        this.store.synchronize(this);
+
         // Convert the days to json.
         String days = this.gson.toJson(this.days);
         // Put the chosen days in the intent
@@ -189,6 +204,7 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         // Finalize.
         finish();
     }
+
     // endregion
 
     // Sets up the month text view with the correct month.
