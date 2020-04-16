@@ -30,6 +30,11 @@ public class StoredDay implements Parcelable {
     public LocalDate date;
 
     /**
+     * The user can select a day as a favorite.
+     */
+    public boolean isFavorite = false;
+
+    /**
      * Creates a new stored day for given date and nutrient goals.
      * that will be tracked.
      * @param date The date
