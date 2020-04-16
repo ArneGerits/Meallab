@@ -47,11 +47,9 @@ public class ShoppingItemRecipeEntryView extends ConstraintLayout {
         // Make sure the text size is scale to fit
         TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.recipeNameTextView,12,15,1, TypedValue.COMPLEX_UNIT_SP);
         TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.unitTextView,10,12,1, TypedValue.COMPLEX_UNIT_SP);
-
     }
 
     public void setSelected(boolean selected) {
-        System.out.println("set selected");
         // TODO: Set images here.
         if (selected) {
             this.checkImage.setVisibility(View.VISIBLE);

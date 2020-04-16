@@ -28,8 +28,7 @@ import java.util.HashMap;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ShoppingViewHolder> {
 
-
-    private ArrayList<StoredDay> days = new ArrayList<>();
+    public ArrayList<StoredDay> days = new ArrayList<>();
     private ArrayList<ShoppingListEntry> mDataset = new ArrayList<>();
 
     public enum ITEM_STATE {
@@ -76,13 +75,14 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 public void onClick(View v) {
                     // Toggle selected state.
                     int location = getLayoutPosition();
-                    updateData(location, state);
 
                     if (state == ITEM_STATE.SELECTED) {
                         setState(ITEM_STATE.NOT_SELECTED);
                     } else {
                         setState(ITEM_STATE.SELECTED);
                     }
+
+                    updateData(location, state);
                 }
             });
         }
@@ -131,34 +131,37 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         ShoppingListEntry entry = this.mDataset.get(position);
 
         // Change the state of every shopping list item.
-        for (StoredShoppingItem i : entry.recipeToItem.values()) {
-            // There can only be 2 sates here.
+        for (StoredShoppingItem i : entry.items) {
+            // There can only be 2 states here.
             if (state == ITEM_STATE.SELECTED) {
+                System.out.println("check one on nigga");
                 i.isChecked = true;
             } else if(state == ITEM_STATE.NOT_SELECTED) {
                 i.isChecked = false;
             }
         }
-        // TODO:? Store this to db?
-        // NO -
     }
     public static class ShoppingListEntry {
 
-        // All items
-        public HashMap<String, StoredShoppingItem> recipeToItem = new HashMap<>();
+        private ArrayList<StoredRecipe> recipes = new ArrayList<>();
+        private ArrayList<StoredShoppingItem> items = new ArrayList<>();
 
         // Unit of the item.
         public String unit;
         // Name of the item.
         public String name;
 
+        public int itemID;
+
         public ShoppingListEntry(int itemID, ArrayList<StoredRecipe> recipes) {
 
+            this.recipes = recipes;
+            this.itemID  = itemID;
             // Get every item from the recipes.
             for (StoredRecipe r : recipes) {
                 for (StoredShoppingItem i : r.items) {
                     if (i.itemID == itemID) {
-                        this.recipeToItem.put(r.name, i);
+                        this.items.add(i);
                         this.name = i.name;
                         this.unit = i.unit;
                     }
@@ -168,7 +171,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         public float getTotalAmount() {
             float total = 0.0f;
 
-            for (StoredShoppingItem i : recipeToItem.values()) {
+            for (StoredShoppingItem i : this.items) {
                 total += i.amount;
             }
             return total;
@@ -177,7 +180,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         public ITEM_STATE getState() {
             boolean onlySeenSelected    = true;
             boolean onlySeenNotSelected = true;
-            for (StoredShoppingItem i : recipeToItem.values()) {
+            for (StoredShoppingItem i : items) {
                 if (i.isChecked) {
                     onlySeenNotSelected = false;
                 } else {
@@ -205,12 +208,26 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         this.days = days;
 
+        this.computeDataModel(days);
+    }
+
+    private void computeDataModel(ArrayList<StoredDay> days) {
+        this.mDataset.clear();
+
         HashMap<Integer, ArrayList<StoredRecipe>> mapping = new HashMap<>();
+
+        int selected = 0;
+        int not_selected = 0;
 
         // Every item ID gets a mapping to the recipes it belongs to.
         for (StoredDay d : days) {
             for (StoredRecipe r : d.recipes) {
                 for (StoredShoppingItem i : r.items) {
+                    if (i.isChecked) {
+                        selected++;
+                    } else {
+                        not_selected++;
+                    }
                     if (!mapping.containsKey(i.itemID)) {
                         mapping.put(i.itemID, new ArrayList<StoredRecipe>());
                     }
@@ -221,12 +238,18 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             }
         }
 
+        System.out.println("" + selected + "/" +(selected + not_selected) + " items selected");
         for (Integer itemID : mapping.keySet()) {
             ArrayList<StoredRecipe> r = mapping.get(itemID);
             mDataset.add(new ShoppingListEntry(itemID, r));
         }
     }
+    public void setDays(ArrayList<StoredDay> newDays) {
 
+        this.days = newDays;
+        this.computeDataModel(this.days);
+        notifyDataSetChanged();
+    }
     // Create new views (invoked by the layout manager)
     @Override
     public ShoppingListAdapter.ShoppingViewHolder onCreateViewHolder(ViewGroup parent,
@@ -255,10 +278,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         holder.nameTextView.setText(e.name);
 
         // Set the sate and recipes on the holder.
-        for (String rName : e.recipeToItem.keySet()) {
-            StoredShoppingItem item = e.recipeToItem.get(rName);
-            holder.addRecipeEntry(rName, item.isChecked, item.amount, item.unit);
-            holder.setState(e.getState());
+        for (StoredRecipe recipe : e.recipes) {
+            for (StoredShoppingItem item : recipe.items) {
+                if (item.itemID == e.itemID) {
+                    holder.addRecipeEntry(recipe.name, item.isChecked, item.amount, item.unit);
+                    holder.setState(e.getState());
+                }
+            }
         }
     }
 

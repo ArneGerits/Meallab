@@ -76,6 +76,7 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         setupMonthTextView();
         setupDateFragment();
 
+        this.dateFragment.setListener(this);
         this.doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,9 +153,9 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
     public void selectedDate(int index, boolean isSelected) {
         // Set the structure.
         this.structure[index] = isSelected;
-
-        // Update the list.
-        // TODO
+        // Updates the entire recyclerview with the correct days.
+        ShoppingListAdapter adapter = (ShoppingListAdapter) this.mAdapter;
+        adapter.setDays(this.getHighlightedDays());
     }
     // endregion
 }
