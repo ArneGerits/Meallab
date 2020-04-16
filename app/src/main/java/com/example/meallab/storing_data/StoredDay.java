@@ -25,13 +25,14 @@ public class StoredDay implements Parcelable {
      */
     public StoredRecipe[] recipes;
     /**
-     * The shopping list for this day.
-     */
-    public StoredShoppingList shoppingList;
-    /**
      * The date.
      */
     public LocalDate date;
+
+    /**
+     * The user can select a day as a favorite.
+     */
+    public boolean isFavorite = false;
 
     /**
      * Creates a new stored day for given date and nutrient goals.
@@ -41,7 +42,6 @@ public class StoredDay implements Parcelable {
     public StoredDay(LocalDate date) {
         this.date = date;
         this.recipes = new StoredRecipe[0];
-        this.shoppingList = new StoredShoppingList(date);
     }
 
     /**
@@ -86,7 +86,6 @@ public class StoredDay implements Parcelable {
 
     protected StoredDay(Parcel in) {
         recipes = (StoredRecipe[]) in.readArray(StoredRecipe.class.getClassLoader());
-        shoppingList = (StoredShoppingList) in.readValue(StoredShoppingList.class.getClassLoader());
         date = (LocalDate) in.readSerializable();
     }
 
@@ -98,7 +97,6 @@ public class StoredDay implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeArray(recipes);
-        dest.writeValue(shoppingList);
         dest.writeSerializable(date);
     }
 

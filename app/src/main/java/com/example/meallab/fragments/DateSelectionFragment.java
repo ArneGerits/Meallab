@@ -93,8 +93,10 @@ public class DateSelectionFragment extends Fragment {
             boolean isSelected = structure[i];
             if (isSelected) {
                 numberText.setBackground(this.numberBackground);
+                numberText.setTextColor(Color.BLACK);
             } else {
                 numberText.setBackgroundColor(Color.TRANSPARENT);
+                numberText.setTextColor(Color.WHITE);
             }
 
             numberText.setOnClickListener(new View.OnClickListener() {

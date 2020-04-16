@@ -128,6 +128,26 @@ public class PersistentStore {
     }
 
     /**
+     * Returns true if the user has a meal plan set up for given date.
+     * A mealplan is defined as all recipes being chosen.
+     * @param date The date.
+     * @return True if the user has a mealplan false otherwise.
+     */
+    boolean hasMealPlanForDate(LocalDate date) {
+        StoredDay match = null;
+        for (StoredDay day: this.days) {
+            if (day.date.isEqual(date)) {
+                match = day;
+            }
+        }
+        if (match == null) {
+            return false;
+        }
+        //TODO: not sure how to implement this yet.
+        //if (match.recipes.length == this.)
+        return false;
+    }
+    /**
      * Retrieves all stored days.
      * @return Dates for which there exists a stored day.
      */

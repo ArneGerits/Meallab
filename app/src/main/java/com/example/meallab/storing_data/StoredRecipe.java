@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.Spoonacular.Recipe;
+import com.example.meallab.Spoonacular.RecipeIngredient;
 import com.example.meallab.Spoonacular.SpoonacularImageSize;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
 
@@ -52,6 +53,11 @@ public class StoredRecipe implements Parcelable {
      */
     public SpoonacularMealType mealType;
 
+    /**
+     * Ingredient list for this recipe.
+     */
+    public StoredShoppingItem[] items;
+
     // Empty constructor.
     public StoredRecipe() {
 
@@ -71,6 +77,14 @@ public class StoredRecipe implements Parcelable {
         this.cookingMins = r.readyInMinutes;
         this.numberOfServings = r.servings;
         this.nutrients = r.nutrients;
+
+        this.items = new StoredShoppingItem[r.ingredients.length];
+
+        for (int i = 0; i < r.ingredients.length; i++) {
+            RecipeIngredient ingredient = r.ingredients[i];
+            StoredShoppingItem item = new StoredShoppingItem(ingredient);
+            this.items[i] = item;
+        }
     }
     public Nutrient[] getMacroNutrients() {
         Nutrient[] macros = new Nutrient[4];
@@ -79,6 +93,15 @@ public class StoredRecipe implements Parcelable {
             macros[i] = this.nutrients[i];
         }
         return macros;
+    }
+    public void setItems(RecipeIngredient[] ingredients) {
+        this.items = new StoredShoppingItem[ingredients.length];
+
+        for (int i = 0; i < ingredients.length; i++) {
+            RecipeIngredient ingredient = ingredients[i];
+            StoredShoppingItem item = new StoredShoppingItem(ingredient);
+            this.items[i] = item;
+        }
     }
     // ---- Parcelable ----
 

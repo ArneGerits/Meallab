@@ -51,6 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="8dp"
             android:background="@color/creamWhite" />
+
         <fragment
             android:id="@+id/topInfo"
             android:name="com.example.meallab.fragments.RecipeSelectionRowFragment"

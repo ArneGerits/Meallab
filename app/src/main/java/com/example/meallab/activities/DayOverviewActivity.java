@@ -7,7 +7,6 @@ import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterIngredients;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -25,11 +23,9 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularAPI;
@@ -42,10 +38,8 @@ import com.example.meallab.fragments.CardScrollerFragment;
 import com.example.meallab.storing_data.PersistentStore;
 import com.example.meallab.storing_data.StoredDay;
 import com.example.meallab.storing_data.StoredRecipe;
-import com.example.meallab.storing_data.StoredShoppingList;
 import com.example.meallab.storing_data.UserPreferences;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.kizitonwose.calendarview.CalendarView;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.CalendarMonth;
@@ -64,10 +58,8 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.TextStyle;
 import org.threeten.bp.temporal.WeekFields;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -189,10 +181,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             @Override
             public void onClick(View v) {
                 if (!calendarShowing) {
-                    calendarShowing = true;
                     showCalendar();
                 } else {
-                    calendarShowing = false;
                     hideCalendar();
                 }
             }
@@ -315,8 +305,10 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 float progress = Math.min(1.0f,(float) y/top);
                 animateTextViews(progress);
 
+                //System.out.println("bleh" + scrollView.getScrollY());
+                //System.out.println("s" + scrollView.getIsScrolling());
                 // Only bound the view when the scrollview is not performing a smooth scroll.
-                if (scrollView.getScrollY() >= topBound && !scrollView.getIsScrolling() && calendarShowing == true) {
+                if (scrollView.getScrollY() >= topBound && !scrollView.getIsScrolling() && calendarShowing) {
                     scrollView.topBoundEnabled = true;
                     calendarShowing = false;
 
@@ -438,7 +430,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
 
     // Sets up the shopping list view for this day.
-    private void setupDayShoppingList(StoredShoppingList list) {
+    private void setupDayShoppingList(StoredRecipe[] recipes) {
 
     }
     // Sets up the card scroll view.
@@ -448,16 +440,15 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         if (recipes.length == 0) {
             this.cardsFragment.setValues(recipes, new boolean[]{true});
         } else {
+            boolean[] structure;
+
             // If the current day is in the past, we do not care about the user prefs get meals per day.
             if (this.currentDay.date.isBefore(LocalDate.now())) {
                 // Set the recipes chosen for that day, no empties.
-
-                boolean[] structure = new boolean[recipes.length];
-                this.cardsFragment.setValues(recipes, structure);
+                structure = new boolean[recipes.length];
             } else {
-
                 SpoonacularMealType[] mealsToEat = this.preferences.getMealsPerDay();
-                boolean[] structure = new boolean[mealsToEat.length];
+                structure = new boolean[mealsToEat.length];
                 for (int i = 0; i < structure.length; i++) {
                     SpoonacularMealType meal = mealsToEat[i];
                     structure[i] = true;
@@ -467,15 +458,16 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                         }
                     }
                 }
-                // Set the amount of calories goal.
-                for (StoredRecipe r : recipes) {
-                    r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
-                }
-                this.cardsFragment.setValues(recipes, structure);
-
-                // Now load the images of the recipes.
-                loadAndSetRecipeImages(recipes);
             }
+
+            // Set the amount of calories goal.
+            for (StoredRecipe r : recipes) {
+                r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
+            }
+            this.cardsFragment.setValues(recipes, structure);
+
+            // Now load the images of the recipes.
+            loadAndSetRecipeImages(recipes);
         }
     }
     // Loads the recipe images and sets them on the card view.
@@ -503,7 +495,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         }
     }
     // Sets up the nutrients view.
-    private void setupNutrientsView(StoredDay day, boolean isUpdate) {
+    private void setupNutrientsView(StoredDay day) {
 
         // 1. Get all tracked nutrients.
         Nutrient[] tracked = this.preferences.getTrackedNutrients();
@@ -519,12 +511,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         }
-
-        if (isUpdate) {
-            this.nutrientFragment.updateExistingNutrients(tracked);
-        } else {
-            this.nutrientFragment.setValues(tracked);
-        }
+        this.nutrientFragment.setValues(tracked);
     }
 
     //endregion
@@ -533,8 +520,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Shows the calendar.
     private void showCalendar() {
+        calendarShowing = true;
 
-        System.out.println("show calendar");
         CalendarView v = this.findViewById(R.id.calendarView);
         CustomScrollView scrollView = (CustomScrollView) findViewById(R.id.scrollView);
 
@@ -547,9 +534,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private void hideCalendar() {
 
         CustomScrollView scrollView = (CustomScrollView) findViewById(R.id.scrollView);
-
-
-        scrollView.smoothScrollTo(0,topBound);
+        scrollView.customSmoothScrollTo(0,topBound);
     }
 
     //endregion
@@ -563,9 +548,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         // Set views (Calendar, and views for current day).
         this.setupCardScrollView(this.currentDay.recipes);
 
-        this.setupDayShoppingList(day.shoppingList);
+        this.setupDayShoppingList(day.recipes);
 
-        this.setupNutrientsView(day,false);
+        this.setupNutrientsView(day);
     }
 
 
@@ -655,7 +640,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         // 2. Populate the recipeCardView and nutrients view.
         this.setupCardScrollView(this.currentDay.recipes);
-        this.setupNutrientsView(this.currentDay, true);
+        this.setupNutrientsView(this.currentDay);
 
         // 3. Compute for which recipes additional data needs to be loaded.
 
@@ -732,6 +717,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             for (Recipe res : recipes) {
                 if (r.recipeID == res.id) {
                     r.nutrients = res.nutrients;
+                    r.setItems(res.ingredients);
                 }
             }
         }
@@ -740,9 +726,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.store.synchronize();
 
         // Reload the nutrients and shopping list.
-        this.setupNutrientsView(this.currentDay, true);
+        this.setupNutrientsView(this.currentDay);
 
-        this.setupDayShoppingList(this.currentDay.shoppingList);
+        this.setupDayShoppingList(this.currentDay.recipes);
     }
 
     @Override

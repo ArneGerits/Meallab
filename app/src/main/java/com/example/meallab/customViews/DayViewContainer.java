@@ -3,7 +3,9 @@ package com.example.meallab.customViews;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -11,15 +13,19 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.example.meallab.R;
+import com.example.meallab.Spoonacular.RecipeEquipment;
 import com.kizitonwose.calendarview.model.CalendarDay;
 import com.kizitonwose.calendarview.model.DayOwner;
 import com.kizitonwose.calendarview.ui.ViewContainer;
 
 import org.threeten.bp.LocalDate;
 
+import java.util.ArrayList;
+
 public class DayViewContainer extends ViewContainer {
 
     public TextView textView;
+    public ImageView check;
 
     // The day of this day view container.
     public CalendarDay day;
@@ -33,15 +39,18 @@ public class DayViewContainer extends ViewContainer {
     // True when this day is selected.
     private boolean isSelected = false;
 
-    // -----
-    int selectedColor;
+    // ----- Resources ------
+    Drawable selected;
+    Drawable notSelected;
+    Drawable currentDate;
+    int textGray;
 
     private DayViewContainerListener listener;
 
     public DayViewContainer(View view) {
         super(view);
         textView = view.findViewById(R.id.exOneDayText);
-
+        check = view.findViewById(R.id.checkImageView);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,6 +63,10 @@ public class DayViewContainer extends ViewContainer {
                 }
             }
         });
+        this.currentDate = ContextCompat.getDrawable(view.getContext(), R.drawable.calendar_current_date);
+        this.selected = ContextCompat.getDrawable(view.getContext(), R.drawable.calendar_selected);
+        this.notSelected = ContextCompat.getDrawable(view.getContext(), R.drawable.calendar_not_selected);
+        this.textGray = ContextCompat.getColor(this.getView().getContext(), R.color.colorCalendarTextOutday);
     }
     public void setListener(DayViewContainerListener listener) {
         this.listener = listener;
@@ -61,58 +74,55 @@ public class DayViewContainer extends ViewContainer {
 
     public void setIsToday(boolean isToday) {
         this.isToday = isToday;
-
-        if (isToday && !this.isSelected) {
-            int color = ContextCompat.getColor(this.getView().getContext(), R.color.colorCalendarCircleGray);
-            this.setCircleColor(color);
-        }
+        this.stateChanged();
     }
     public void setIsOutday(boolean isOutDay) {
         this.isOutDay = isOutDay;
-
-        if (isOutDay) {
-            int color = ContextCompat.getColor(this.getView().getContext(), R.color.colorCalendarTextOutday);
-            textView.setTextColor(color);
-        } else {
-            textView.setTextColor(Color.parseColor("#000000"));
-        }
+        this.stateChanged();
     }
     public void setHasMealPlan(boolean hasMealPlan) {
         this.hasMealPlan = hasMealPlan;
-
-        if (hasMealPlan) {
-
-        } else {
-
-        }
+        this.stateChanged();
     }
     public void setIsSelected(boolean isSelected) {
 
         this.isSelected = isSelected;
-
-        if (isSelected) {
-            int color = ContextCompat.getColor(this.getView().getContext(), R.color.colorPrimary);
-            this.setCircleColor(color);
-        } else {
-            if (!this.isToday) {
-                this.getView().setBackgroundColor(Color.TRANSPARENT);
-                //this.setCircleColor(Color.TRANSPARENT);
-            } else {
-                int color = ContextCompat.getColor(this.getView().getContext(), R.color.colorCalendarCircleGray);
-                this.setCircleColor(color);
-            }
-        }
-
+        this.stateChanged();
     }
 
-    // ------ Private Methods ------
-    private void setCircleColor(int color) {
+    // Called when the state of the container changes.
+    private void stateChanged() {
+        // The background of this container can be multiple drawables.
+        ArrayList<Drawable> layers = new ArrayList<>();
 
-        View circle = this.getView().findViewById(R.id.circleView);
-        Drawable background = circle.getBackground();
+        layers.add(this.notSelected);
 
-        Drawable wrappedDrawable = DrawableCompat.wrap(background);
-        DrawableCompat.setTint(wrappedDrawable, color);
+        if (this.isSelected) {
+            layers.add(this.selected);
+        }
+        if (this.isToday) {
+            layers.add(this.currentDate);
+        }
+        // Creating the compound drawable background.
+        Drawable[] l = new Drawable[layers.size()];
+        layers.toArray(l);
+        LayerDrawable compoundDrawable = new LayerDrawable(l);
+
+        if (isOutDay) {
+            textView.setTextColor(textGray);
+        } else {
+            textView.setTextColor(Color.BLACK);
+        }
+        if (isSelected) {
+            textView.setTextColor(Color.WHITE);
+        }
+        if (hasMealPlan) {
+            this.check.setVisibility(View.VISIBLE);
+        } else {
+            this.check.setVisibility(View.INVISIBLE);
+        }
+
+        this.getView().setBackground(compoundDrawable);
     }
 
     // ------ INTERFACES ------
