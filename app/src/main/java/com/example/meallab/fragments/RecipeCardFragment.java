@@ -2,14 +2,20 @@ package com.example.meallab.fragments;
 
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Layout;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.meallab.Nutrients.Nutrient;
@@ -37,10 +43,14 @@ public class RecipeCardFragment extends Fragment {
     private TextView cookingTimeTextView;
     private TextView servingsTextView;
     private TextView costTextView;
+    public TextView infoTextView;
 
     private LinearLayout topLayout;
-    private LinearLayout recipeLayout;
-    private ImageView addImageView;
+    private ConstraintLayout addLayout;
+    private LinearLayout infoLayout;
+    private ImageButton editButton;
+
+    private View divider;
 
     // ----
 
@@ -125,16 +135,17 @@ public class RecipeCardFragment extends Fragment {
         this.servings = servings;
         this.pricePerServing = pricePerServing;
         this.nutrients = nutrients;
-
-        //this.loadAllViews();
     }
     public String getName() {
         return name;
     }
+
     public void setRecipeImage(Bitmap image) {
         this.recipeImage = image;
 
-        this.recipeImageView.setImageBitmap(image);
+        if (this.recipeImageView != null) {
+            this.recipeImageView.setImageBitmap(image);
+        }
     }
     public void setListener(RecipeCardFragmentListener listener) {
         this.listener = listener;
@@ -144,28 +155,38 @@ public class RecipeCardFragment extends Fragment {
         this.layoutListener = listener;
     }
     // Loads all view objects.
-    private void loadAllViews() {
+    private void loadAllViews(View v) {
         if (!isEmpty) {
 
-            addImageView.setVisibility(View.GONE);
-            this.recipeLayout.setVisibility(View.VISIBLE);
+            addLayout.setVisibility(View.GONE);
+            this.infoLayout.setVisibility(View.VISIBLE);
+            this.recipeImageView.setVisibility(View.VISIBLE);
             this.nutrientsOverview.getView().setVisibility(View.VISIBLE);
+            this.divider.setVisibility(View.VISIBLE);
 
-            System.out.println("cooking time text view: " + this.cookingTimeTextView);
+            v.setBackgroundResource(android.R.drawable.dialog_holo_light_frame);
             // Set the text views.
             this.cookingTimeTextView.setText("" + this.cookingMins + " min");
             this.servingsTextView.setText("" + this.servings);
             // TODO: Find out how to localize costs
-            this.costTextView.setText("" + this.pricePerServing  + "$/serving");
+            // Price per servings is given in cents.
+            String price = String.format("%.2f$/sv",(this.pricePerServing / 100));
+            this.costTextView.setText(price);
 
             // Set the nutrients.
             this.nutrientsOverview.setValues(this.nutrients);
-        } else {
-            // Set all to GONE
-            this.recipeLayout.setVisibility(View.GONE);
-            this.nutrientsOverview.getView().setVisibility(View.GONE);
 
-            addImageView.setVisibility(View.VISIBLE);
+            if (this.recipeImage != null) {
+                this.recipeImageView.setImageBitmap(this.recipeImage);
+            }
+        } else {
+            v.setBackgroundColor(Color.TRANSPARENT);
+            // Set all to GONE
+            this.infoLayout.setVisibility(View.GONE);
+            this.recipeImageView.setVisibility(View.GONE);
+            this.nutrientsOverview.getView().setVisibility(View.GONE);
+            this.divider.setVisibility(View.GONE);
+            addLayout.setVisibility(View.VISIBLE);
         }
     }
     @Override
@@ -191,29 +212,58 @@ public class RecipeCardFragment extends Fragment {
         this.cookingTimeTextView = v.findViewById(R.id.caloriesSelected);
         this.costTextView        = v.findViewById(R.id.costTextView);
         this.recipeImageView     = v.findViewById(R.id.recipeImageView);
-        this.recipeLayout        = v.findViewById(R.id.recipeLayout);
+        this.infoLayout          = v.findViewById(R.id.infoContainer);
         this.nutrientsOverview   = (SimpleNutrientsOverviewFragment) getChildFragmentManager().findFragmentById(R.id.nutrientsFragment);
-        this.addImageView        = v.findViewById(R.id.addImageView);
+        this.addLayout           = v.findViewById(R.id.addLayout);
         this.topLayout           = v.findViewById(R.id.topLayout);
+        this.editButton          = v.findViewById(R.id.editButton);
+        this.infoTextView        = v.findViewById(R.id.infoTextView);
+        this.divider             = v.findViewById(R.id.dividerBottom);
         this.topLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Decide if we want to perform some sort of scrolling actions.
                 if (listener != null) {
                     listener.clickedOnFragment(RecipeCardFragment.this);
                 }
             }
         });
+        ImageButton b = v.findViewById(R.id.plusButton);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.editFragment(RecipeCardFragment.this);
+                }
+            }
+        });
+        this.editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.editFragment(RecipeCardFragment.this);
+                }
+            }
+        });
+
         if (this.name != null) {
-            loadAllViews();
+            loadAllViews(v);
         }
-        this.layoutListener.loadedView(v);
+        if (this.layoutListener != null) {
+            this.layoutListener.loadedView(v);
+        }
+
+        // Make sure the text size is scale to fit
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.costTextView,1,17,1, TypedValue.COMPLEX_UNIT_SP);
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.cookingTimeTextView,1,17,1, TypedValue.COMPLEX_UNIT_SP);
 
         return v;
     }
 
     public int getIndex() {
         return this.index;
+    }
+    public boolean getIsEmpty() {
+        return this.isEmpty;
     }
     /**
      * Interface that communicates user events with the recipe card.
@@ -225,9 +275,19 @@ public class RecipeCardFragment extends Fragment {
          * @param fragment The fragment the user selected.
          */
         void clickedOnFragment(RecipeCardFragment fragment);
+
+        /**
+         * Called when the user wants to edit this fragment
+         * @param fragment The fragment the user wants to edit.
+         */
+        void editFragment(RecipeCardFragment fragment);
     }
     public interface RecipeCardFragmentLayoutListener {
 
+        /**
+         * Called when the given view is loaded.
+         * @param v The view that is loaded.
+         */
         void loadedView(View v);
     }
 }

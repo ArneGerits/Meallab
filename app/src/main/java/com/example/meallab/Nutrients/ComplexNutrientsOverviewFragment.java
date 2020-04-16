@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -21,9 +22,11 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.meallab.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// TODO: IF NO MICROS DONT SHOW BUTTON and TITLE.
 /**
  * This fragment shows more extensive nutritional info.
  */
@@ -36,19 +39,18 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
     private LinearLayout[] microLayouts;
     private final int kMicroHeight = 175;
 
-    private LinearLayout microHolder;
-
     private boolean showingMicros = false;
 
     ArrayList<MicroNutrientFragment> microFrags = new ArrayList<>();
 
-    // ---- Views ----
+    // ---- Outlets ----
     HorizontalBarChart caloriesBar;
     HorizontalBarChart carbsBar;
     HorizontalBarChart fatsBar;
     HorizontalBarChart proteinsBar;
+    LinearLayout microHolder;
+    ImageButton showButton;
 
-    Button showButton;
     public ComplexNutrientsOverviewFragment() {
         // Required empty public constructor
     }
@@ -146,6 +148,33 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
 
         this.setArguments(args);
     }
+    public void updateExistingNutrients(Nutrient[] newNutrients) {
+
+        // 1. Update the macronutrients.
+        HorizontalBarChart[] macroBars = new HorizontalBarChart[] {this.caloriesBar,this.carbsBar,
+                this.fatsBar, this.proteinsBar};
+
+        for (int i = 0; i < macroBars.length; i++) {
+            HorizontalBarChart bar = macroBars[i];
+            Nutrient nut = newNutrients[i];
+            bar.setPercentProgress(nut.progressToday());
+            bar.setRightText(String.format("%.0f", nut.amountDailyTarget) + nut.unit);
+            bar.setTitleText(nut.name + " - " + (int)nut.amount + nut.unit);
+        }
+
+        // Update micro nutrients.
+        Nutrient[] micros = Arrays.copyOfRange(newNutrients,4,newNutrients.length);
+        for (MicroNutrientFragment f : this.microFrags) {
+            for (Nutrient m : micros) {
+                // Update existing values.
+                if (m.name.equals(f.n.name)) {
+                    f.setValues(m);
+                    break;
+                }
+            }
+        }
+
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,29 +204,18 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-
-
                 showingMicros = !showingMicros;
 
-                // Change the button appearance
-                if (showingMicros) {
-                    System.out.println("hide now!");
-                    // TODO: Change button images.
-                    showButton.setText("Hide");
-                } else {
-                    System.out.println("show now!");
-                    showButton.setText("Show");
+                int toValue = 0;
+                if (microLayouts != null) {
+                    toValue   = kMicroHeight * microLayouts.length;
                 }
-
-                int toValue   = kMicroHeight * microLayouts.length;
                 int fromValue = 0;
 
                 if (!showingMicros) {
                     fromValue = toValue;
                     toValue   = 0;
                 }
-                System.out.println("To value: " + toValue);
-                System.out.println("From value: " + fromValue);
 
                 microHolder.setVisibility(View.VISIBLE);
 
@@ -224,8 +242,10 @@ public class ComplexNutrientsOverviewFragment extends Fragment {
                     {
                         if (showingMicros) {
                             microHolder.setVisibility(View.VISIBLE);
+                            showButton.setImageResource(R.drawable.expand_up);
                         } else {
                             microHolder.setVisibility(View.GONE);
+                            showButton.setImageResource(R.drawable.expand_down);
                         }
                     }
                 });

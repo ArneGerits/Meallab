@@ -168,11 +168,10 @@ public class SpoonacularAPI {
                 try {
                     Recipe[] recipes = new Recipe[response.length()];
 
-                    System.out.println("Received batch json");
                     for (int i = 0; i < response.length(); i++) {
-                        System.out.println("Created new recipe for batch");
                         JSONObject recipe = response.getJSONObject(i);
                         recipes[i] = new Recipe(recipe, rTypes[i]);
+                        recipes[i].hasLoadedFully = true;
                     }
                     listener.retrievedAdditionalInformation(recipes);
                 } catch (JSONException e) {

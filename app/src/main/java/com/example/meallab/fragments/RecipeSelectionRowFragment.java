@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,9 +26,13 @@ public class RecipeSelectionRowFragment extends Fragment {
     // ----- Outlets -----
     ImageView recipeImage;
     ImageView selectedImageView;
+    ImageView topSelectedImageView;
+
     ProgressBar spinner;
-    ImageView moreButton;
+    ImageButton moreButton;
     TextView titleTextView;
+    View moreButtonBackground;
+
     // -----
 
     private recipeInfoFragmentListener mListener;
@@ -58,19 +63,22 @@ public class RecipeSelectionRowFragment extends Fragment {
         this.titleTextView = root.findViewById(R.id.titleTextView);
         this.spinner = root.findViewById(R.id.spinner);
         this.selectedImageView = root.findViewById(R.id.selectedImageView);
-        this.recipeImage       = root.findViewById(R.id.imageView);
+        this.recipeImage       = root.findViewById(R.id.recipeImageView);
         this.recipeImage.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 selected();
             }
         });
+        this.topSelectedImageView = root.findViewById(R.id.topSelectedImageView);
+        this.moreButton = root.findViewById(R.id.moreButton);
+        this.moreButtonBackground = root.findViewById(R.id.info_background);
 
-        this.moreButton = root.findViewById(R.id.moreImageView);
         moreButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 more();
             }
         });
+
         // Inflate the layout for this fragment
         return root;
     }
@@ -103,8 +111,10 @@ public class RecipeSelectionRowFragment extends Fragment {
         // TODO: Animate?
         if (selected) {
             this.selectedImageView.setVisibility(View.VISIBLE);
+            this.topSelectedImageView.setVisibility(View.VISIBLE);
         } else {
             this.selectedImageView.setVisibility(View.INVISIBLE);
+            this.topSelectedImageView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -126,6 +136,8 @@ public class RecipeSelectionRowFragment extends Fragment {
             this.spinner.setAlpha(0.0f);
             this.spinner.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
         }
+        this.moreButton.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
+        this.moreButtonBackground.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
     }
 
     /**
@@ -138,6 +150,9 @@ public class RecipeSelectionRowFragment extends Fragment {
         l.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
 
         this.spinner.animate().alpha(0.0f).setDuration(this.shortAnimationDuration);
+
+        this.moreButton.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
+        this.moreButtonBackground.animate().alpha(1.0f).setDuration(this.shortAnimationDuration);
     }
     /**
      * Sets the event listener for this info fragment.

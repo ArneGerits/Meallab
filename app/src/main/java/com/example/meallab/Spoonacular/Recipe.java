@@ -60,6 +60,8 @@ public class Recipe {
     public SpoonacularMealType type; // The type of this recipe.
     private RecipeCost cost = RecipeCost.UNKNOWN; // The cost of this recipe.
 
+    // This variable is true when the recipe has loaded every single piece of data (all nutrients etc.).
+    public boolean hasLoadedFully = false;
     // ------ Constructor ------
 
     /**
@@ -90,7 +92,6 @@ public class Recipe {
         this.cost = this.computeCost(this.pricePerServing,this.type);
 
         this.popular = json.optBoolean("veryPopular",false);
-
 
         // Setting the nutritional properties.
 

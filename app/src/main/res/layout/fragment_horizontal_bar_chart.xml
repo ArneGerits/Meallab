@@ -15,13 +15,13 @@
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        app:barColor="#00FFFFFF"
+        app:indicatorColor="#00FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/rightTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"
-        custom:barColor="#FFFFFF"
-        custom:drawsDottedLines="true"
-        custom:indicatorColor="#FFFFFF" />
+        custom:drawsDottedLines="true" />
 
     <TextView
         android:id="@+id/titleTextView"
@@ -36,16 +36,13 @@
 
     <TextView
         android:id="@+id/percentageTextView"
-        android:layout_width="0dp"
+        android:layout_width="80dp"
         android:layout_height="0dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
         android:gravity="center|left"
-        android:text="TextView"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/barView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="@+id/barView"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
 
@@ -53,7 +50,6 @@
         android:id="@+id/leftTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/barView" />
 
@@ -61,7 +57,6 @@
         android:id="@+id/rightTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/barView" />
 

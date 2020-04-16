@@ -5,111 +5,215 @@
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff6f4f"
+    android:background="@android:drawable/dialog_holo_light_frame"
     android:orientation="vertical"
     tools:context=".fragments.RecipeCardFragment">
 
-        <LinearLayout
-            android:id="@+id/recipeLayout"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_height="match_parent"
+            android:layout_width="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            >
 
                 <ImageView
                     android:id="@+id/recipeImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_margin="0dp"
                     android:layout_weight="1"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:src="@tools:sample/avatars" />
+
+                <ImageButton
+                    android:id="@+id/editButton"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:elevation="30dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit"
+                    android:background="@drawable/white_circle"
+                    app:layout_constraintEnd_toEndOf="@+id/recipeImageView"
+                    app:layout_constraintTop_toTopOf="@+id/recipeImageView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <LinearLayout
+            android:id="@+id/infoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_weight="0"
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/timeImageView"
+                            android:layout_width="20dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:orientation="horizontal">
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="0"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/clock" />
 
-                                <ImageView
-                                    android:id="@+id/timeImageView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    tools:src="@tools:sample/avatars" />
-
-                                <TextView
-                                    android:id="@+id/caloriesSelected"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:gravity="center|left"
-                                    android:text="TextView" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/cookingTimeTextView"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
                             android:layout_weight="1"
-                            android:orientation="horizontal">
+                            android:fontFamily="@font/greycliff_cf_medium"
+                            android:gravity="center"
+                            android:textColor="#FFFFFF"
+                            android:textSize="17sp" />
 
-                                <ImageView
-                                    android:id="@+id/servingsImageView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    tools:src="@tools:sample/avatars" />
+                </LinearLayout>
 
-                                <TextView
-                                    android:id="@+id/servingsTextView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:gravity="center|left"
-                                    android:text="TextView" />
-                        </LinearLayout>
+                <View
+                    android:id="@+id/leftSep"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#ffffff" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/servingsImageView"
+                            android:layout_width="20dp"
                             android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="0"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/person" />
+
+                        <TextView
+                            android:id="@+id/servingsTextView"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
                             android:layout_weight="1"
-                            android:orientation="horizontal">
+                            android:fontFamily="@font/greycliff_cf_medium"
+                            android:gravity="center|start"
+                            android:textColor="#FFFFFF"
+                            android:textSize="17sp" />
 
-                                <ImageView
-                                    android:id="@+id/costImageView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    tools:src="@tools:sample/avatars" />
+                </LinearLayout>
 
-                                <TextView
-                                    android:id="@+id/costTextView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:gravity="center|left"
-                                    android:text="test" />
-                        </LinearLayout>
+                <View
+                    android:id="@+id/rightSep"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#ffffff" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/costImageView"
+                            android:layout_width="10dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="0"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/price_single" />
+
+                        <TextView
+                            android:id="@+id/costTextView"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/greycliff_cf_medium"
+                            android:gravity="center"
+                            android:textColor="#FFFFFF"
+                            android:textSize="17sp" />
                 </LinearLayout>
         </LinearLayout>
+
+        <View
+            android:id="@+id/dividerBottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimaryDark" />
 
         <fragment
             android:id="@+id/nutrientsFragment"
             android:name="com.example.meallab.Nutrients.SimpleNutrientsOverviewFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.9" />
 
-        <ImageView
-            android:id="@+id/addImageView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/addLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:src="@drawable/debug_plus_button"
-            tools:visibility="gone" />
+            android:background="@color/creamWhite"
+            tools:visibility="visible">
+
+                <ImageButton
+                    android:id="@+id/plusButton"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/white_circle"
+                    android:elevation="30dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/add_button"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/infoTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp"
+                    android:fontFamily="@font/greycliff_cf_heavy"
+                    android:text="Start planning"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    app:layout_constraintBottom_toTopOf="@+id/plusButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/greycliff_cf_heavy"
+                    android:text="No meal(s) planned"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toTopOf="@+id/infoTextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

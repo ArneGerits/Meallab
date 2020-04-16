@@ -4,67 +4,82 @@
     android:layout_height="30dp"
     android:background="@drawable/calendar_bar_shadow"
     >
+
     <TextView
         android:id="@+id/first"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="M"
+        android:fontFamily="@font/greycliff_cf_heavy"
         android:gravity="center"
-        android:textColor="#ffffff"/>
+        android:text="M"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/second"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="T"
+        android:fontFamily="@font/greycliff_cf_heavy"
         android:gravity="center"
-        android:textColor="#ffffff"/>
+        android:text="T"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/third"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="W"
+        android:fontFamily="@font/greycliff_cf_heavy"
         android:gravity="center"
-        android:textColor="#ffffff"/>
+        android:text="W"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/fourth"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="T"
+        android:fontFamily="@font/greycliff_cf_heavy"
         android:gravity="center"
-        android:textColor="#ffffff"/>
+        android:text="T"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/fifth"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="F"
+        android:fontFamily="@font/greycliff_cf_heavy"
         android:gravity="center"
-        android:textColor="#ffffff"/>
+        android:text="F"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/sixth"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="S"
+        android:fontFamily="@font/greycliff_cf_heavy"
         android:gravity="center"
-        android:textColor="#ffffff"/>
+        android:text="S"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/seventh"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="S"
+        android:fontFamily="@font/greycliff_cf_heavy"
         android:gravity="center"
-        android:textColor="#ffffff"/>
+        android:text="S"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 
 </LinearLayout>

@@ -21,7 +21,7 @@ import com.google.gson.Gson;
  */
 public class PersistentStore {
 
-    private final String C_FILE_NAME = "stored_data.txt";
+    private final String C_FILE_NAME = "stored_data.json";
 
     // The listener
     private final PersistentStoreListener listener;
@@ -99,15 +99,32 @@ public class PersistentStore {
             if (!added) {
                 StoredDay newDay = new StoredDay(date);
                 d.add(newDay);
+                this.days.add(newDay);
             }
         }
-        // Add the days to the days array.
-        this.days.addAll(d);
 
         StoredDay[] arr = new StoredDay[d.size()];
         arr = d.toArray(arr);
 
         return arr;
+    }
+    /**
+     * Retrieves a StoredDay object from given date.
+     * If a storedDay object did not yet exist it is created.
+     * @param date The date of the StoredDay object.
+     * @return The day.
+     */
+    public StoredDay retrieveDay(LocalDate date) {
+
+        for (StoredDay day: this.days) {
+            if (day.date.isEqual(date)) {
+                return day;
+            }
+        }
+        StoredDay newDay = new StoredDay(date);
+        this.days.add(newDay);
+
+        return newDay;
     }
 
     /**
@@ -253,10 +270,7 @@ public class PersistentStore {
             Context c = ctx[0];
             if (c != null) {
                 try {
-
                     String json = gson.toJson(this.days);
-                    System.out.println("Writing json: " + json);
-
                     this.writeToFile(this.fileName, json, c);
 
                 } catch (IOException e) {
@@ -278,6 +292,7 @@ public class PersistentStore {
         }
         // Writes json to the file system.
         private void writeToFile(String fileName, String json, Context context) throws IOException {
+
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             outputStreamWriter.write(json);
             outputStreamWriter.close();

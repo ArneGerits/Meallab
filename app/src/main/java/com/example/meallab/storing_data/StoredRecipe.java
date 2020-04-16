@@ -68,7 +68,7 @@ public class StoredRecipe implements Parcelable {
         this.imageURL = r.getImageURLForSize(SpoonacularImageSize.S_636x393);
         this.isFavorite = false;
         this.pricePerServing = r.pricePerServing;
-        this.cookingMins = r.cookingMinutes;
+        this.cookingMins = r.readyInMinutes;
         this.numberOfServings = r.servings;
         this.nutrients = r.nutrients;
     }

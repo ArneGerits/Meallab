@@ -4,13 +4,18 @@
     <color name="colorPrimaryDark">#D74A2E</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorCalendarDark">#D74A2E</color>
-    <color name="colorCalendarVeryDark">#A41700</color>
+    <color name="colorCalendarVeryDark">#D74A1E</color>
+    <color name="test">#4F1C0B</color>
     <color name="colorCalendarCircleGray">#AAAAAA</color>
     <color name="colorCalendarTextOutday">#B1B1B1</color>
     <color name="creamWhite">#fdf6e4</color>
+    <color name="creamWhiteDarker">#f2ebda</color>
     <color name="woodBrown">#6D574E</color>
     <color name="carb">#A2E4C1</color>
     <color name="fat">#ffd67c</color>
     <color name="protein">#ff9f86</color>
     <color name="calories">#abcdef</color>
+    <color name="slightGrey">#AEAEAE</color>
+    <color name="buttonGrey">#CACBCE</color>
+    <color name="cardSilver">#E8E8E8</color>
 </resources>

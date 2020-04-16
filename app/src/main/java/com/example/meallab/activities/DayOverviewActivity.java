@@ -1,10 +1,13 @@
 package com.example.meallab.activities;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.meallab.Nutrients.ComplexNutrientsOverviewFragment;
 import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterIngredients;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,17 +15,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.meallab.Spoonacular.Recipe;
 import com.example.meallab.Spoonacular.SpoonacularAPI;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
+import com.example.meallab.Spoonacular.VolleySingleton;
 import com.example.meallab.customViews.CustomScrollView;
 import com.example.meallab.customViews.DayViewContainer;
 import com.example.meallab.customViews.MonthHeader;
@@ -56,6 +68,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
 
 import kotlin.Unit;
@@ -73,7 +86,11 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         CardScrollerFragment.CardScrollerFragmentListener, SpoonacularAPI.SpoonacularDetailedRecipeListener {
 
     // ----- Constants ------
-    private static final int RECIPE_SELECTION_CODE = 12345;
+
+    private static final int RECIPE_SELECTION_CODE = 1;
+    private static final int SHOPPING_CODE         = 2;
+
+    // -----
 
     private ArrayList<Object> mIngredientNames = new ArrayList<>();
     private ArrayList<String> mIngredientQuantities = new ArrayList<>();
@@ -111,6 +128,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private CardScrollerFragment cardsFragment;
     private ComplexNutrientsOverviewFragment nutrientFragment;
 
+    private ImageButton settingsButton;
+    private ImageButton shoppingButton;
+
     // ------
 
     SharedPreferences sharedPreferences;
@@ -121,11 +141,23 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Used for api communication with Spoonacular
     private SpoonacularAPI api;
+
+    // A cache of fully loaded recipes is kept to decrease API calls,
+    // it maps recipe IDS to Recipe objects.
+    private HashMap<Integer, Recipe> recipesCache = new HashMap<Integer, Recipe>();
+
+    private FrameLayout calendarContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_day_overview);
+
+        // Setting the fragments.
+        this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
+        this.cardsFragment.setListener(this);
+        this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
+
 
         // Init the store, will give callback on completion.
         this.store = new PersistentStore(this,this);
@@ -134,6 +166,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         // Perform view first time setup.
         this.scrollView = findViewById(R.id.scrollView);
         this.calendar   = this.findViewById(R.id.calendarView);
+
+        this.calendarContainer = this.findViewById(R.id.calendarContainer);
 
         this.setupCalendar(this.calendar);
         this.setupScrollView(this.scrollView);
@@ -144,11 +178,11 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         api = new SpoonacularAPI(this);
 
         // Getting the text views of the nav bar.
-        this.dateTextView  = this.findViewById(R.id.dateTextView);
-        this.yearTextView  = this.findViewById(R.id.yearTextView);
-        this.monthTextView = this.findViewById(R.id.monthTextView);
-
-        selected(this.selectedDate);
+        this.dateTextView   = this.findViewById(R.id.dateTextView);
+        this.yearTextView   = this.findViewById(R.id.yearTextView);
+        this.monthTextView  = this.findViewById(R.id.monthTextView);
+        this.settingsButton = this.findViewById(R.id.settingsButton);
+        this.shoppingButton = this.findViewById(R.id.shoppingButton);
 
         ConstraintLayout navBar = this.findViewById(R.id.navBar);
         navBar.setOnClickListener(new View.OnClickListener() {
@@ -163,43 +197,74 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         });
-
-        // Setting the fragments.
-        this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
-        this.cardsFragment.setListener(this);
-        this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
+        this.settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchSettings();
+            }
+        });
+        this.shoppingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchShoppingList();
+            }
+        });
     }
 
+    // ----- Actions ------
+
+    // Launches the settings activity.
+    private void launchSettings() {
+
+    }
+    // Launches the shopping list activity.
+    private void launchShoppingList() {
+
+        ShoppingListActivity recipeSelection = new ShoppingListActivity();
+        Intent intent = new Intent(this, ShoppingListActivity.class);
+
+        // Get the next 6 stored days.
+        StoredDay[] days = new StoredDay[7];
+
+        // Get the stored days.
+        LocalDate selectedDate = LocalDate.now();
+        for (int i = 0; i < days.length; i++) {
+            StoredDay d =  this.store.retrieveDay(selectedDate.plusDays(i));
+            days[i]     = d;
+        }
+
+        intent.putExtra("days", gson.toJson(days));
+        // Start the recipe selection.
+        startActivityForResult(intent, SHOPPING_CODE);
+    }
 
     // region Date Selection
 
     // Called when the user selects a date in the calendar.
     // @pre calendar and dateTextView must be initialized.
     public void selected(LocalDate date) {
-
-        LocalDate old = this.selectedDate;
+        // Set the new selected date.
         this.selectedDate = date;
-
         // Update the calendar.
-        this.calendar.notifyDateChanged(old);
-        this.calendar.notifyDateChanged(date);
-
+        this.calendar.notifyCalendarChanged();
+        // Update the text view.
         this.updateDateTextView(this.selectedDate);
+
+        // Ask the persistent store for the date selected, and switch to that day.
+        this.switchToDay(this.store.retrieveDay(date));
 
     }
     public void selectedInOrOutDate(LocalDate date) {
         selected(date);
-
-        //this.calendar.smoothScrollToDate(date);
     }
     // Updates the dateTextView with the correct date.
     private void updateDateTextView(LocalDate date) {
 
         DateTimeFormatter f;
         if (date.getDayOfMonth() > 9) {
-            f = DateTimeFormatter.ofPattern("EEE dd MMMM yyyy");
+            f = DateTimeFormatter.ofPattern("EEE dd MMMM");
         } else {
-            f = DateTimeFormatter.ofPattern("EEE d MMMM yyyy");
+            f = DateTimeFormatter.ofPattern("EEE d MMMM");
         }
         String result = f.format(this.selectedDate);
         this.dateTextView.setText(result);
@@ -255,8 +320,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     scrollView.topBoundEnabled = true;
                     calendarShowing = false;
 
-                    System.out.println("HIDE");
-
                     DateTimeFormatter f = DateTimeFormatter.ofPattern("MMMM");
                     String result = f.format(selectedDate);
                     monthTextView.setText(result);
@@ -273,6 +336,37 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Sets up the calendar view.
     private void setupCalendar(final CalendarView v) {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        // Calculate the dimensions of a cell, 7 cells need to be next to eachother.
+
+        float dip = 30f;
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.getDisplayMetrics()
+        );
+
+
+        int cellDimension = width / 7;
+        int calendarHeight = cellDimension * 5 + (int)px;
+
+        ViewGroup.LayoutParams p =  this.calendarContainer.getLayoutParams();
+        p.height = calendarHeight;
+        this.calendarContainer.setLayoutParams(p);
+
+        v.setDayHeight(cellDimension);
+        v.setDayWidth(cellDimension);
+        topBound = calendarHeight;
+        leftDistance = width / 2.0f;
+
+        scrollView.boundYTop = topBound;
+        scrollView.topBoundEnabled = true;
+        scrollView.scrollTo(0,topBound);
+
         v.setOrientation(RecyclerView.HORIZONTAL);
         v.setScrollMode(ScrollMode.PAGED);
         v.setOutDateStyle(OutDateStyle.END_OF_GRID);
@@ -341,19 +435,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         DayOfWeek firstDayOfWeek = WeekFields.of(Locale.getDefault()).getFirstDayOfWeek();
         v.setup(first, last, firstDayOfWeek);
         v.scrollToMonth(current);
-
-        v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                topBound = v.getHeight();
-                leftDistance = v.getWidth() / 2.0f;
-
-                scrollView.boundYTop = topBound;
-                scrollView.topBoundEnabled = true;
-                scrollView.scrollTo(0,topBound);
-            }
-        });
     }
 
     // Sets up the shopping list view for this day.
@@ -362,6 +443,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     }
     // Sets up the card scroll view.
     private void setupCardScrollView(StoredRecipe[] recipes) {
+
         // If there are no recipes chosen yet we present a single empty card.
         if (recipes.length == 0) {
             this.cardsFragment.setValues(recipes, new boolean[]{true});
@@ -390,11 +472,38 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                     r.nutrients[0].amountDailyTarget = this.preferences.getTrackedNutrients()[0].amountDailyTarget;
                 }
                 this.cardsFragment.setValues(recipes, structure);
+
+                // Now load the images of the recipes.
+                loadAndSetRecipeImages(recipes);
             }
         }
     }
+    // Loads the recipe images and sets them on the card view.
+    private void loadAndSetRecipeImages(StoredRecipe[] recipes) {
+        // Used to load images.
+        ImageLoader imageLoader = VolleySingleton.getInstance(this).getImageLoader();
+        for (final StoredRecipe r : recipes) {
+            // Load the image.
+            imageLoader.get(r.imageURL, new ImageLoader.ImageListener() {
+                @Override
+                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                    if (response.getBitmap() != null) {
+                        System.out.println("GOT THE IMAGE for: " + r.name);
+                        Bitmap result = response.getBitmap();
+                        cardsFragment.setImageOnRecipe(result,r);
+                    }
+                }
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //todo: show error screen.
+                    System.out.println("VOLLEY ERROR recipe select " +  error.toString());
+                }
+            });
+        }
+    }
     // Sets up the nutrients view.
-    private void setupNutrientsView(StoredDay day) {
+    private void setupNutrientsView(StoredDay day, boolean isUpdate) {
 
         // 1. Get all tracked nutrients.
         Nutrient[] tracked = this.preferences.getTrackedNutrients();
@@ -410,7 +519,12 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
             }
         }
-        this.nutrientFragment.setValues(tracked);
+
+        if (isUpdate) {
+            this.nutrientFragment.updateExistingNutrients(tracked);
+        } else {
+            this.nutrientFragment.setValues(tracked);
+        }
     }
 
     //endregion
@@ -420,6 +534,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // Shows the calendar.
     private void showCalendar() {
 
+        System.out.println("show calendar");
         CalendarView v = this.findViewById(R.id.calendarView);
         CustomScrollView scrollView = (CustomScrollView) findViewById(R.id.scrollView);
 
@@ -450,7 +565,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         this.setupDayShoppingList(day.shoppingList);
 
-        this.setupNutrientsView(day);
+        this.setupNutrientsView(day,false);
     }
 
 
@@ -459,28 +574,23 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     @Override
     public void initializedSuccessfully(boolean success) {
 
-        StoredDay today = this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0];
         // Load the current day, if no day exists yet a new empty day is created.
-        this.switchToDay(this.store.retrieveDays(new LocalDate[]{this.selectedDate})[0]);
+        //this.switchToDay(this.store.retrieveDay(this.selectedDate));
+        this.selected(this.selectedDate);
     }
 
     // endregion
-
-    // region Recipe Card Scroller Listener
 
     @Override
     public void completedSynchronize(boolean success) {
 
     }
 
-    @Override
-    public void selectedShowDetailForIndex(int index) {
-        //System.out.println("show detail for " + r.name);
-    }
+    // region Recipe Card Scroller Listener
 
     @Override
-    public void selectedEditForIndex(int index) {
-        this.editingIndex = index;
+    public void selectedShowDetailForIndex(int index) {
+        System.out.println("show detail");
     }
 
     @Override
@@ -509,6 +619,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
             case (RECIPE_SELECTION_CODE) : {
+
                 if (resultCode == Activity.RESULT_OK) {
                     // Get the chosen recipes from the activity.
                     String recipesJson = data.getStringExtra(RecipeSelectionActivity.RECIPES_SELECTED);
@@ -519,23 +630,56 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 }
                 break;
             }
+            case (SHOPPING_CODE) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    // Get the chosen recipes from the activity.
+                    String daysJson = data.getStringExtra(ShoppingListActivity.DAYS);
+                    StoredDay[] days = this.gson.fromJson(daysJson, StoredDay[].class);
+
+                    // Do something with days.
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+
+                }
+                break;
+            }
         }
     }
-
 
 
     // Called when the user has finished choosing recipes in the recipe selection activity.
     // load detailed recipe info.
     private void recipesChosen(Recipe[] recipes) {
 
-        // TODO: Cross ref to avoid loading twice.
-        int[] recipeIDS                 = new int[recipes.length];
-        SpoonacularMealType[] mealTypes = new SpoonacularMealType[recipes.length];
+        // 1. Create a stored day object for each recipe.
+        this.addRecipesToDay(recipes);
+
+        // 2. Populate the recipeCardView and nutrients view.
+        this.setupCardScrollView(this.currentDay.recipes);
+        this.setupNutrientsView(this.currentDay, true);
+
+        // 3. Compute for which recipes additional data needs to be loaded.
+
+        // Array with recipes to load more data from.
+        ArrayList<Recipe> toLoadMore = new ArrayList<>();
+
+        for (Recipe r : recipes) {
+            if (!r.hasLoadedFully) {
+                // It needs to be loaded more.
+                toLoadMore.add(r);
+            } else {
+                // It is loaded fully, store it in the cache.
+                this.recipesCache.put(r.id,r);
+            }
+        }
+        // 4. Load the data from those.
+
+        int[] recipeIDS                 = new int[toLoadMore.size()];
+        SpoonacularMealType[] mealTypes = new SpoonacularMealType[toLoadMore.size()];
 
         // The recipes do not have detailed info yet we need to retrieve it.
-        for (int i = 0; i < recipes.length; i++) {
-            recipeIDS[i] = recipes[i].id;
-            mealTypes[i] = recipes[i].type;
+        for (int i = 0; i < toLoadMore.size(); i++) {
+            recipeIDS[i] = toLoadMore.get(i).id;
+            mealTypes[i] = toLoadMore.get(i).type;
         }
         // Load the data for the recipes chosen.
         this.api.retrieveRecipeDetailedInfo(recipeIDS, mealTypes, this);
@@ -557,19 +701,15 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             // There can only be one here.
             Recipe toAdd = recipes[0];
 
-            ArrayList<StoredRecipe> storedRecipes = new ArrayList<StoredRecipe>(Arrays.asList(this.currentDay.recipes));
+            ArrayList<StoredRecipe> storedRecipes = new ArrayList<>(Arrays.asList(this.currentDay.recipes));
             if (this.editingIndex >= storedRecipes.size()) {
                 storedRecipes.add(new StoredRecipe(toAdd));
             } else {
-                storedRecipes.add(this.editingIndex, new StoredRecipe(toAdd));
+                storedRecipes.set(this.editingIndex, new StoredRecipe(toAdd));
             }
             StoredRecipe[] arr = new StoredRecipe[storedRecipes.size()];
             arr = storedRecipes.toArray(arr);
             this.currentDay.recipes = arr;
-        }
-        System.out.println("add recipes to the current day.");
-        for (StoredRecipe r : this.currentDay.recipes) {
-            System.out.println("TO STORE: " + r.name);
         }
 
         // Save the changes
@@ -581,13 +721,28 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     public void retrievedAdditionalInformation(Recipe[] recipes) {
 
         System.out.println("Retrieved detailed information fo the recipes");
-        // Set the recipe(s) in storedDay, update cardView, update nutrition
 
-        // Add the recipes to storedDay.
-        this.addRecipesToDay(recipes);
+        // Store the recipes in the cache.
+        for (Recipe r : recipes) {
+            this.recipesCache.put(r.id,r);
+        }
 
-        // Reload all views.
-        this.switchToDay(this.currentDay);
+        // Add the info about the nutrients to storedDay.
+        for (StoredRecipe r : this.currentDay.recipes) {
+            for (Recipe res : recipes) {
+                if (r.recipeID == res.id) {
+                    r.nutrients = res.nutrients;
+                }
+            }
+        }
+
+        // Sync the store.
+        this.store.synchronize();
+
+        // Reload the nutrients and shopping list.
+        this.setupNutrientsView(this.currentDay, true);
+
+        this.setupDayShoppingList(this.currentDay.shoppingList);
     }
 
     @Override

@@ -4,45 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@android:drawable/dialog_holo_light_frame"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/colorPrimaryDark">
 
-        <ImageView
-            android:id="@+id/kcalImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5"
-            tools:srcCompat="@tools:sample/avatars" />
 
+            <ImageView
+                android:id="@+id/kcalImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:scaleType="fitCenter"
+                android:layout_margin="8dp"
+                android:src="@drawable/calories"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/calories" />
         <TextView
             android:id="@+id/caloriesTextView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:fontFamily="@font/greycliff_cf_medium"
             android:gravity="center|left"
             android:text="TextView"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff"
+            android:textSize="17sp" />
     </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@color/colorPrimaryDark">
 
-            <ImageView
-                android:id="@+id/timeImageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1.5"
-                tools:srcCompat="@tools:sample/avatars" />
+
+                <ImageView
+                    android:id="@+id/timeImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/clock"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@drawable/clock"
+                    android:layout_margin="8dp"/>
 
             <TextView
                 android:id="@+id/caloriesSelected"
@@ -50,24 +69,34 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
+                android:fontFamily="@font/greycliff_cf_medium"
                 android:gravity="center|left"
                 android:text="TextView"
-                android:textColor="#ffffff"/>
+                android:textColor="#ffffff"
+                android:textSize="17sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@color/colorPrimaryDark">
 
-            <ImageView
-                android:id="@+id/servingsImageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1.5"
-                tools:srcCompat="@tools:sample/avatars" />
 
+                <ImageView
+                    android:id="@+id/servingsImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/person"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@drawable/person"
+                    android:layout_margin="8dp"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -78,17 +107,41 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:layout_weight="1.4"
+                    android:fontFamily="@font/greycliff_cf_medium"
                     android:gravity="center|left"
                     android:text="TextView"
-                    android:textColor="#ffffff" />
+                    android:textColor="#ffffff"
+                    android:textSize="17sp" />
 
-                <ImageView
-                    android:id="@+id/costImageView"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    android:orientation="vertical">
+
+                    <View
+                        android:id="@+id/divider5"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_weight="0"
+                        android:background="#00FFFFFF" />
+
+                    <ImageView
+                        android:id="@+id/costImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        tools:srcCompat="@tools:sample/avatars" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/divider4"
+                    android:layout_width="10dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:background="#00FFFFFF" />
+
             </LinearLayout>
         </LinearLayout>
 </LinearLayout>
