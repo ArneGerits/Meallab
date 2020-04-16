@@ -48,6 +48,7 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
+    private RecyclerView.ItemDecoration mDecorator;
     private RecyclerView.LayoutManager layoutManager;
 
     @Override
@@ -107,6 +108,10 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         // specify an adapter
         mAdapter = new ShoppingListAdapter(this.getHighlightedDays());
         recyclerView.setAdapter(mAdapter);
+
+        // Specify a decorator
+        mDecorator = new ShoppingListDecorator();
+        recyclerView.addItemDecoration(mDecorator);
     }
     // Called when the user clicks the confirm button.
     private void confirm() {

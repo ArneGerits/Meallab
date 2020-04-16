@@ -94,21 +94,35 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         public void setState(ITEM_STATE state) {
             this.state = state;
+
+            // TODO: Switch a lot of the view here.
             // TODO: Switch between images.
             if (state == ITEM_STATE.SELECTED) {
                 this.checkImageView.setVisibility(View.VISIBLE);
+
             } else if(state == ITEM_STATE.NOT_SELECTED) {
                 this.checkImageView.setVisibility(View.INVISIBLE);
             } else {
+                // Set partial here.
+            }
 
+            // Reload all sub views.
+            if (state == ITEM_STATE.SELECTED || state == ITEM_STATE.NOT_SELECTED) {
+                // Loop all children of the holder.
+                for (int i = 0; i < this.recipesHolder.getChildCount(); i++) {
+                    ShoppingItemRecipeEntryView v = (ShoppingItemRecipeEntryView) this.recipesHolder.getChildAt(i);
+                    v.setSelected(state == ITEM_STATE.SELECTED);
+                }
             }
         }
 
         // Adds a new recipe entry.
         public void addRecipeEntry(String name, boolean isSelected, float amount, String unit) {
-            System.out.println("Add a new layout to the recipesHolder");
             ShoppingItemRecipeEntryView v = new ShoppingItemRecipeEntryView(this.v.getContext());
             v.recipeNameTextView.setText(name);
+            v.unitTextView.setText(unit);
+            v.amountTextView.setText(String.format("%.2f",amount));
+            v.setSelected(isSelected);
             this.recipesHolder.addView(v);
         }
     }
