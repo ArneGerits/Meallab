@@ -31,6 +31,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public ArrayList<StoredDay> days = new ArrayList<>();
     private ArrayList<ShoppingListEntry> mDataset = new ArrayList<>();
 
+    private ShoppingListActivity.SORT_OPTION currentSort;
+
     public enum ITEM_STATE {
         NOT_SELECTED,
         SELECTED,
@@ -134,14 +136,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         for (StoredShoppingItem i : entry.items) {
             // There can only be 2 states here.
             if (state == ITEM_STATE.SELECTED) {
-                System.out.println("check one on nigga");
                 i.isChecked = true;
             } else if(state == ITEM_STATE.NOT_SELECTED) {
                 i.isChecked = false;
             }
         }
     }
-    public static class ShoppingListEntry {
+    public static class ShoppingListEntry implements Comparable< ShoppingListEntry > {
 
         private ArrayList<StoredRecipe> recipes = new ArrayList<>();
         private ArrayList<StoredShoppingItem> items = new ArrayList<>();
@@ -196,6 +197,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 return ITEM_STATE.PARTIALLY_SELECTED;
             }
         }
+
+        @Override
+        public int compareTo(ShoppingListEntry o) {
+            return this.name.compareTo(o.name);
+        }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
@@ -204,44 +210,42 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
      * Creates a new shopping list adapter.
      * @param days The stored days to show data for.
      */
-    public ShoppingListAdapter(ArrayList<StoredDay> days) {
+    public ShoppingListAdapter(ArrayList<StoredDay> days, ShoppingListActivity.SORT_OPTION sort) {
 
         this.days = days;
 
+        this.currentSort = sort;
+
+        // First compute the data model, then sort by.
         this.computeDataModel(days);
     }
 
     private void computeDataModel(ArrayList<StoredDay> days) {
         this.mDataset.clear();
 
-        HashMap<Integer, ArrayList<StoredRecipe>> mapping = new HashMap<>();
+        if (this.currentSort == ShoppingListActivity.SORT_OPTION.ALPHABET) {
+            HashMap<Integer, ArrayList<StoredRecipe>> mapping = new HashMap<>();
 
-        int selected = 0;
-        int not_selected = 0;
-
-        // Every item ID gets a mapping to the recipes it belongs to.
-        for (StoredDay d : days) {
-            for (StoredRecipe r : d.recipes) {
-                for (StoredShoppingItem i : r.items) {
-                    if (i.isChecked) {
-                        selected++;
-                    } else {
-                        not_selected++;
+            // Every item ID gets a mapping to the recipes it belongs to.
+            for (StoredDay d : days) {
+                for (StoredRecipe r : d.recipes) {
+                    for (StoredShoppingItem i : r.items) {
+                        if (!mapping.containsKey(i.itemID)) {
+                            mapping.put(i.itemID, new ArrayList<StoredRecipe>());
+                        }
+                        ArrayList<StoredRecipe> a = mapping.get(i.itemID);
+                        a.add(r);
+                        mapping.put(i.itemID,a);
                     }
-                    if (!mapping.containsKey(i.itemID)) {
-                        mapping.put(i.itemID, new ArrayList<StoredRecipe>());
-                    }
-                    ArrayList<StoredRecipe> a = mapping.get(i.itemID);
-                    a.add(r);
-                    mapping.put(i.itemID,a);
                 }
             }
-        }
+            for (Integer itemID : mapping.keySet()) {
+                ArrayList<StoredRecipe> r = mapping.get(itemID);
+                mDataset.add(new ShoppingListEntry(itemID, r));
+            }
+            Collections.sort(mDataset);
+        } else {
 
-        System.out.println("" + selected + "/" +(selected + not_selected) + " items selected");
-        for (Integer itemID : mapping.keySet()) {
-            ArrayList<StoredRecipe> r = mapping.get(itemID);
-            mDataset.add(new ShoppingListEntry(itemID, r));
         }
     }
     public void setDays(ArrayList<StoredDay> newDays) {
@@ -288,6 +292,15 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         }
     }
 
+    // This method sorts the data in the recycler view.
+    public void sortBy(ShoppingListActivity.SORT_OPTION option) {
+
+        if (option == ShoppingListActivity.SORT_OPTION.ALPHABET) {
+
+        } else {
+
+        }
+    }
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {

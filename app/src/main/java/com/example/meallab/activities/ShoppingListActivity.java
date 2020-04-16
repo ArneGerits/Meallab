@@ -9,13 +9,16 @@ import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.example.meallab.fragments.DateSelectionFragment;
 import com.example.meallab.storing_data.StoredDay;
 import com.example.meallab.storing_data.UserPreferences;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.threeten.bp.format.DateTimeFormatter;
@@ -40,16 +43,27 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
     // To consult user preferences.
     UserPreferences prefs;
 
+    // Get this from the user preferences.
+    SORT_OPTION currentSort = SORT_OPTION.ALPHABET;
+
     // ----- Outlets ------
     private DateSelectionFragment dateFragment;
     private TextView monthTextView;
     private TextView sTextView;
     private ImageButton doneButton;
+    private ImageButton sortButton;
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.ItemDecoration mDecorator;
     private RecyclerView.LayoutManager layoutManager;
+
+    // User can sort by date or alphabet.
+    public enum SORT_OPTION {
+        DATE,
+        ALPHABET,
+        RECIPE
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +78,11 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         this.prefs = new UserPreferences(this);
 
         // TODO: figure out how to structure.
-        this.structure = new boolean[]{true,true,true,true,true,false,false};
+        this.structure = this.prefs.getShoppingListSelectionStructure();
 
         // Setting the outlets
         this.doneButton    = this.findViewById(R.id.doneButton);
+        this.sortButton    = this.findViewById(R.id.sortButton);
         this.sTextView     = this.findViewById(R.id.shoppingTextView);
         this.monthTextView = this.findViewById(R.id.monthTextView);
         this.dateFragment  = (DateSelectionFragment) this.getSupportFragmentManager().findFragmentById(R.id.dateFragment);
@@ -81,6 +96,12 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
             @Override
             public void onClick(View v) {
                 confirm();
+            }
+        });
+        this.sortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sort();
             }
         });
 
@@ -107,13 +128,56 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter
-        mAdapter = new ShoppingListAdapter(this.getHighlightedDays());
+        mAdapter = new ShoppingListAdapter(this.getHighlightedDays(), this.currentSort);
         recyclerView.setAdapter(mAdapter);
 
         // Specify a decorator
         mDecorator = new ShoppingListDecorator();
         recyclerView.addItemDecoration(mDecorator);
     }
+    // region Actions
+
+    // Called when the user clicks on the sort button.
+    private void sort() {
+        final BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(this);
+        View sheetView = this.getLayoutInflater().inflate(R.layout.bottom_dialog_sort, null);
+        mBottomSheetDialog.setContentView(sheetView);
+        mBottomSheetDialog.show();
+
+        LinearLayout alphabet = (LinearLayout) sheetView.findViewById(R.id.alphabet_sheet);
+        LinearLayout dates = (LinearLayout) sheetView.findViewById(R.id.date_sheet);
+        LinearLayout recipes = (LinearLayout) sheetView.findViewById(R.id.recipe_sheet);
+
+        alphabet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDataBy(SORT_OPTION.ALPHABET);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        dates.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDataBy(SORT_OPTION.DATE);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        recipes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDataBy(SORT_OPTION.RECIPE);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+    }
+    private void sortDataBy(SORT_OPTION option) {
+        this.currentSort = option;
+
+        // Sort the data in the recyclerview.
+        ShoppingListAdapter a = (ShoppingListAdapter) this.mAdapter;
+        a.sortBy(option);
+    }
+
     // Called when the user clicks the confirm button.
     private void confirm() {
         // Convert the days to json.
@@ -125,6 +189,8 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         // Finalize.
         finish();
     }
+    // endregion
+
     // Sets up the month text view with the correct month.
     private  void setupMonthTextView() {
 
@@ -151,11 +217,16 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
     // region DateSelectionListener
     @Override
     public void selectedDate(int index, boolean isSelected) {
+
         // Set the structure.
         this.structure[index] = isSelected;
+
         // Updates the entire recyclerview with the correct days.
         ShoppingListAdapter adapter = (ShoppingListAdapter) this.mAdapter;
         adapter.setDays(this.getHighlightedDays());
+
+        // Save the structure to user prefs.
+        this.prefs.setShoppingListSelectionStructure(this.structure);
     }
     // endregion
 }

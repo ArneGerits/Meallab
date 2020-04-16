@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
 
         firstTime = sharedPreferences.getBoolean(firstTimeKey, true);
+
+        
         if(testing){
             goToActivityUnderTest();
         }else{
