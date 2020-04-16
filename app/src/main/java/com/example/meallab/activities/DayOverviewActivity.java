@@ -9,6 +9,7 @@ import com.example.meallab.RecyclerViewAdapterIngredients;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.animation.LayoutTransition;
@@ -23,8 +24,10 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.meallab.Spoonacular.Recipe;
@@ -82,9 +85,13 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // -----
 
-    private ArrayList<Object> mIngredientNames = new ArrayList<>();
-    private ArrayList<String> mIngredientQuantities = new ArrayList<>();
-    RecyclerViewAdapterIngredients adapter;
+    // Get this from the user preferences.
+    ShoppingListActivity.SORT_OPTION currentSort = ShoppingListActivity.SORT_OPTION.ALPHABET;
+
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.ItemDecoration mDecorator;
+    private RecyclerView.LayoutManager layoutManager;
+
 
     // True if the calendar is currently showing, False otherwise
     boolean calendarShowing = false;
@@ -121,6 +128,13 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private ImageButton settingsButton;
     private ImageButton shoppingButton;
 
+    private RecyclerView ingredients;
+    private FrameLayout recyclerParent;
+    private LinearLayout ingredientsDivider;
+    private boolean atScrollBottom = false;
+
+    private ConstraintLayout navBar;
+
     // ------
 
     SharedPreferences sharedPreferences;
@@ -147,7 +161,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.cardsFragment    = (CardScrollerFragment) getSupportFragmentManager().findFragmentById(R.id.cardsFragment);
         this.cardsFragment.setListener(this);
         this.nutrientFragment = (ComplexNutrientsOverviewFragment) getSupportFragmentManager().findFragmentById(R.id.nutrientsFragment);
-
 
         // Init the store, will give callback on completion.
         this.store = PersistentStore.getSharedInstance();
@@ -197,6 +210,13 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             }
         });
         this.selected(this.selectedDate);
+
+        this.ingredients = this.findViewById(R.id.ingredients);
+        this.recyclerParent = this.findViewById(R.id.recyclerParent);
+        this.ingredientsDivider = (LinearLayout) this.findViewById(R.id.ingredientsDivider);
+        this.navBar = this.findViewById(R.id.navBar);
+
+        this.setupRecyclerView(this.ingredients);
     }
 
     // ----- Actions ------
@@ -214,6 +234,39 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         startActivityForResult(intent, SHOPPING_CODE);
     }
 
+    private void setupRecyclerView(RecyclerView v) {
+        v.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        v.setLayoutManager(layoutManager);
+
+        ArrayList<StoredDay> day = new ArrayList<>();
+        day.add(this.currentDay);
+
+        // specify an adapter
+        mAdapter = new ShoppingListAdapter(day, this.currentSort);
+        v.setAdapter(mAdapter);
+
+        // Specify a decorator
+        mDecorator = new ShoppingListDecorator();
+        v.addItemDecoration(mDecorator);
+    }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        // Used to get the height of the screen.
+        View content = getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+
+        // Get the height of the nav bar and ingredients divider.
+        ViewGroup.LayoutParams p1 = this.ingredientsDivider.getLayoutParams();
+        ViewGroup.LayoutParams p2 = this.navBar.getLayoutParams();
+
+        ViewGroup.LayoutParams p = this.recyclerParent.getLayoutParams();
+        p.height = (content.getHeight() - (p1.height + p2.height));
+        this.recyclerParent.setLayoutParams(p);
+    }
     // region Date Selection
 
     // Called when the user selects a date in the calendar.
@@ -291,8 +344,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 float progress = Math.min(1.0f,(float) y/top);
                 animateTextViews(progress);
 
-                //System.out.println("bleh" + scrollView.getScrollY());
-                //System.out.println("s" + scrollView.getIsScrolling());
                 // Only bound the view when the scrollview is not performing a smooth scroll.
                 if (scrollView.getScrollY() >= topBound && !scrollView.getIsScrolling() && calendarShowing) {
                     scrollView.topBoundEnabled = true;
@@ -308,6 +359,30 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
                     calendar.scrollToDate(selectedDate);
                 }
+
+                // If the scroll view has reached the maximum value we change
+                // the ingredients dividers color.
+
+                // Used to check if the scrollview is at the bottom.
+                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+
+                // if diff is zero, then the bottom has been reached
+                if (diff == 0) {
+                    if (!atScrollBottom) {
+
+                        // Change color to red.
+                        atScrollBottom = true;
+                    }
+                } else {
+
+                    if (atScrollBottom) {
+
+                        // Change color to white.
+                        atScrollBottom = false;
+                    }
+                }
+
             }
         });
     }

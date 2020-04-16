@@ -117,7 +117,7 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
             }
         });
 
-        this.setupRecyclerView();
+        this.setupRecyclerView(this.recyclerView);
     }
 
     // Gets the highlighted days according to the structure.
@@ -132,20 +132,20 @@ public class ShoppingListActivity extends AppCompatActivity implements DateSelec
         return days;
     }
 
-    private void setupRecyclerView() {
-        this.recyclerView.setHasFixedSize(true);
+    private void setupRecyclerView(RecyclerView v) {
+        v.setHasFixedSize(true);
 
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        v.setLayoutManager(layoutManager);
 
         // specify an adapter
         mAdapter = new ShoppingListAdapter(this.getHighlightedDays(), this.currentSort);
-        recyclerView.setAdapter(mAdapter);
+        v.setAdapter(mAdapter);
 
         // Specify a decorator
         mDecorator = new ShoppingListDecorator();
-        recyclerView.addItemDecoration(mDecorator);
+        v.addItemDecoration(mDecorator);
     }
     // region Actions
 
