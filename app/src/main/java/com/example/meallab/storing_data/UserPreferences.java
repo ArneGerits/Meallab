@@ -25,12 +25,14 @@ import java.util.Collections;
 public class UserPreferences {
 
     // Constant keys
-    private static final String C_PREFERENCES   = "MY_PREF";
+    private static final String C_PREFERENCES     = "MY_PREF";
     // ---
-    private static final String C_MEALS_DAY     = "_meals_day";
-    private static final String C_DIETS         = "diets";
-    private static final String C_INTOLERANCES  = "intolerances";
-    private static final String C_NUTRIENTS     = "nutrients";
+    private static final String C_MEALS_DAY       = "_meals_day";
+    private static final String C_DIETS           = "diets";
+    private static final String C_INTOLERANCES    = "intolerances";
+    private static final String C_NUTRIENTS       = "nutrients";
+    private static final String C_SHOPPING        = "shopping_list_day_";
+    private static final String C_FIRST_TIME      = "shopping_list_day_";
 
     private static final String C_MACRO_FILENAME      = "Default_Macronutrients.json";
     private static final String C_MICRO_FILENAME      = "Default_Micronutrients.json";
@@ -39,11 +41,6 @@ public class UserPreferences {
     private Context context;
     private SharedPreferences pref;
     private Gson gson = new Gson();
-    /*private static final String C_INVALIDATE_CACHE = "cache";
-
-    // Caching vars
-    Nutrient[] trackedNutrientsCache;
-    */
 
     public UserPreferences(Context c) {
         this.context = c;
@@ -157,6 +154,52 @@ public class UserPreferences {
         return readDefaultFile(C_ADDITIONAL_FILENAME);
     }
 
+    /**
+     * Gets the structure
+     * @return The structure of the shopping list day selection.
+     */
+    public boolean[] getShoppingListSelectionStructure() {
+        // 7 Days.
+        boolean[] struct = new boolean[7];
+
+        for (int i = 0; i < struct.length; i++) {
+
+            // Default is 5 selected 2 not.
+            struct[i] = this.pref.getBoolean(C_SHOPPING + i, (i < 4));
+        }
+        return struct;
+    }
+
+    /**
+     * Get the first time key.
+     * @return True if it is the first time, false otherwise.
+     */
+    public boolean getIsFirstTime() {
+        return this.pref.getBoolean(C_FIRST_TIME, true);
+    }
+
+    /**
+     * Set the first time key.
+     * @param isFirstTime True if it is the first time, false otherwise.
+     */
+    public void setIsFirstTime(boolean isFirstTime) {
+        SharedPreferences.Editor e = this.pref.edit();
+        e.putBoolean(C_FIRST_TIME, isFirstTime);
+        e.apply();
+    }
+    /**
+     * Sets the structure.
+     * @param structure The structure of the shopping list day selection.
+     */
+    public void setShoppingListSelectionStructure(boolean[] structure) {
+        SharedPreferences.Editor e = this.pref.edit();
+
+        // Save the array
+        for (int i = 0; i < structure.length; i++) {
+            e.putBoolean(C_SHOPPING + i, structure[i]);
+        }
+        e.apply();
+    }
     // Setters
 
     public void setDiets(SpoonacularDiet[] d) {

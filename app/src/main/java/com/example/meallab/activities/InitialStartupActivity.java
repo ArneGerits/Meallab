@@ -30,6 +30,7 @@ import com.example.meallab.R;
 import com.example.meallab.RecyclerViewAdapterToggle;
 import com.example.meallab.Spoonacular.SpoonacularDiet;
 import com.example.meallab.Spoonacular.SpoonacularIntolerance;
+import com.example.meallab.storing_data.UserPreferences;
 import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.example.meallab.storing_data.UserPreferences;
 
@@ -62,6 +63,8 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
     EditText[] microNutrientAmounts;
 
 
+    private UserPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +72,8 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
         sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
         userPreferences = new UserPreferences(this);
+        this.prefs = new UserPreferences(this);
+
         initRecyclerChoices();
         microNutrients = userPreferences.getDefaultMicroNutrients();
         mealTypes = new SpoonacularMealType[]{SpoonacularMealType.BREAKFAST,
@@ -207,6 +212,11 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean(firstTimeKey,false);
                 editor.putInt("caloriesDaily",(bar.getProgress()*100 + 500));
+                this.prefs.setIsFirstTime(false);
+                // TODO: Make user of UserPreferences.
+
+                //editor.putInt("caloriesDaily",(bar.getProgress()*100 + 500));
+                //editor.putInt("mealsDaily",(bar2.getProgress()+1));
                 int count = 0;
                 for(SpoonacularIntolerance i : SpoonacularIntolerance.values()){
                     editor.putBoolean(i.getValue(),allergies[count]);

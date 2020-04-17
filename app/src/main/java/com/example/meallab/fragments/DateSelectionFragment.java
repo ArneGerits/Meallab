@@ -27,7 +27,8 @@ public class DateSelectionFragment extends Fragment {
 
     private boolean notSet = false;
 
-    Drawable numberBackground;
+    Drawable selectedBackground;
+    Drawable unSelectedBackground;
 
     int[] idsDayNumbers;
 
@@ -92,10 +93,10 @@ public class DateSelectionFragment extends Fragment {
 
             boolean isSelected = structure[i];
             if (isSelected) {
-                numberText.setBackground(this.numberBackground);
+                numberText.setBackground(this.selectedBackground);
                 numberText.setTextColor(Color.BLACK);
             } else {
-                numberText.setBackgroundColor(Color.TRANSPARENT);
+                numberText.setBackground(this.unSelectedBackground);;
                 numberText.setTextColor(Color.WHITE);
             }
 
@@ -112,10 +113,10 @@ public class DateSelectionFragment extends Fragment {
                             structure[i] = !structure[i];
 
                             if (structure[i]) {
-                                v.setBackground(numberBackground);
+                                v.setBackground(selectedBackground);
                                 textView.setTextColor(Color.BLACK);
                             } else {
-                                v.setBackgroundColor(Color.TRANSPARENT);
+                                v.setBackground(unSelectedBackground);
                                 textView.setTextColor(Color.WHITE);
                             }
                             if (mListener != null) {
@@ -142,7 +143,8 @@ public class DateSelectionFragment extends Fragment {
                 R.id.textView6,
                 R.id.textView7};
         // Get the background.
-        this.numberBackground = ResourcesCompat.getDrawable(getResources(), R.drawable.white_circle, null);
+        this.selectedBackground   = ResourcesCompat.getDrawable(getResources(), R.drawable.white_circle, null);
+        this.unSelectedBackground = ResourcesCompat.getDrawable(getResources(), R.drawable.dark_red_circle, null);
     }
 
     @Override
@@ -163,6 +165,5 @@ public class DateSelectionFragment extends Fragment {
          * @param index The index of the flip
          */
         void selectedDate(int index, boolean isSelected);
-
     }
 }

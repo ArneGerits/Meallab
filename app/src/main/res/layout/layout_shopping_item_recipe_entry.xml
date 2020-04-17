@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="30dp"
-
-    android:background="#ff00ff"
-    >
+    android:background="#00FFFFFF">
 
     <TextView
         android:id="@+id/recipeName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
+        android:fontFamily="@font/greycliff_cf_medium"
+        android:gravity="center|start"
+        android:maxLines="1"
         android:text="TextView"
+        android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/amountTextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:ellipsize="end" />
 
     <TextView
         android:id="@+id/amountTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
+        android:layout_height="0dp"
+        android:gravity="center|right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/unitTextView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/unitTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:gravity="center|left"
+        android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/checkImageView"
         app:layout_constraintTop_toTopOf="parent" />
@@ -43,9 +46,9 @@
         android:id="@+id/checkImageView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:scaleType="fitCenter"
         app:layout_constraintDimensionRatio="W,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/checkmark"
-        android:scaleType="fitCenter"/>
+        app:srcCompat="@drawable/checkmark" />
 </androidx.constraintlayout.widget.ConstraintLayout>

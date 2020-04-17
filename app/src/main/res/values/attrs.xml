@@ -15,4 +15,8 @@
         <attr name="horizontalInset" format="float" />
     </declare-styleable>
 
+    <declare-styleable name="Divider">
+        <attr name="highlighted" format="boolean"/>
+        <attr name="text" format="string"/>
+    </declare-styleable>
 </resources>
