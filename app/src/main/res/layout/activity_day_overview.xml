@@ -52,43 +52,12 @@
 
             </FrameLayout>
 
-
-            <LinearLayout
+            <view
+                android:id="@+id/mealDivider"
+                class="com.example.meallab.customViews.Divider"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <View
-                    android:id="@+id/view6"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="16dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimaryDark" />
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="0"
-                    android:fontFamily="@font/greycliff_cf_heavy"
-                    android:text="YOUR MEALS"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="18sp" />
-
-                <View
-                    android:id="@+id/view8"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="16dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimaryDark" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                app:text="YOUR MEALS"/>
 
             <fragment
                 android:id="@+id/cardsFragment"
@@ -102,42 +71,12 @@
                 android:layout_height="8dp"
                 android:background="#00ffffff" />
 
-            <LinearLayout
+            <view
+                android:id="@+id/nutrientsDivider"
+                class="com.example.meallab.customViews.Divider"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <View
-                    android:id="@+id/view100"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="16dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimaryDark" />
-
-                <TextView
-                    android:id="@+id/nutrientsTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="0"
-                    android:fontFamily="@font/greycliff_cf_heavy"
-                    android:text="DAILY NUTRIENT GOALS"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="18sp" />
-
-                <View
-                    android:id="@+id/view101"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="16dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimaryDark" />
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                app:text="DAILY NUTRIENTS GOAL"/>
 
             <fragment
                 android:id="@+id/nutrientsFragment"
@@ -145,46 +84,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipChildren="false"
-                android:clipToPadding="false"/>
+                android:clipToPadding="false"
+                />
 
-            <LinearLayout
+            <view
                 android:id="@+id/ingredientsDivider"
+                class="com.example.meallab.customViews.Divider"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <View
-                    android:id="@+id/view103"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="16dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimaryDark" />
-
-                <TextView
-                    android:id="@+id/ing"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="0"
-                    android:fontFamily="@font/greycliff_cf_heavy"
-                    android:text="INGREDIENTS FOR THIS DAY"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="18sp" />
-
-                <View
-                    android:id="@+id/view105"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="16dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimaryDark" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                app:text="INGREDIENTS FOR THIS DAY"/>
 
             <FrameLayout android:layout_width="match_parent"
                 android:layout_height="350dp"

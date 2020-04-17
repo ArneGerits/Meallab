@@ -36,6 +36,7 @@ import com.example.meallab.Spoonacular.SpoonacularMealType;
 import com.example.meallab.Spoonacular.VolleySingleton;
 import com.example.meallab.customViews.CustomScrollView;
 import com.example.meallab.customViews.DayViewContainer;
+import com.example.meallab.customViews.Divider;
 import com.example.meallab.customViews.MonthHeader;
 import com.example.meallab.fragments.CardScrollerFragment;
 import com.example.meallab.storing_data.PersistentStore;
@@ -130,7 +131,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     private RecyclerView ingredients;
     private FrameLayout recyclerParent;
-    private LinearLayout ingredientsDivider;
+    private Divider ingredientsDivider;
     private boolean atScrollBottom = false;
 
     private ConstraintLayout navBar;
@@ -213,7 +214,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
         this.ingredients = this.findViewById(R.id.ingredients);
         this.recyclerParent = this.findViewById(R.id.recyclerParent);
-        this.ingredientsDivider = (LinearLayout) this.findViewById(R.id.ingredientsDivider);
+        this.ingredientsDivider = this.findViewById(R.id.ingredientsDivider);
         this.navBar = this.findViewById(R.id.navBar);
 
         this.setupRecyclerView(this.ingredients);
@@ -259,12 +260,17 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         // Used to get the height of the screen.
         View content = getWindow().findViewById(Window.ID_ANDROID_CONTENT);
 
+        DisplayMetrics m = getApplication().getResources().getDisplayMetrics();
+        System.out.println("density: " + m.density);
         // Get the height of the nav bar and ingredients divider.
         ViewGroup.LayoutParams p1 = this.ingredientsDivider.getLayoutParams();
         ViewGroup.LayoutParams p2 = this.navBar.getLayoutParams();
 
+        System.out.println("p1 + p2: " + (p1.height + p2.height));
+        System.out.println("content height: " + content.getHeight());
+        System.out.println("total height: " + (content.getHeight() - (p1.height + p2.height)));
         ViewGroup.LayoutParams p = this.recyclerParent.getLayoutParams();
-        p.height = (content.getHeight() - (p1.height + p2.height));
+        p.height = (content.getHeight() - (int)(106 * m.density));//(p1.height + p2.height));
         this.recyclerParent.setLayoutParams(p);
     }
     // region Date Selection
@@ -371,13 +377,14 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 if (diff == 0) {
                     if (!atScrollBottom) {
 
+                        ingredientsDivider.setHighlighted(true);
                         // Change color to red.
                         atScrollBottom = true;
                     }
                 } else {
 
                     if (atScrollBottom) {
-
+                        ingredientsDivider.setHighlighted(false);
                         // Change color to white.
                         atScrollBottom = false;
                     }
@@ -654,8 +661,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 break;
             }
             case (SHOPPING_CODE) : {
-                // todo: update the ingredient list to reflect selected.
-
+                // After returning from the shopping list reload the recyclerview.
+                this.ingredients.getAdapter().notifyDataSetChanged();
                 break;
             }
         }
