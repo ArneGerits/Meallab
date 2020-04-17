@@ -453,7 +453,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             Recipe top = this.recipesShowing[0];
 
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
-            intent.putExtra("id", top.id);
+            intent.putExtra("obj", top.id);
             intent.putExtra("from DayOverview",false);
             intent.putExtra("mealType",gson.toJson((meals[this.mealIndex])));
 
@@ -465,7 +465,7 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             Recipe middle = this.recipesShowing[1];
 
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
-            intent.putExtra("id",middle.id);
+            intent.putExtra("obj",middle.id);
             intent.putExtra("from DayOverview",false);
             intent.putExtra("mealType",gson.toJson((meals[this.mealIndex])));
 
