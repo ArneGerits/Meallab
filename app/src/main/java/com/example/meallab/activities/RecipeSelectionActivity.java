@@ -449,8 +449,6 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
     @Override
     public void moreInfoFragment(RecipeSelectionRowFragment fragment) {
 
-        //todo: use circular reveal.
-        // Top fragment was selected.
         if (fragment.getId() == R.id.topInfo) {
             Recipe top = this.recipesShowing[0];
 

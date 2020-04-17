@@ -159,7 +159,6 @@ public class SpoonacularAPI {
 
         // Obtain the API url.
         final String url = recipeBulkInfoURL(recipeIDs);
-        System.out.println("URL END PINT BATCH: " + url);
         // Make the request.
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
 

@@ -89,11 +89,11 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     // Get this from the user preferences.
     ShoppingListActivity.SORT_OPTION currentSort = ShoppingListActivity.SORT_OPTION.ALPHABET;
 
-    private RecyclerView.Adapter mAdapter;
+    private ShoppingListAdapter mAdapter;
     private RecyclerView.ItemDecoration mDecorator;
     private RecyclerView.LayoutManager layoutManager;
 
-
+    boolean showingIngredients = false;
     // True if the calendar is currently showing, False otherwise
     boolean calendarShowing = false;
 
@@ -122,6 +122,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private TextView dateTextView;
     private TextView yearTextView;
     private TextView monthTextView;
+
+    private TextView noIngredients;
 
     private CardScrollerFragment cardsFragment;
     private ComplexNutrientsOverviewFragment nutrientFragment;
@@ -186,6 +188,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.monthTextView  = this.findViewById(R.id.monthTextView);
         this.settingsButton = this.findViewById(R.id.settingsButton);
         this.shoppingButton = this.findViewById(R.id.shoppingButton);
+        this.noIngredients  = this.findViewById(R.id.noIngredients);
 
         ConstraintLayout navBar = this.findViewById(R.id.navBar);
         navBar.setOnClickListener(new View.OnClickListener() {
@@ -210,14 +213,14 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 launchShoppingList();
             }
         });
-        this.selected(this.selectedDate);
 
         this.ingredients = this.findViewById(R.id.ingredients);
         this.recyclerParent = this.findViewById(R.id.recyclerParent);
         this.ingredientsDivider = this.findViewById(R.id.ingredientsDivider);
         this.navBar = this.findViewById(R.id.navBar);
 
-        this.setupRecyclerView(this.ingredients);
+        // This must be the last call here at all times.!
+        this.selected(this.selectedDate);
     }
 
     // ----- Actions ------
@@ -237,42 +240,38 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         startActivityForResult(intent, SHOPPING_CODE);
     }
 
-    private void setupRecyclerView(RecyclerView v) {
-        v.setHasFixedSize(true);
-
-        // use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
-        v.setLayoutManager(layoutManager);
-
-        ArrayList<StoredDay> day = new ArrayList<>();
-        day.add(this.currentDay);
-
-        // specify an adapter
-        mAdapter = new ShoppingListAdapter(day, this.currentSort);
-        v.setAdapter(mAdapter);
-
-        // Specify a decorator
-        mDecorator = new ShoppingListDecorator();
-        v.addItemDecoration(mDecorator);
-    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
-        // Used to get the height of the screen.
-        View content = getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+        this.updateRecyclerViewHeight(this.mAdapter.days.get(0).recipes.length > 0);
+        if (this.mAdapter.days.get(0).recipes.length > 0) {
+            this.noIngredients.setVisibility(View.GONE);
+        } else {
+            this.noIngredients.setVisibility(View.VISIBLE);
+        }
+    }
 
-        DisplayMetrics m = getApplication().getResources().getDisplayMetrics();
-        System.out.println("density: " + m.density);
-        // Get the height of the nav bar and ingredients divider.
-        ViewGroup.LayoutParams p1 = this.ingredientsDivider.getLayoutParams();
-        ViewGroup.LayoutParams p2 = this.navBar.getLayoutParams();
+    private void updateRecyclerViewHeight(boolean shouldshow) {
+        this.showingIngredients = shouldshow;
 
-        System.out.println("p1 + p2: " + (p1.height + p2.height));
-        System.out.println("content height: " + content.getHeight());
-        System.out.println("total height: " + (content.getHeight() - (p1.height + p2.height)));
         ViewGroup.LayoutParams p = this.recyclerParent.getLayoutParams();
-        p.height = (content.getHeight() - (int)(106 * m.density));//(p1.height + p2.height));
+
+        if (shouldshow) {
+            // Used to get the height of the screen.
+            View content = getWindow().findViewById(Window.ID_ANDROID_CONTENT);
+
+            DisplayMetrics m = getApplication().getResources().getDisplayMetrics();
+
+            // Get the height of the nav bar and ingredients divider.
+            ViewGroup.LayoutParams p1 = this.ingredientsDivider.getLayoutParams();
+            ViewGroup.LayoutParams p2 = this.navBar.getLayoutParams();
+
+
+            p.height = (content.getHeight() - (int)(106 * m.density));
+        } else {
+            p.height = 0;
+        }
         this.recyclerParent.setLayoutParams(p);
     }
     // region Date Selection
@@ -371,27 +370,24 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 // If the scroll view has reached the maximum value we change
                 // the ingredients dividers color.
 
-                // Used to check if the scrollview is at the bottom.
-                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
-                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+                if (showingIngredients) {
+                    // Used to check if the scrollview is at the bottom.
+                    View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+                    int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
 
-                // if diff is zero, then the bottom has been reached
-                if (diff == 0) {
-                    if (!atScrollBottom) {
-
-                        ingredientsDivider.setHighlighted(true);
-                        // Change color to red.
-                        atScrollBottom = true;
-                    }
-                } else {
-
-                    if (atScrollBottom) {
-                        ingredientsDivider.setHighlighted(false);
-                        // Change color to white.
-                        atScrollBottom = false;
+                    // if diff is zero, then the bottom has been reached
+                    if (diff <= 0) {
+                        if (!atScrollBottom) {
+                            ingredientsDivider.setHighlighted(true);
+                            atScrollBottom = true;
+                        }
+                    } else {
+                        if (atScrollBottom) {
+                            ingredientsDivider.setHighlighted(false);
+                            atScrollBottom = false;
+                        }
                     }
                 }
-
             }
         });
     }
@@ -621,17 +617,54 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.setupDayShoppingList(day.recipes);
 
         this.setupNutrientsView(day);
+
+        this.configureRecyclerForCurrentDay();
     }
+
+    private void configureRecyclerForCurrentDay() {
+
+        RecyclerView v = this.ingredients;
+        if (this.mAdapter == null) {
+            v.setHasFixedSize(true);
+
+            // use a linear layout manager
+            layoutManager = new LinearLayoutManager(this);
+            v.setLayoutManager(layoutManager);
+
+            ArrayList<StoredDay> day = new ArrayList<>();
+            day.add(this.currentDay);
+
+            // specify an adapter
+            mAdapter = new ShoppingListAdapter(day, this.currentSort);
+            v.setAdapter(mAdapter);
+
+            // Specify a decorator
+            mDecorator = new ShoppingListDecorator();
+            v.addItemDecoration(mDecorator);
+        } else {
+            // Reload the ingredients.
+            ArrayList<StoredDay> day = new ArrayList<>();
+            day.add(this.currentDay);
+            this.mAdapter.setDays(day);
+
+            if (day.get(0).recipes.length > 0) {
+                this.noIngredients.setVisibility(View.GONE);
+                this.updateRecyclerViewHeight(true);
+            } else {
+                this.noIngredients.setVisibility(View.VISIBLE);
+                this.updateRecyclerViewHeight(false);
+            }
+        }
+    }
+
 
     @Override
     public void selectedShowDetailForIndex(int index) {
-        System.out.println("show detail");
     }
 
     @Override
     public void selectedNewRecipeForIndex(int index) {
 
-        RecipeSelectionActivity recipeSelection = new RecipeSelectionActivity();
         Intent intent = new Intent(this, RecipeSelectionActivity.class);
         SpoonacularMealType[] meals = this.preferences.getMealsPerDay();
 
@@ -669,7 +702,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             }
         }
     }
-
 
     // Called when the user has finished choosing recipes in the recipe selection activity.
     // load detailed recipe info.
@@ -745,8 +777,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     @Override
     public void retrievedAdditionalInformation(Recipe[] recipes) {
 
-        System.out.println("Retrieved detailed information fo the recipes");
-
         // Store the recipes in the cache.
         for (Recipe r : recipes) {
             this.recipesCache.put(r.id,r);
@@ -769,10 +799,11 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.setupNutrientsView(this.currentDay);
 
         this.setupDayShoppingList(this.currentDay.recipes);
+        this.setupDayShoppingList(this.currentDay.recipes);
 
-        // Reload the recyclerview.
-        this.mAdapter.notifyDataSetChanged();
+        this.configureRecyclerForCurrentDay();
     }
+
 
     @Override
     public void complexSpoonacularErrorHandler() {

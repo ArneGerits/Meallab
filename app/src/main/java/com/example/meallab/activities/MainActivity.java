@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements PersistentStore.P
         } else {
             goToDayOverViewActivity();
         }
+        finish();
     }
 
     @Override
