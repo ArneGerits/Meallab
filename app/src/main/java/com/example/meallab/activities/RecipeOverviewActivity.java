@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -26,6 +28,8 @@ import java.util.Arrays;
 
 
 public class RecipeOverviewActivity extends AppCompatActivity implements SpoonacularSimpleRecipeListener, SpoonacularDetailedRecipeListener {
+    public static final String RECIPE = "recipe";
+
     public static final String mypreference = "mypref";
     SharedPreferences sharedPreferences;
     Recipe testRecipe;
@@ -33,19 +37,37 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     Gson gson = new Gson();
     RecyclerViewAdapterRecipe adapter;
     ArrayList<Object> mObjects = new ArrayList<>();
+    private boolean fromDayOverview;
+    private SpoonacularMealType mealType;
+    private int recipeID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        System.out.println("---------------------------------------------");
         setContentView(R.layout.activity_recipe_overview);
         RecyclerView view = (RecyclerView) findViewById(R.id.recyclerv_view_recipe_overview);
         view.setFocusableInTouchMode(true);
         view.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
-        String strObj = getIntent().getStringExtra("obj");
-        this.recipe = gson.fromJson(strObj, Recipe.class);
+        this.fromDayOverview = getIntent().getBooleanExtra("from DayOverview",true);
+        String strMealType = getIntent().getStringExtra("mealType");
+        this.mealType = gson.fromJson(strMealType,SpoonacularMealType.class);
+        if(fromDayOverview){
+            String strObj = getIntent().getStringExtra("obj");
+            this.recipe = gson.fromJson(strObj,Recipe.class);
+            setRecipe(this.recipe);
+        } else {
+            this.recipe = null;
+            int id = getIntent().getIntExtra("obj",0);
+            this.recipeID = id;
+            setRecipe(this.recipe);
+        }
 
-        setRecipe(this.recipe);
+
+
+
+
     }
 
     public void createTestRecipe() {
@@ -89,16 +111,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     }
 
     public void retrievedAdditionalInformation(Recipe recipe) {
-        testRecipe = recipe;
-        sharedPreferences = getSharedPreferences(mypreference, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        String json = gson.toJson(testRecipe);
-        editor.putString("testRecipe",json);
-        editor.commit();
-        System.out.println(json);
-
-        testRecipe = gson.fromJson(json,Recipe.class);
+        System.out.println("retrieved additional");
         this.recipe = recipe;
         prepareRecyclerView();
 
@@ -109,7 +122,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
     }
 
     private void initRecyclerView(ArrayList<Object> mObjects){
-        System.out.println(testRecipe.id+ " DASDASJDASDKASD AHSDASDas fake");
+        System.out.println("init recyclerd");
         RecyclerView recyclerViewRecipeOverview = findViewById(R.id.recyclerv_view_recipe_overview);
         adapter = new RecyclerViewAdapterRecipe(this, mObjects);
         recyclerViewRecipeOverview.setAdapter(adapter);
@@ -125,19 +138,41 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
 
     }
     public void setRecipe(Recipe recipe){
+        System.out.println("setting recipe");
+        if(this.fromDayOverview){
+            System.out.println("from dayoverview");
+            prepareRecyclerView();
+            this.recipe = recipe;
+        } else {
+            SpoonacularAPI api = new SpoonacularAPI(this);
+            // retrieveRecipeDetailedInfo(final int[] recipeIDs, final SpoonacularMealType[] rTypes, final SpoonacularDetailedRecipeListener listener) {
+            int[] recipeID = new int[1];
+            SpoonacularMealType[] mealtype = new SpoonacularMealType[1];
+            recipeID[0] = this.recipeID;
+            mealtype[0] = this.mealType;
+            api.retrieveRecipeDetailedInfo(recipeID, mealtype, this);
+            this.recipe = recipe;
+        }
 
-        SpoonacularAPI api = new SpoonacularAPI(this);
-       // api.retrieveAdditionalRecipeInformation(recipe,this);
-        this.recipe = recipe;
     }
 
     @Override
     public void retrievedAdditionalInformation(Recipe[] recipe) {
-
+        System.out.println("retrieved additional");
+        this.recipe = recipe[0];
+        prepareRecyclerView();
     }
 
     @Override
     public void complexSpoonacularErrorHandler() {
 
+    }
+    @Override
+    public void onBackPressed(){
+        System.out.println("back pressed in recipe overview");
+        Intent intent = new Intent();
+        intent.putExtra(RECIPE,gson.toJson(this.recipe));
+        setResult(Activity.RESULT_OK,intent);
+        finish();
     }
 }

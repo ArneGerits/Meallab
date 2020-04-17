@@ -60,8 +60,10 @@ public class MainActivity extends AppCompatActivity implements PersistentStore.P
 
         if (first) {
             goToInitialStartupActivity();
+
         } else {
             goToDayOverViewActivity();
+
         }
         finish();
     }
@@ -70,4 +72,5 @@ public class MainActivity extends AppCompatActivity implements PersistentStore.P
     public void completedSynchronize(boolean success) {
 
     }
+
 }

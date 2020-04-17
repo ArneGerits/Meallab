@@ -1,7 +1,9 @@
 package com.example.meallab.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -237,6 +239,10 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
                         mealChoices.add(mealTypes[i]);
                     }
                 }
+                if(mealChoices.size() == 0){
+                    noMealsSelected();
+                    break;
+                }
                 userPreferences.setMealsPerDay( mealChoices.toArray
                         (new SpoonacularMealType[mealChoices.size()]));
 
@@ -261,6 +267,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
                 editor.commit();
                 System.out.println("clicked in second activity");
+                prefs.setIsFirstTime(false);
                 goToSecondActivity();
                 break;
 
@@ -325,7 +332,24 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
     }
 
 
+    private void noMealsSelected(){
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage("You have to select at least one meal");
+        builder1.setCancelable(true);
 
+        builder1.setPositiveButton(
+                "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
 
 
     // ------ Actions ------

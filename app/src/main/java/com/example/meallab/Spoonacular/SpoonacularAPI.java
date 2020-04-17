@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.meallab.activities.RecipeOverviewActivity;
 import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
@@ -25,8 +26,8 @@ import java.util.ArrayList;
 public class SpoonacularAPI {
 
     // API key used for authentication.
-    private final String API_KEY = "17ec74bd49124b45960ffb5d3b2b0b93"; // MAIN KEY
-    //private final String API_KEY = "45c0adb7abff40c69e59feb277e379aa"; // BACKUP KEY
+    //private final String API_KEY = "17ec74bd49124b45960ffb5d3b2b0b93"; // MAIN KEY
+    private final String API_KEY = "45c0adb7abff40c69e59feb277e379aa"; // BACKUP KEY
     // The base URL for searching recipes.
     private final String SEARCH_BASE_URL = "https://api.spoonacular.com/recipes/complexSearch";
 
@@ -208,6 +209,9 @@ public class SpoonacularAPI {
     private String searchURL(RecipeRequest request) {
 
         return SEARCH_BASE_URL + "?apiKey=" + API_KEY + "&addRecipeInformation=true" + request.toString();
+    }
+
+    public void retrieveAdditionalRecipeInformation(Recipe recipe, RecipeOverviewActivity recipeOverviewActivity) {
     }
 
     // -------- INTERFACES --------

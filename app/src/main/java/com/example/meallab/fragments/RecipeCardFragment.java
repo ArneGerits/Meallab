@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import com.example.meallab.Nutrients.Nutrient;
 import com.example.meallab.Nutrients.SimpleNutrientsOverviewFragment;
 import com.example.meallab.R;
-import com.example.meallab.storing_data.StoredRecipe;
 
 
 /**

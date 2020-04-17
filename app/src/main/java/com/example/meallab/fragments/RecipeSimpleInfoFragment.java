@@ -118,7 +118,7 @@ public class RecipeSimpleInfoFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_recipe_simple_info, container, false);
 
         this.caloriesTextView = root.findViewById(R.id.caloriesTextView);
-        this.prepTimeTextView = root.findViewById(R.id.cookingTimeTextView);
+        this.prepTimeTextView = root.findViewById(R.id.caloriesSelected);
         this.servingsTextView = root.findViewById(R.id.servingsTextView);
 
         this.costImageView    = root.findViewById(R.id.costImageView);

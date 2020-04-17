@@ -83,6 +83,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     private static final int RECIPE_SELECTION_CODE = 1;
     private static final int SHOPPING_CODE         = 2;
+    private static final int OVERVIEW_CODE         = 3;
 
     // -----
 
@@ -122,8 +123,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private TextView dateTextView;
     private TextView yearTextView;
     private TextView monthTextView;
-
-    private TextView noIngredients;
 
     private CardScrollerFragment cardsFragment;
     private ComplexNutrientsOverviewFragment nutrientFragment;
@@ -188,7 +187,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.monthTextView  = this.findViewById(R.id.monthTextView);
         this.settingsButton = this.findViewById(R.id.settingsButton);
         this.shoppingButton = this.findViewById(R.id.shoppingButton);
-        this.noIngredients  = this.findViewById(R.id.noIngredients);
 
         ConstraintLayout navBar = this.findViewById(R.id.navBar);
         navBar.setOnClickListener(new View.OnClickListener() {
@@ -660,6 +658,22 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     @Override
     public void selectedShowDetailForIndex(int index) {
+        //check if recipe details are already loaded
+        Recipe detailedRecipe = recipesCache.get(this.currentDay.recipes[index].recipeID);
+        Intent intent = new Intent(this,RecipeOverviewActivity.class);
+        if(detailedRecipe == null){
+            //if detailedRecipe is null, its not yet loaded fully
+            System.out.println("recipe was not found bruh");
+            intent.putExtra("obj", this.currentDay.recipes[index].recipeID);
+            intent.putExtra("from DayOverview",false);
+            intent.putExtra("mealType",gson.toJson((this.currentDay.recipes[index].mealType)));
+        } else {
+
+            intent.putExtra("obj", gson.toJson(detailedRecipe));
+            intent.putExtra("from DayOverview",true);
+            intent.putExtra("mealType",gson.toJson((this.currentDay.recipes[index].mealType)));
+        }
+        startActivityForResult(intent,OVERVIEW_CODE);
     }
 
     @Override
@@ -700,8 +714,16 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 this.ingredients.getAdapter().notifyDataSetChanged();
                 break;
             }
+            case (OVERVIEW_CODE) : {
+                System.out.println("ja je kwam terug van overview idd");
+                String recipesJson = data.getStringExtra(RecipeOverviewActivity.RECIPE);
+                Recipe recipesChosen = this.gson.fromJson(recipesJson, Recipe.class);
+                this.recipesCache.put(recipesChosen.id,recipesChosen);
+                break;
+            }
         }
     }
+
 
     // Called when the user has finished choosing recipes in the recipe selection activity.
     // load detailed recipe info.
@@ -776,6 +798,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     @Override
     public void retrievedAdditionalInformation(Recipe[] recipes) {
+
+        System.out.println("Retrieved detailed information fo the recipes");
 
         // Store the recipes in the cache.
         for (Recipe r : recipes) {
