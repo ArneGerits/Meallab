@@ -224,8 +224,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     // Launches the settings activity.
     private void launchSettings() {
-            Intent intent = new Intent(this,InitialStartupActivity.class);
-            startActivity(intent);
+        Intent intent = new Intent(this,InitialStartupActivity.class);
+        startActivity(intent);
 
     }
     // Launches the shopping list activity.
@@ -769,6 +769,9 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.setupNutrientsView(this.currentDay);
 
         this.setupDayShoppingList(this.currentDay.recipes);
+
+        // Reload the recyclerview.
+        this.mAdapter.notifyDataSetChanged();
     }
 
     @Override

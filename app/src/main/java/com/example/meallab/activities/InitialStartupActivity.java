@@ -254,7 +254,7 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
 
                         }
                         microNutrientChoices.add(microNutrients[i]);
-                }}
+                    }}
                 userPreferences.setTrackedNutrients(microNutrientChoices.toArray
                         (new Nutrient[microNutrientChoices.size()]));
 
@@ -336,7 +336,3 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
         startActivity(intent);
     }
 }
-
-
-
-
