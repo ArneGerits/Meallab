@@ -124,6 +124,8 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
     private TextView yearTextView;
     private TextView monthTextView;
 
+    private TextView noIngredients;
+
     private CardScrollerFragment cardsFragment;
     private ComplexNutrientsOverviewFragment nutrientFragment;
 
@@ -187,6 +189,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
         this.monthTextView  = this.findViewById(R.id.monthTextView);
         this.settingsButton = this.findViewById(R.id.settingsButton);
         this.shoppingButton = this.findViewById(R.id.shoppingButton);
+        this.noIngredients  = this.findViewById(R.id.noIngredients);
 
         ConstraintLayout navBar = this.findViewById(R.id.navBar);
         navBar.setOnClickListener(new View.OnClickListener() {
@@ -715,7 +718,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
                 break;
             }
             case (OVERVIEW_CODE) : {
-                System.out.println("ja je kwam terug van overview idd");
                 String recipesJson = data.getStringExtra(RecipeOverviewActivity.RECIPE);
                 Recipe recipesChosen = this.gson.fromJson(recipesJson, Recipe.class);
                 this.recipesCache.put(recipesChosen.id,recipesChosen);
@@ -723,7 +725,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             }
         }
     }
-
 
     // Called when the user has finished choosing recipes in the recipe selection activity.
     // load detailed recipe info.
@@ -798,8 +799,6 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     @Override
     public void retrievedAdditionalInformation(Recipe[] recipes) {
-
-        System.out.println("Retrieved detailed information fo the recipes");
 
         // Store the recipes in the cache.
         for (Recipe r : recipes) {
