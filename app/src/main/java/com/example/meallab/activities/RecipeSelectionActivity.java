@@ -455,7 +455,10 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             Recipe top = this.recipesShowing[0];
 
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
-            intent.putExtra("obj", gson.toJson(top));
+            intent.putExtra("id", top.id);
+            intent.putExtra("from DayOverview",false);
+            intent.putExtra("mealType",gson.toJson((meals[this.mealIndex])));
+
             startActivity(intent);
 
         }
@@ -464,7 +467,10 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             Recipe middle = this.recipesShowing[1];
 
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
-            intent.putExtra("obj", gson.toJson(middle));
+            intent.putExtra("id",middle.id);
+            intent.putExtra("from DayOverview",false);
+            intent.putExtra("mealType",gson.toJson((meals[this.mealIndex])));
+
             startActivity(intent);
         }
         // Bottom fragment was selected.
@@ -472,7 +478,9 @@ public class RecipeSelectionActivity extends AppCompatActivity implements Spoona
             Recipe bottom = this.recipesShowing[2];
 
             Intent intent = new Intent(this,RecipeOverviewActivity.class);
-            intent.putExtra("obj", gson.toJson(bottom));
+            intent.putExtra("obj",bottom.id);
+            intent.putExtra("from DayOverview",false);
+            intent.putExtra("mealType",gson.toJson((meals[this.mealIndex])));
             startActivity(intent);
         }
     }

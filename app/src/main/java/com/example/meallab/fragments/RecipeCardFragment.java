@@ -209,7 +209,7 @@ public class RecipeCardFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_recipe_card, container, false);
         this.servingsTextView    = v.findViewById(R.id.servingsTextView);
-        this.cookingTimeTextView = v.findViewById(R.id.caloriesSelected);
+        this.cookingTimeTextView = v.findViewById(R.id.cookingTimeTextView);
         this.costTextView        = v.findViewById(R.id.costTextView);
         this.recipeImageView     = v.findViewById(R.id.recipeImageView);
         this.infoLayout          = v.findViewById(R.id.infoContainer);

@@ -83,6 +83,7 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     private static final int RECIPE_SELECTION_CODE = 1;
     private static final int SHOPPING_CODE         = 2;
+    private static final int OVERVIEW_CODE         = 3;
 
     // -----
 
@@ -625,7 +626,22 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
 
     @Override
     public void selectedShowDetailForIndex(int index) {
-        System.out.println("show detail");
+        //check if recipe details are already loaded
+        Recipe detailedRecipe = recipesCache.get(this.currentDay.recipes[index].recipeID);
+        Intent intent = new Intent(this,RecipeOverviewActivity.class);
+        if(detailedRecipe == null){
+            //if detailedRecipe is null, its not yet loaded fully
+            System.out.println("recipe was not found bruh");
+            intent.putExtra("obj", this.currentDay.recipes[index].recipeID);
+            intent.putExtra("from DayOverview",false);
+            intent.putExtra("mealType",gson.toJson((this.currentDay.recipes[index].mealType)));
+        } else {
+
+            intent.putExtra("obj", gson.toJson(detailedRecipe));
+            intent.putExtra("from DayOverview",true);
+            intent.putExtra("mealType",gson.toJson((this.currentDay.recipes[index].mealType)));
+        }
+        startActivityForResult(intent,OVERVIEW_CODE);
     }
 
     @Override
@@ -665,6 +681,13 @@ public class DayOverviewActivity extends AppCompatActivity implements DayViewCon
             case (SHOPPING_CODE) : {
                 // After returning from the shopping list reload the recyclerview.
                 this.ingredients.getAdapter().notifyDataSetChanged();
+                break;
+            }
+            case (OVERVIEW_CODE) : {
+                System.out.println("ja je kwam terug van overview idd");
+                String recipesJson = data.getStringExtra(RecipeOverviewActivity.RECIPE);
+                Recipe recipesChosen = this.gson.fromJson(recipesJson, Recipe.class);
+                this.recipesCache.put(recipesChosen.id,recipesChosen);
                 break;
             }
         }
