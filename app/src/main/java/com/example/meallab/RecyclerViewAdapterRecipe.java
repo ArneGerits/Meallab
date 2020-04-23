@@ -78,7 +78,6 @@ public class RecyclerViewAdapterRecipe extends  RecyclerView.Adapter<RecyclerVie
 
                 break;
             case 1:
-                System.out.println(position+ " trololol");
                 Recipe recipe = (Recipe) mObjects.get(position);
                 System.out.println(recipe.sourceURL);
                 ((ViewHolder1) holder).recipeName.setText(recipe.title);

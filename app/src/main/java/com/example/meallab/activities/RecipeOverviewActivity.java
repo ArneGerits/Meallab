@@ -133,7 +133,6 @@ public class RecipeOverviewActivity extends AppCompatActivity implements Spoonac
         mObjects.add(recipe.getImageURLForSize(SpoonacularImageSize.S_636x393));
         mObjects.add(recipe);
         mObjects.addAll(Arrays.asList(recipe.instructions));
-        System.out.println("now running initRecyclerView(mObjects); BROLOOO");
         initRecyclerView(mObjects);
 
     }

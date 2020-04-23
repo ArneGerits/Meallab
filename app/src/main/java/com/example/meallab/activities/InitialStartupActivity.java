@@ -132,7 +132,6 @@ public class InitialStartupActivity extends AppCompatActivity implements View.On
         Nutrient[] nutrients = userPreferences.getTrackedNutrients();
         Nutrient[] defaultMicroNutrients = userPreferences.getDefaultMicroNutrients();
         System.out.println(nutrients.length);
-        System.out.println("REEEEEEEEEEEEEEEE");
         for(int i = 0; i < nutrients.length;i++){
             for(int j = 0 ; j < microNutrients.length; j++){
                 System.out.println("i = " + i + " and j : " + j);
